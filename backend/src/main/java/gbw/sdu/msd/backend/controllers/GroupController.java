@@ -3,7 +3,6 @@ package gbw.sdu.msd.backend.controllers;
 import gbw.sdu.msd.backend.dtos.CreateGroupDTO;
 import gbw.sdu.msd.backend.dtos.GroupDTO;
 import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
-import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.Auth;
@@ -31,6 +30,7 @@ public class GroupController {
         this.auth = auth;
     }
     /**
+     * Adds a user to an existing group
      * @return Adds a user to an existing group
      */
     @PostMapping(path="{groupId}/add-user/{userId}")
@@ -48,6 +48,7 @@ public class GroupController {
     }
 
     /**
+     * Creates a new group
      * @return Creates a new group
      */
     @ApiResponses(value = {
@@ -60,10 +61,10 @@ public class GroupController {
     }
 
     /**
-     * Example: /api/v1/groups/join?groupId=1&userId=1
-     * @param groupId
-     * @param userId
-     * @return Information about the group joined.
+     * Adds a user to a group. URI example: /api/v1/groups/join?groupId=1&userId=1
+     * @param groupId id of group
+     * @param userId id of user
+     * @return Adds a user to a group. URI example: /api/v1/groups/join?groupId=1&userId=1
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user or no such group"),
@@ -85,19 +86,31 @@ public class GroupController {
         return ResponseEntity.ok(GroupDTO.of(groupRegistry.get(groupId)));
     }
 
-    @PostMapping(path= "/{groupId}/remove-user/{idOfUserToBeRemoved}")
-    public @ResponseBody ResponseEntity<Boolean> removeUser(@PathVariable Integer idOfUserToBeRemoved, @PathVariable Integer groupId, @RequestBody UserCredentialsDTO actingUser){
+    /**
+     * Removes the user from the group if the acting user is authorized to do so
+     * @param userInQuestion id of user to be removed
+     * @param groupId id of group
+     * @param actingUser Credentials of the user performing this action
+     * @return Removes the user from the group if the acting user is authorized to do so
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Invalid acting user"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path= "/{groupId}/remove-user/{userInQuestion}")
+    public @ResponseBody ResponseEntity<Boolean> removeUser(@PathVariable Integer userInQuestion, @PathVariable Integer groupId, @RequestBody UserCredentialsDTO actingUser){
         if(actingUser == null || groupId == null){
             return ResponseEntity.notFound().build();
         }
-        User maybeAdmin = userRegistry.get(actingUser.username(), actingUser.password());
+        User maybeAdmin = userRegistry.get(actingUser);
         if(maybeAdmin == null || !auth.mayDeleteUsersFrom(maybeAdmin.id(),groupId)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(idOfUserToBeRemoved == null){
+        if(userInQuestion == null){
             return ResponseEntity.notFound().build();
         }
-        User user = userRegistry.get(idOfUserToBeRemoved);
+        User user = userRegistry.get(userInQuestion);
         if(user == null){
             System.out.println("user not found");
             return ResponseEntity.notFound().build();
@@ -110,6 +123,16 @@ public class GroupController {
         return ResponseEntity.ok(true);
     }
 
+    /**
+     * The information about that group
+     * @param groupId id of group
+     * @return The information about that group
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such group"),
+            @ApiResponse(responseCode = "400", description = "Missing group id"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
     @GetMapping(path = "/{groupId}")
     public @ResponseBody ResponseEntity<GroupDTO> getGroup(@PathVariable Integer groupId){
         if(groupId == null){
@@ -122,9 +145,20 @@ public class GroupController {
         return ResponseEntity.ok(GroupDTO.of(group));
     }
 
+    /**
+     * Deletes a given group if the acting user is authorized to do so
+     * @param groupId group to delete
+     * @param credentials of the user trying to delete said group
+     * @return true on success
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Invalid acting user"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
     @PostMapping(path="/{groupId}/delete")
     public @ResponseBody ResponseEntity<Boolean> deleteGroup(@PathVariable Integer groupId, @RequestBody UserCredentialsDTO credentials){
-        User user = userRegistry.get(credentials.username(), credentials.password());
+        User user = userRegistry.get(credentials);
         if(user == null) {
             return ResponseEntity.badRequest().build();
         }

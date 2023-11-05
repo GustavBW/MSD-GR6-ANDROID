@@ -2,6 +2,7 @@ package gbw.sdu.msd.backend.services;
 
 import gbw.sdu.msd.backend.dtos.CreateUserDTO;
 import gbw.sdu.msd.backend.dtos.UpdateUserDTO;
+import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
 import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import java.util.Map;
 @Service
 public class UserRegistry implements IUserRegistry {
     private final Map<Integer,User> usersById = new HashMap<>();
+    private final Map<String,User> usersByUsername = new HashMap<>();
+
 
 
     /**
@@ -26,13 +29,18 @@ public class UserRegistry implements IUserRegistry {
      * @return null on not found
      */
     @Override
-    public User get(String username, String password) {
+    public User get(UserCredentialsDTO credentials) {
         for(User user : usersById.values()){
-            if(user.username().equals(username) && user.password().equals(password)){
+            if(credentials.compareTo(user) == 0){
                 return user;
             }
         }
         return null;
+    }
+
+    @Override
+    public User get(String username){
+        return usersByUsername.get(username);
     }
 
     @Override
@@ -45,6 +53,7 @@ public class UserRegistry implements IUserRegistry {
                 dto.phoneNumber(),
                 dto.name()
         );
+        usersByUsername.put(user.username(), user);
         usersById.put(user.id(), user);
         return user;
     }

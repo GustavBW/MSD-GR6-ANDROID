@@ -2,6 +2,7 @@ package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.CreateUserDTO;
 import gbw.sdu.msd.backend.dtos.GroupDTO;
+import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
 import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
@@ -29,8 +30,7 @@ public class UserController {
     }
 
     /**
-     * @param userId id of user to get information of.
-     * @return Get user information.
+     * Get user information.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user"),
@@ -47,8 +47,7 @@ public class UserController {
 
 
     /**
-     * Example: /api/v1/users?ids=1,7,32,45
-     * @return Users of listed ids.
+     * Users of listed ids. URI Example: /api/v1/users?ids=1,7,32,45
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Invalid id list"),
@@ -67,7 +66,7 @@ public class UserController {
     }
 
     /**
-     * @return All groups the user is part of. An empty list of none.
+     * All groups the user is part of. An empty list of none.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success")
@@ -82,29 +81,29 @@ public class UserController {
     }
 
     /**
-     * @return Creates a new user from the information given
+     * Creates a new user from the information given
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/create")
     public @ResponseBody ResponseEntity<UserDTO> create(@RequestBody CreateUserDTO dto){
+        //Check if username is unique
+
         User user = userRegistry.create(dto);
         return ResponseEntity.ok(UserDTO.of(user));
     }
 
     /**
-     * @param username
-     * @param password - hash
-     * @return The user information for the user with matching username and password
+     * The user information for the user with matching username and password
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/login")
-    public @ResponseBody ResponseEntity<UserDTO> login(@RequestParam String username, @RequestParam String password){
-        User user = userRegistry.get(username, password);
+    public @ResponseBody ResponseEntity<UserDTO> login(@RequestBody UserCredentialsDTO credentials){
+        User user = userRegistry.get(credentials);
         if(user == null) {
             return ResponseEntity.notFound().build();
         }
