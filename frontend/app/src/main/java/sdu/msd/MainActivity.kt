@@ -12,7 +12,6 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import sdu.msd.databinding.ActivityMainBinding
-import sdu.msd.ui.gallery.SomeClass
 
 class MainActivity : AppCompatActivity() {
 
