@@ -12,6 +12,6 @@ public class NotaficationController {
 
     @GetMapping(path="/{userId}")
     public @ResponseBody ResponseEntity<List<Object>> getAllNotifications(@PathVariable Integer userId){
-        
+
     }
 }
