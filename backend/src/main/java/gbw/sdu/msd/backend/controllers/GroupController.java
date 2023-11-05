@@ -9,6 +9,8 @@ import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.Auth;
 import gbw.sdu.msd.backend.services.IGroupRegistry;
 import gbw.sdu.msd.backend.services.IUserRegistry;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,9 @@ public class GroupController {
         this.groupRegistry = groups;
         this.auth = auth;
     }
-
+    /**
+     * @return Adds a user to an existing group
+     */
     @PostMapping(path="{groupId}/add-user/{userId}")
     public @ResponseBody ResponseEntity<Boolean> joinGroup(@PathVariable Integer userId, @PathVariable int groupId){
         User user = userRegistry.get(userId);
@@ -43,6 +47,12 @@ public class GroupController {
         return ResponseEntity.ok(true);
     }
 
+    /**
+     * @return Creates a new group
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
     @PostMapping(path="/create")
     public @ResponseBody ResponseEntity<GroupDTO> create(@RequestBody CreateGroupDTO dto){
         Group group = groupRegistry.create(dto);
@@ -55,6 +65,11 @@ public class GroupController {
      * @param userId
      * @return Information about the group joined.
      */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user or no such group"),
+            @ApiResponse(responseCode = "400", description = "Missing groupId or userId"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
     @PostMapping(path="/join")
     public @ResponseBody ResponseEntity<GroupDTO> linkJoin(@RequestParam Integer groupId, @RequestParam Integer userId){
         if(groupId == null || userId == null){
