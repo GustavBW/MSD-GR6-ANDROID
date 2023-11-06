@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Service
 public class DeathAndTaxes implements IDeptService {
@@ -15,7 +14,7 @@ public class DeathAndTaxes implements IDeptService {
 
     @Override
     public void addDebt(User debtor, User creditor, double amount) {
-        graph.addDebt(debtor, creditor, amount);
+        graph.recordDebt(debtor, creditor, amount);
     }
 
     @Override
