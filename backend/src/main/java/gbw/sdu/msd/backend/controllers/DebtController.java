@@ -90,7 +90,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id or missing amount"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @PostMapping(path="/of-user/{userA}/add/{userB}/amount/{amount}")
+    @PostMapping(path="/{userA}/paid-for/{userB}/amount/{amount}")
     public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();

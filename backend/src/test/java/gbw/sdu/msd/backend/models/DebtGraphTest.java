@@ -97,16 +97,28 @@ public class DebtGraphTest {
     @Test
     public void testProcessPayment() {
         debtGraph.recordDebt(userA, userB, 50.0);
-        assertEquals(50.0, debtGraph.getAmountOwedBy(userA, userB));
+        //If A pays B those 50 back, nothing is owed
+        debtGraph.processPayment(userA, userB, 50.0);
+        assertEquals(0.0, debtGraph.getAmountOwedBy(userA, userB));
         assertEquals(0.0, debtGraph.getAmountOwedBy(userB, userA));
-        System.out.println(debtGraph);
 
+        //If B owes C 50
         debtGraph.recordDebt(userB, userC, 50.0);
-        System.out.println(debtGraph);
-
-        //Since A already owed B those 50 buck, A now owes C 50 and B 0
-        assertEquals(0.0, debtGraph.getAmountOwedBy(userB, userC));
-        assertEquals(50.0, debtGraph.getAmountOwedBy(userA, userC));
+        //And pays back 20
+        debtGraph.processPayment(userB, userC, 20.0);
+        //They still owe 30
+        assertEquals(30.0, debtGraph.getAmountOwedBy(userB, userC));
+        assertEquals(30.0, debtGraph.totalOwedByUser(userB)); //No other users are in play
+        //And if they pay 20 more
+        debtGraph.processPayment(userB, userC, 20.0);
+        //They still owe 10
+        assertEquals(10.0, debtGraph.getAmountOwedBy(userB, userC));
+        assertEquals(10.0, debtGraph.totalOwedByUser(userB)); //No other users are in play
+        //However now C paid for B's shawarma
+        debtGraph.recordDebt(userB, userC, 20.0);
+        //And they're back to owing C 30
+        assertEquals(30.0, debtGraph.getAmountOwedBy(userB, userC));
+        assertEquals(30.0, debtGraph.totalOwedByUser(userB)); //No other users are in play
     }
 
 
