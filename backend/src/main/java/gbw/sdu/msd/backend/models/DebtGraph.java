@@ -35,80 +35,29 @@ public class DebtGraph {
         double whatBMayBeOwingA = getAmountOwedBy(userB, userA);
 
         if(whatBMayBeOwingA != 0){
-            if (whatBMayBeOwingA > whatAowesB){
-                // B --50--> A --10--> B, resolves to:
-                // B --40--> A ---0--> B
-                whatBMayBeOwingA -= whatAowesB;
-                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, whatBMayBeOwingA);
-                whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, whatBMayBeOwingA);
-                //Clear what A might have been owing B
-                whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
-                whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
-                return;
-            }else{ //If A owes more to B than B to A
-                // B --10--> A --50--> B, resolves to:
-                // B ---0--> A --40--> B
-                //Reduce remaining amount
-                whatAowesB -= whatBMayBeOwingA;
-                //Clear what B might have been owing A
-                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
-                whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
-                //However, we havn't checked B's creditors yet, so we can't set anything just yet
-            }
+            whatAowesB = resolveOneToOne(userA, userB, whatAowesB, whatBMayBeOwingA);
         }
+
+        if(whatAowesB <= 0.0) return;
 
         // Then check if somebody owes money to A (which could've been B, but that is resolved above and wont be a part of this list)
         for (Map.Entry<User, Double> debtOfCToA : getDebtsTo(userA).toList()) {
-            if(whatAowesB <= 0) break;
-
-            double amountCOwesA = debtOfCToA.getValue();
+            if(whatAowesB <= 0) return;
             User userC = debtOfCToA.getKey();
             if(userB == userC) continue;
-
-            if (amountCOwesA < whatAowesB) {
-                // C --10--> A --50--> B, resolves to:
-                // C --------10------> B
-                whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userB, amountCOwesA, Double::sum);
-                whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userC, amountCOwesA, Double::sum);
-                // A --------40------> B is resolved below as long as "whatAowesB" is modified correctly
-                whatAowesB -= amountCOwesA;
-            } else {
-                // C --50--> A --10--> B, resolves to:
-                // C --------10------> B
-                whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userB, whatAowesB, Double::sum);
-                whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userC, whatAowesB, Double::sum);
-                // C --40--> A
-                whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userA, amountCOwesA - whatAowesB);
-                whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userC, amountCOwesA - whatAowesB);
-                return;
-            }
+            double amountCOwesA = debtOfCToA.getValue();
+            whatAowesB = resolveDebteeOfA(userA, userB, userC, amountCOwesA, whatAowesB);
         }
+
+        if(whatAowesB <= 0.0) return;
 
         // Transfer debt to third-party creditors of B
         for (Map.Entry<User, Double> debtOfBToC : getDebtsOf(userB).toList()) {
-            if(whatAowesB <= 0) break; //We could return here
-
+            if(whatAowesB <= 0) return;
             User userC = debtOfBToC.getKey();
-            double amountBOwesC = debtOfBToC.getValue();
             if(userA == userC) continue;
-
-            if (amountBOwesC < whatAowesB) {
-                // A --50--> B --10--> C, resolves to:
-                // A --------10------> C
-                whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userC, amountBOwesC, Double::sum);
-                whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userA, amountBOwesC, Double::sum);
-                // A --40--> B is resolved down below as long as "whatAowesB" is modified correctly
-                whatAowesB -= amountBOwesC;
-            } else {
-                // A --10--> B --50--> C, resolves to:
-                // A --------10------> C
-                whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userC, whatAowesB, Double::sum);
-                whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userA, whatAowesB, Double::sum);
-                // B --40--> C
-                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userC, amountBOwesC - whatAowesB);
-                whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userB, amountBOwesC - whatAowesB);
-                return;
-            }
+            double amountBOwesC = debtOfBToC.getValue();
+            whatAowesB = resolveCreditorOfB(userA, userB, userC, amountBOwesC, whatAowesB);
         }
 
         //We should have resolved all complexity at this point so
@@ -116,6 +65,70 @@ public class DebtGraph {
             //If A still owes B money at this point
             whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userB, whatAowesB, Double::sum);
             whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userA, whatAowesB, Double::sum);
+        }
+    }
+
+    private double resolveOneToOne(User userA, User userB, double whatAowesB, double whatBMayBeOwingA){
+        if (whatBMayBeOwingA > whatAowesB){
+            // B --50--> A --10--> B, resolves to:
+            // B --40--> A ---0--> B
+            whatBMayBeOwingA -= whatAowesB;
+            whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, whatBMayBeOwingA);
+            whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, whatBMayBeOwingA);
+            //Clear what A might have been owing B
+            whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
+            whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
+            return 0;
+        }else{ //If A owes more to B than B to A
+            // B --10--> A --50--> B, resolves to:
+            // B ---0--> A --40--> B
+            //Clear what B might have been owing A
+            whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
+            whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
+            //However, we havn't checked B's creditors yet, so we can't set anything just yet
+            //Reduce remaining amount
+            return whatAowesB - whatBMayBeOwingA;
+        }
+    }
+
+    private double resolveDebteeOfA(User userA, User userB, User userC, double amountCOwesA, double whatAowesB){
+        if (amountCOwesA < whatAowesB) {
+            // C --10--> A --50--> B, resolves to:
+            // C --------10------> B
+            whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userB, amountCOwesA, Double::sum);
+            whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userC, amountCOwesA, Double::sum);
+            // A --------40------> B is resolved below as long as "whatAowesB" is modified correctly
+            return whatAowesB - amountCOwesA;
+        } else {
+            // C --50--> A --10--> B, resolves to:
+            // C --------10------> B
+            whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userB, whatAowesB, Double::sum);
+            whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userC, whatAowesB, Double::sum);
+            // C --40--> A
+            whoDoesThisUserOweMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userA, amountCOwesA - whatAowesB);
+            whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userC, amountCOwesA - whatAowesB);
+            return 0;
+        }
+    }
+
+    //Zero on stop or nothing left
+    private double resolveCreditorOfB(User userA, User userB, User userC, double amountBOwesC, double whatAowesB){
+        if (amountBOwesC < whatAowesB) {
+            // A --50--> B --10--> C, resolves to:
+            // A --------10------> C
+            whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userC, amountBOwesC, Double::sum);
+            whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userA, amountBOwesC, Double::sum);
+            // A --40--> B is resolved down below as long as "whatAowesB" is modified correctly
+            return whatAowesB - amountBOwesC;
+        } else {
+            // A --10--> B --50--> C, resolves to:
+            // A --------10------> C
+            whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userC, whatAowesB, Double::sum);
+            whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).merge(userA, whatAowesB, Double::sum);
+            // B --40--> C
+            whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userC, amountBOwesC - whatAowesB);
+            whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userB, amountBOwesC - whatAowesB);
+            return 0;
         }
     }
 

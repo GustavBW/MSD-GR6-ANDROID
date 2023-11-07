@@ -72,7 +72,7 @@ public class DebtGraphTest {
                 debtGraph.recordDebt(users.get(i % amount), users.get((i + 1) % amount), (i % 10) * 100);
             }
             long deltaMs = System.currentTimeMillis() - timeA;
-            System.out.println("1_000_000 inserts total time:\t" + deltaMs + "ms,\tavg per insert:\t" + ((double) deltaMs / 1_000_000) + "ms\twith: " + amount + " users");
+            System.out.println("1_000_000 inserts total time:\t" + deltaMs + "ms,\tavg per insert:\t" + ((double) deltaMs / 1_000_000) + "ms\twith: " + amount + " users ("+amount+","+((double) deltaMs / 1_000_000)+")");
             assertTrue(deltaMs / 1_000_000 < MAX_MS_PER_INSERT);
         }
     }
