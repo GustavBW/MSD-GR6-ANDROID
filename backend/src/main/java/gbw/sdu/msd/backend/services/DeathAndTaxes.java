@@ -36,6 +36,16 @@ public class DeathAndTaxes implements IDeptService {
     }
 
     @Override
+    public double processPayment(User userA, User userB, double amount) {
+        return graph.processPayment(userA, userB, amount);
+    }
+
+    @Override
+    public double getAmountOwedBy(User userA, User userB) {
+        return graph.getAmountOwedBy(userA, userB);
+    }
+
+    @Override
     public double totalDeptToGroup(User debtor, List<User> creditors) {
         return graph.totalDeptToGroup(debtor,creditors);
     }

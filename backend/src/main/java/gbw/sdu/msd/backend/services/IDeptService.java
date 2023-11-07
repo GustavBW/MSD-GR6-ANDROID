@@ -14,6 +14,13 @@ public interface IDeptService {
     List<Debt> whoDoesThisUserOweMoney(User entity);
     double totalOwedByUser(User entity);
     double totalOwedToUser(User user);
+    double processPayment(User userA, User userB, double amount);
+    /**
+     * @param userA by
+     * @param userB to
+     * @return amount
+     */
+    double getAmountOwedBy(User userA, User userB);
     double totalDeptToGroup(User debtor, List<User> creditors);
     List<Debt> whoOwesMoneyToThisUser(User entity);
 }
