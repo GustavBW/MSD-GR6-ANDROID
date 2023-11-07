@@ -15,7 +15,7 @@ public class DebtGraphTest {
     private User userB;
     private User userC;
     private static final double FLOAT_SIGNIFICANCE_LEVEL = 0.01;
-    private static final long MAX_MS_PER_INSERT = 3L;
+    private static final long MAX_MS_PER_INSERT = 1L;
     private static final long MAX_MS_PER_PAYMENT = 3L;
 
     @BeforeEach
@@ -72,7 +72,7 @@ public class DebtGraphTest {
                 debtGraph.recordDebt(users.get(i % amount), users.get((i + 1) % amount), (i % 10) * 100);
             }
             long deltaMs = System.currentTimeMillis() - timeA;
-            System.out.println("1_000_000 inserts with " + amount + "\t\t\tusers: " + deltaMs + "ms, avg per insert: " + ((double) deltaMs / 1_000_000) + "ms");
+            System.out.println("1_000_000 inserts total time:\t" + deltaMs + "ms,\tavg per insert:\t" + ((double) deltaMs / 1_000_000) + "ms\twith: " + amount + " users");
             assertTrue(deltaMs / 1_000_000 < MAX_MS_PER_INSERT);
         }
     }
@@ -81,6 +81,14 @@ public class DebtGraphTest {
     public void recordDebtTransference(){
         debtGraph.recordDebt(userA, userB, 50);
         debtGraph.recordDebt(userB, userC, 50);
+        //User A should now owe C 50 instead of B - simplifying the graph
+        assertEquals(0.0, debtGraph.getAmountOwedBy(userB, userC));
+        assertEquals(50, debtGraph.getAmountOwedBy(userA, userC));
+
+        //And it should be "omnidirectional" - regardless of insertion order
+        debtGraph = new DebtGraph();
+        debtGraph.recordDebt(userB, userC, 50);
+        debtGraph.recordDebt(userA, userB, 50);
         //User A should now owe C 50 instead of B - simplifying the graph
         assertEquals(0.0, debtGraph.getAmountOwedBy(userB, userC));
         assertEquals(50, debtGraph.getAmountOwedBy(userA, userC));
@@ -99,7 +107,6 @@ public class DebtGraphTest {
         //Since A already owed B those 50 buck, A now owes C 50 and B 0
         assertEquals(0.0, debtGraph.getAmountOwedBy(userB, userC));
         assertEquals(50.0, debtGraph.getAmountOwedBy(userA, userC));
-
     }
 
 
@@ -116,7 +123,10 @@ public class DebtGraphTest {
         debtGraph.recordDebt(userA, userB, 100.0);
         debtGraph.recordDebt(userC, userA, 50.0);
 
-        assertEquals(50.0, debtGraph.totalOwedToUser(userA));
+        assertEquals(0.0, debtGraph.totalOwedToUser(userA));
+        assertEquals(100.0, debtGraph.totalOwedToUser(userB));
+        assertEquals(50.0, debtGraph.getAmountOwedBy(userA, userB));
+        assertEquals(50.0, debtGraph.getAmountOwedBy(userC, userB));
     }
 
     @Test
@@ -135,12 +145,9 @@ public class DebtGraphTest {
         debtGraph.recordDebt(userA, userB, 100.0);
         debtGraph.recordDebt(userC, userA, 50.0);
 
-        double amountOwedByBToA = debtGraph.getAmountOwedBy(userB, userA);
-        double amountOwedByCToA = debtGraph.getAmountOwedBy(userC, userA);
-        double amountOwedByCToB = debtGraph.getAmountOwedBy(userC, userB);
-
-        assertEquals(0.0,amountOwedByBToA);
-        assertEquals(0.0, amountOwedByCToA);
-        assertEquals(50.0, amountOwedByCToB);
+        assertEquals(0.0,debtGraph.getAmountOwedBy(userB, userA));
+        assertEquals(0.0, debtGraph.getAmountOwedBy(userC, userA));
+        assertEquals(50.0, debtGraph.getAmountOwedBy(userC, userB));
+        assertEquals(50.0, debtGraph.getAmountOwedBy(userA, userB));
     }
 }

@@ -1,5 +1,6 @@
 package gbw.sdu.msd.backend.services;
 
+import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.DebtGraph;
 import gbw.sdu.msd.backend.models.User;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ public class DeathAndTaxes implements IDeptService {
     }
 
     @Override
-    public Map<User, Double> whoDoesThisUserOweMoney(User entity) {
-        return graph.whoDoesThisUserOweMoney(entity);
+    public List<Debt> whoDoesThisUserOweMoney(User entity) {
+        return graph.getDebtsOf(entity)
+                .map(debt -> new Debt(debt.getKey(), debt.getValue()))
+                .toList();
     }
 
     @Override
@@ -38,7 +41,9 @@ public class DeathAndTaxes implements IDeptService {
     }
 
     @Override
-    public Map<User, Double> whoOwesMoneyToThisUser(User entity) {
-        return graph.whoOwesMoneyToThisUser(entity);
+    public List<Debt> whoOwesMoneyToThisUser(User entity) {
+        return graph.getDebtsTo(entity)
+                .map(debt -> new Debt(debt.getKey(), debt.getValue()))
+                .toList();
     }
 }

@@ -4,10 +4,18 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-
+/**
+ * This class represents a graph model between users (nodes) and the amount they owe each other (edges). <br>
+ * The majority of the calculations in terms of simplifying the graph happen on insert ({@link DebtGraph#recordDebt(User, User, double)}) making lookups
+ * and payments cheap in terms of compute at scale. <br>
+ * Furthermore, it automatically simplifies relationships, i.e. if A owes B who owes C some amount, this is simplified to potentially just A owes C.<br>
+ * Again, this is computed at insert at an insignificant cost. <br>
+ * Atomic. This cannot be parallelized.
+ * @author GBW
+ */
 public class DebtGraph {
-    private final Map<User, Map<User,Double>> whoDoesThisUserOweMoney;
-    private final Map<User, Map<User,Double>> whoOwesThisUserMoney; // Reverse graph for creditors.
+    private final Map<User, Map<User, Double>> whoDoesThisUserOweMoney;
+    private final Map<User, Map<User, Double>> whoOwesThisUserMoney; // Reverse graph for creditors.
 
     public DebtGraph() {
         this.whoDoesThisUserOweMoney = new HashMap<>();
@@ -15,100 +23,114 @@ public class DebtGraph {
     }
 
     /**
-     * @param userA - the user that owes money
-     * @param userB - who A owes money to
+     * @param userA  - the user that owes money
+     * @param userB  - who A owes money to
      * @param amount - how much
      */
     public void recordDebt(User userA, User userB, double amount) {
-        if(userA == userB) return;
+        if (userA == userB) return;
+        if (amount <= 0) return;
 
-        double remainingAmount = amount + getAmountOwedBy(userA,userB);
-        List<Map.Entry<User,Double>> thirdPartyCreditors = new ArrayList<>(getNonZeroDebts(userB).toList());
+        double whatAowesB = amount;
 
-        //If B owes A, A is already a creditor and is placed as the first creditor evaluated
-        if(getAmountOwedBy(userB, userA) > 0){
-            thirdPartyCreditors.sort((entry1, entry2) -> {
-                if(entry1.getKey() == userA) return -1;
-                if(entry2.getKey() == userA) return 1;
-                return 0;
-            });
-        }
+        /// List of users who owe money to userA
+        for (Map.Entry<User, Double> debtOfCToA : getDebtsTo(userA).toList()) {
+            if(whatAowesB <= 0) return;
 
-        //Check thirdparty outstandings for userB.
-        for(Map.Entry<User,Double> debtByTo : thirdPartyCreditors){
-            if(remainingAmount <= 0){ //It should never be less than 0, but... for safety
-                //All creditors of the creditor have been paid as much as possible
-                return;
-            }
-            User userC = debtByTo.getKey();
-            double amountBOwesC = debtByTo.getValue();
-            if(amountBOwesC < remainingAmount){
-                //clear what B owes C
-                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userC, 0.0);
-                whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userB, 0.0);
-                //transfer as much debt from A->B to A->C
-                recordDebt(userA, userC, amountBOwesC);
-                remainingAmount -= amountBOwesC;
-            }else if(amountBOwesC == remainingAmount){
-                recordDebt(userA, userC, amountBOwesC);
-                return;
-            }else if(amountBOwesC > remainingAmount){ //If B owes C more than A owes B
-                //reduce the amount B owes C by the amount A owes B
-                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userC, amountBOwesC - remainingAmount);
-                whoOwesThisUserMoney.computeIfAbsent(userC, k -> new HashMap<>()).put(userB, amountBOwesC - remainingAmount);
-                //set A to owe C said amount
-                recordDebt(userA, userC, remainingAmount);
+            double amountCOwesA = debtOfCToA.getValue();
+            User userC = debtOfCToA.getKey();
+            if(userC == userB) break;
+
+            if (amountCOwesA < whatAowesB) {
+                // C --10--> A --50--> B, resolves to:
+                // C --------10------> B
+                recordDebt(userC, userB, amountCOwesA);
+                // A --------40------> B
+                whatAowesB -= amountCOwesA;
+                recordDebt(userA, userB, whatAowesB);
+            } else {
+                // C --50--> A --10--> B, resolves to:
+                // C --------10------> B
+                recordDebt(userC, userB, whatAowesB);
+                // C --40--> A
+                recordDebt(userC, userA, amountCOwesA - whatAowesB);
                 return;
             }
         }
 
-        //This is only reached if what A owes B is greater than what B owes to anyone else combined
-        whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, Math.max(remainingAmount, 0.0));
-        whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, Math.max(remainingAmount, 0.0));
-    }
+        // Transfer debt to third-party creditors of B
+        for (Map.Entry<User, Double> debtOfBToC : getDebtsOf(userB).toList()) {
+            if(whatAowesB <= 0) return;
 
-    private void balanceDebts(User from, User to) {
-        Map<User, Double> debtorDebts = whoDoesThisUserOweMoney.get(from);
-        Map<User, Double> creditorDebts = whoDoesThisUserOweMoney.get(to);
+            User userC = debtOfBToC.getKey();
+            double amountBOwesC = debtOfBToC.getValue();
 
-        if (debtorDebts != null && creditorDebts != null) {
-            for (User intermediary : creditorDebts.keySet()) {
-                double debtToCreditor = creditorDebts.get(intermediary);
-                double debtFromDebtor = debtorDebts.getOrDefault(intermediary, 0.0);
+            if (amountBOwesC < whatAowesB) {
+                // A --50--> B --10--> C, resolves to:
+                // A --40--> B
+                whatAowesB -= amountBOwesC;
+                recordDebt(userA, userB, whatAowesB);
+                // A --------10------> C
+                recordDebt(userA, userC, amountBOwesC);
+            } else {
+                // A --10--> B --50--> C, resolves to:
+                // A --------10------> C
+                recordDebt(userA, userC, whatAowesB);
+                // B --40--> C
+                recordDebt(userB, userC, amountBOwesC - whatAowesB);
+                return;
+            }
+        }
 
-                if (debtToCreditor > debtFromDebtor) {
-                    double transferAmount = Math.min(debtToCreditor - debtFromDebtor, debtorDebts.get(to));
-                    debtorDebts.compute(to, (k, v) -> v - transferAmount);
-                    creditorDebts.compute(intermediary, (k, v) -> v - transferAmount);
-                    //Recursion. lets go
-                    recordDebt(from, intermediary, transferAmount);
-                }
+        double whatBMayBeOwingA = getAmountOwedBy(userB, userA);
+        if(whatBMayBeOwingA == 0){
+            whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).merge(userB, whatAowesB, Double::sum);
+            whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).merge(userA, whatAowesB, Double::sum);
+        } else {
+            if (whatBMayBeOwingA > whatAowesB){
+                // B --50--> A --10--> B, resolves to:
+                // B --40--> A ---0--> B
+                whatBMayBeOwingA -= whatAowesB;
+                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, whatBMayBeOwingA);
+                whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, whatBMayBeOwingA);
+                //Clear what A might have been owing B
+                whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
+                whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
+            }else{ //If A owes more to B than B to A
+                // B --10--> A --50--> B, resolves to:
+                // B ---0--> A --40--> B
+                whatAowesB -= whatBMayBeOwingA;
+                whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, whatAowesB);
+                whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, whatAowesB);
+                //Clear what B might have been owing A
+                whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>()).put(userA, 0.0);
+                whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>()).put(userB, 0.0);
             }
         }
     }
 
     /**
-     * @param userA - from
-     * @param userB - to
+     * @param userA  - from
+     * @param userB  - to
      * @param amount - amount
      * @return the amount of money "left over" from settling all debt between the users.
      */
-    public double processPayment2(User userA, User userB, double amount) {
+    public double processPayment(User userA, User userB, double amount) {
         //First check if userA even owes userB anything.
         double totalOwedByAToB = getAmountOwedBy(userA, userB);
-        if(totalOwedByAToB <= 0){
+        if (totalOwedByAToB <= 0) {
             return amount;
         }
 
         double remainingAmount = amount;
         //Check thirdparty outstandings by userB.
-        for(Map.Entry<User,Double> debtByTo : getNonZeroDebts(userB).toList()){
-            if(remainingAmount <= 0){ //It should never be less than 0, but... for safety
+        for (Map.Entry<User, Double> debtByTo : getDebtsOf(userB).toList()) {
+            if (remainingAmount <= 0) { //It should never be less than 0, but... for safety
                 //All creditors of the creditor have been paid as much as possible
                 break;
             }
             //Recursion here we go
-            remainingAmount = processPayment2(userB, debtByTo.getKey(), remainingAmount);
+            remainingAmount = processPayment(userB, debtByTo.getKey(), remainingAmount);
         }
 
         double delta = totalOwedByAToB - amount;
@@ -119,76 +141,28 @@ public class DebtGraph {
         return Math.abs(delta);
     }
 
-    private static final Predicate<Map.Entry<User,Double>> NOT_ZERO_OR_NULL = entry -> entry.getValue() != null && entry.getValue() > 0.0;
+    private static final Predicate<Map.Entry<User, Double>> NOT_ZERO_OR_NULL = entry -> entry.getValue() != null && entry.getValue() > 0.0;
 
-    private Stream<Map.Entry<User,Double>> getNonZeroDebts(User user){
-        Map<User,Double> thirdPartyOutstandingsByUser = whoDoesThisUserOweMoney.get(user);
-        if(thirdPartyOutstandingsByUser == null){
+    /**
+     * @return A stream of those the user owe money to
+     */
+    public Stream<Map.Entry<User, Double>> getDebtsOf(User user) {
+        Map<User, Double> thirdPartyOutstandingsByUser = whoDoesThisUserOweMoney.get(user);
+        if (thirdPartyOutstandingsByUser == null) {
             return Stream.of();
         }
         return thirdPartyOutstandingsByUser.entrySet().stream().filter(NOT_ZERO_OR_NULL);
     }
 
-    private Stream<Map.Entry<User,Double>> getNonZeroOwedAmountsTo(User user){
-        Map<User,Double> pplWhoOweMoneyToThisUser = whoOwesThisUserMoney.get(user);
-        if(pplWhoOweMoneyToThisUser == null){
+    /**
+     * @return A stream of those who owe money to the user
+     */
+    public Stream<Map.Entry<User, Double>> getDebtsTo(User user) {
+        Map<User, Double> pplWhoOweMoneyToThisUser = whoOwesThisUserMoney.get(user);
+        if (pplWhoOweMoneyToThisUser == null) {
             return Stream.of();
         }
         return pplWhoOweMoneyToThisUser.entrySet().stream().filter(NOT_ZERO_OR_NULL);
-    }
-
-    public void processPayment(User from, User to, double amount) {
-        // Check if payer owes money to payee
-        double debt = whoDoesThisUserOweMoney.getOrDefault(from, Collections.emptyMap())
-                .getOrDefault(to, 0.0);
-
-        if (debt >= amount) {
-            // Payer fully pays payee
-            whoDoesThisUserOweMoney.get(from).put(to, debt - amount);
-            whoOwesThisUserMoney.get(to).put(from, debt - amount);
-
-            // Clear the debt from B to C as well
-            whoDoesThisUserOweMoney.get(to).put(from, 0.0);
-            whoOwesThisUserMoney.get(from).put(to, 0.0);
-
-            // Balance debts after processing the payment
-            balanceDebts(from, to);
-            return;
-        }
-
-        if (debt > 0) {
-            // Payer partially pays payee
-            whoDoesThisUserOweMoney.get(from).put(to, 0.0);
-            whoOwesThisUserMoney.get(to).put(from, 0.0);
-            amount -= debt;
-        }
-
-        // Handle money redirects
-        Map<User, Double> payeeDebts = whoDoesThisUserOweMoney.get(to);
-        if (payeeDebts != null) {
-            for (User creditor : payeeDebts.keySet()) {
-                double debtToCreditor = payeeDebts.get(creditor);
-                if (amount >= debtToCreditor) {
-                    whoDoesThisUserOweMoney.get(to).put(creditor, 0.0);
-                    whoOwesThisUserMoney.get(creditor).put(to, 0.0);
-                    amount -= debtToCreditor;
-                } else {
-                    whoDoesThisUserOweMoney.get(to).put(creditor, debtToCreditor - amount);
-                    whoOwesThisUserMoney.get(creditor).put(to, debtToCreditor - amount);
-                    amount = 0;
-                    break;
-                }
-            }
-        }
-
-        // Update remaining amount as debt from payer to payee
-        whoDoesThisUserOweMoney.computeIfAbsent(from, k -> new HashMap<>())
-                .merge(to, amount, Double::sum);
-        whoOwesThisUserMoney.computeIfAbsent(to, k -> new HashMap<>())
-                .merge(from, amount, Double::sum);
-
-        // Balance debts after processing the payment
-        balanceDebts(from, to);
     }
 
     /**
@@ -196,7 +170,7 @@ public class DebtGraph {
      * @param to - user the amount is owed to
      * @return 0 on nothing owed to "to"
      */
-    public double getAmountOwedBy(User by, User to){
+    public double getAmountOwedBy(User by, User to) {
         Map<User, Double> debtorMap = whoDoesThisUserOweMoney.get(by);
         if (debtorMap == null) {
             return 0;
@@ -206,33 +180,16 @@ public class DebtGraph {
         return amount != null ? amount : 0;
     }
 
+    public double totalOwedByUser(User user) {
+        return getDebtsOf(user)
+                .mapToDouble(Map.Entry::getValue)
+                .sum();
+    }
 
-
-    /**
-     * Who owes this user money
-     */
-    public Map<User,Double> whoOwesMoneyToThisUser(User entity) {
-        return whoOwesThisUserMoney.computeIfAbsent(entity, k -> new HashMap<>());
-    }
-    /**
-     * Debts of user
-     */
-    public Map<User,Double> whoDoesThisUserOweMoney(User entity) {
-        return whoDoesThisUserOweMoney.computeIfAbsent(entity, k -> new HashMap<>());
-    }
-    public double totalOwedByUser(User user){
-        double total = 0;
-        for(Map.Entry<User,Double> debt : whoDoesThisUserOweMoney(user).entrySet()){
-            total += debt.getValue() == null ? 0 : debt.getValue();
-        }
-        return total;
-    }
-    public double totalOwedToUser(User user){
-        double total = 0;
-        for(Map.Entry<User,Double> debt : whoOwesMoneyToThisUser(user).entrySet()){
-            total += debt.getValue() == null ? 0 : debt.getValue();
-        }
-        return total;
+    public double totalOwedToUser(User user) {
+        return getDebtsTo(user)
+                .mapToDouble(Map.Entry::getValue)
+                .sum();
     }
 
     public double totalDeptToGroup(User debtor, List<User> creditors) {
@@ -250,11 +207,11 @@ public class DebtGraph {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder("DebtGraph").append("\n");
-        for(Map.Entry<User, Map<User,Double>> debtEntries : whoDoesThisUserOweMoney.entrySet()){
+        for (Map.Entry<User, Map<User, Double>> debtEntries : whoDoesThisUserOweMoney.entrySet()) {
             sb.append("\tUser ").append(debtEntries.getKey().name()).append(" owes:").append("\n");
-            for(Map.Entry<User,Double> userDebtEntries : debtEntries.getValue().entrySet()){
+            for (Map.Entry<User, Double> userDebtEntries : debtEntries.getValue().entrySet()) {
                 sb.append("\t\t").append(userDebtEntries.getKey().name()).append(" ").append(userDebtEntries.getValue()).append(" bucks\n");
             }
         }
