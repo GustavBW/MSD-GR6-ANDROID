@@ -109,6 +109,7 @@ public class DebtGraphTest {
         //They still owe 30
         assertEquals(30.0, debtGraph.getAmountOwedBy(userB, userC));
         assertEquals(30.0, debtGraph.totalOwedByUser(userB)); //No other users are in play
+
         //And if they pay 20 more
         debtGraph.processPayment(userB, userC, 20.0);
         //They still owe 10
