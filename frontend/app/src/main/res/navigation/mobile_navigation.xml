@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
+        android:id="@+id/nav_creat_group"
+        android:name="sdu.msd.ui.createGroup.createGroupFragment"
+        android:label="@string/menu_create_group"
+        tools:layout="@layout/fragment_create_group" />
+
+    <fragment
         android:id="@+id/nav_slideshow"
         android:name="sdu.msd.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"

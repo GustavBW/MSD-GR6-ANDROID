@@ -7,6 +7,10 @@ android {
     namespace = "sdu.msd"
     compileSdk = 33
 
+    viewBinding{
+        enable = true
+    }
+
     defaultConfig {
         applicationId = "sdu.msd"
         minSdk = 24

@@ -1,10 +1,10 @@
-package sdu.msd.ui.gallery
+package sdu.msd.ui.createGroup
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class GalleryViewModel : ViewModel() {
+class reateGroupViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is Fragment"
