@@ -1,3 +1,4 @@
+/*
 package sdu.msd.ui.home
 
 import androidx.lifecycle.LiveData
@@ -11,3 +12,5 @@ class HomeViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 }
+
+ */

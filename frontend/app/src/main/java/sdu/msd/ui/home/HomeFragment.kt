@@ -1,3 +1,4 @@
+/*
 package sdu.msd.ui.home
 
 import android.os.Bundle
@@ -40,3 +41,5 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 }
+
+ */
