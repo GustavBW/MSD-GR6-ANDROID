@@ -9,6 +9,7 @@ import android.widget.Button;
 import sdu.msd.R;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
+import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.profile;
 
 public class HomeView extends AppCompatActivity {
@@ -21,11 +22,20 @@ public class HomeView extends AppCompatActivity {
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
         Button groupBtn = findViewById(R.id.group);
         Button btnProfile = findViewById(R.id.btnProfile);
+        Button btnNotifications = findViewById(R.id.btnNotifications);
 
         btnProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeView.this, profile.class);
+                startActivity(intent);
+            }
+        });
+
+        btnNotifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeView.this, NotificationsView.class);
                 startActivity(intent);
             }
         });
