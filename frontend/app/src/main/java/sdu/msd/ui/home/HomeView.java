@@ -20,6 +20,8 @@ public class HomeView extends AppCompatActivity {
         setContentView(R.layout.fragment_home);
         Button btnProfile = findViewById(R.id.btnProfile);
         Button btnNotifications = findViewById(R.id.btnNotifications);
+        Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
+        Button groupBtn = findViewById(R.id.group);
 
         btnProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,6 +38,7 @@ public class HomeView extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
