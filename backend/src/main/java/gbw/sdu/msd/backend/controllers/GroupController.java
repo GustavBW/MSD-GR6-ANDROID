@@ -54,11 +54,17 @@ public class GroupController {
      * @return Creates a new group
      */
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user - A user that doesn't exist can't be admin."),
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/create")
     public @ResponseBody ResponseEntity<GroupDTO> create(@RequestBody CreateGroupDTO dto){
-        Group group = groupRegistry.create(dto);
+        User admin = userRegistry.get(dto.idOfAdmin());
+        if(admin == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        Group group = groupRegistry.create(dto, admin);
         return ResponseEntity.ok(GroupDTO.of(group));
     }
 

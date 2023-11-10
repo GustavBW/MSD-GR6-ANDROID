@@ -34,8 +34,7 @@ public class GroupRegistry implements IGroupRegistry{
      * @return null on missing admin user
      */
     @Override
-    public Group create(CreateGroupDTO dto) {
-        User admin = userRegistry.get(dto.idOfAdmin());
+    public Group create(CreateGroupDTO dto, User admin) {
         if(admin == null) return null;
         Group group = new Group(
                 groupsById.keySet().size() + 1,
