@@ -40,8 +40,7 @@
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        android:inputType="text"
-        android:text="Name" />
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/descriptionEditText"
@@ -51,12 +50,12 @@
         android:layout_marginHorizontal="30dp"
         android:ems="10"
         android:background="@drawable/border"
-        android:hint="Name"
+        android:hint="Description"
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         android:inputType="text"
-        android:text="Description" />
+        />
 
     <ImageView
         android:id="@+id/groupImage"
@@ -102,7 +101,8 @@
             android:layout_marginHorizontal="30dp"
             android:textColor="@color/white"
             android:layout_weight="1"
-            android:text="Confirm" />
+            android:text="Confirm"
+            />
     </LinearLayout>
 
 
