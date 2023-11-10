@@ -38,7 +38,7 @@ public class CreateGroupView extends AppCompatActivity {
         Button uploadBtn = findViewById(R.id.uploadImage);
         EditText groupName = findViewById(R.id.nameEditText);
         EditText groupDescription = findViewById(R.id.descriptionEditText);
-        ImageView groupImg = findViewById(R.id.imageView);
+        ImageView groupImg = findViewById(R.id.groupImage);
         /*
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("YOUR_API_BASE_URL") // Replace with your actual API base URL
