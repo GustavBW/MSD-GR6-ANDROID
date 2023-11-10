@@ -9,6 +9,7 @@ import android.widget.Button;
 import sdu.msd.R;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
+import sdu.msd.ui.profile.profile;
 
 public class HomeView extends AppCompatActivity {
 
@@ -19,10 +20,12 @@ public class HomeView extends AppCompatActivity {
 
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
         Button groupBtn = findViewById(R.id.group);
-        groupBtn.setOnClickListener(new View.OnClickListener() {
+        Button btnProfile = findViewById(R.id.btnProfile);
+
+        btnProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeView.this,GroupView.class);
+                Intent intent = new Intent(HomeView.this, profile.class);
                 startActivity(intent);
             }
         });
@@ -31,6 +34,14 @@ public class HomeView extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeView.this, CreateGroupView.class);
+                startActivity(intent);
+            }
+        });
+
+        groupBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeView.this,GroupView.class);
                 startActivity(intent);
             }
         });
