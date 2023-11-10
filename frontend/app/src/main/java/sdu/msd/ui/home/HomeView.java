@@ -19,12 +19,9 @@ public class HomeView extends AppCompatActivity {
 
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
         Button groupBtn = findViewById(R.id.group);
-        groupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeView.this,GroupView.class);
-                startActivity(intent);
-            }
+        groupBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(HomeView.this,GroupView.class);
+            startActivity(intent);
         });
 
         btnCreateGroup.setOnClickListener(new View.OnClickListener() {
