@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path="/api/v1/groups")
 public class GroupController {
@@ -166,5 +168,26 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(groupRegistry.delete(groupId));
+    }
+
+    /**
+     * Returns the Ids of all the groups the user is in.
+     * @param userId, id of user
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user"),
+            @ApiResponse(responseCode = "400", description = "Missing or invalid userId"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path="/of-user/{userId}")
+    public @ResponseBody ResponseEntity<List<Integer>> getGroupsOfUser(@PathVariable Integer userId){
+        if(userId == null || userId < 0){
+            return ResponseEntity.badRequest().build();
+        }
+        User found = userRegistry.get(userId);
+        if(found == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(groupRegistry.ofUser(userId).stream().map(Group::id).toList());
     }
 }
