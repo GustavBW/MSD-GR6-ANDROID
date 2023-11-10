@@ -18,9 +18,6 @@ public class HomeView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
-
-        Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
-        Button groupBtn = findViewById(R.id.group);
         Button btnProfile = findViewById(R.id.btnProfile);
         Button btnNotifications = findViewById(R.id.btnNotifications);
 
