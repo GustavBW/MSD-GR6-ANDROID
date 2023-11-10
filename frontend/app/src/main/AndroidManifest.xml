@@ -27,6 +27,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.notifications.NotificationsView"
+            android:exported="true"
+            android:theme="@style/Theme.Frontend.NoActionBar">
+        </activity>
+        <activity
             android:name=".ui.createGroup.CreateGroupView"
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar">
