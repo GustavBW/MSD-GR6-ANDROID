@@ -57,24 +57,34 @@
         android:inputType="text"
         />
 
-    <ImageView
-        android:id="@+id/groupImage"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
         android:background="@drawable/border"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_menu_camera"
-         />
 
-    <Button
-        android:id="@+id/uploadImage"
-        android:layout_width="match_parent"
-        android:background="@drawable/buttoncolors"
-        android:textColor="@color/white"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginBottom="20dp"
-        android:layout_height="wrap_content"
-        android:text="UploadImage" />
+        >
+
+        <Button
+            android:id="@+id/changeColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttoncolors"
+            android:text="Change color"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/groupViewColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints" />
+            <View
+                android:id="@+id/groupViewColor"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/border"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="30dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

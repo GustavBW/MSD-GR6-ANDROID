@@ -6,11 +6,13 @@ public class CreateGroupDTO {
     private final int idOfAdmin;
     private final String name;
     private final String desc;
+    private final int groupColor;
 
-    public CreateGroupDTO(int idOfAdmin, String name, String desc) {
+    public CreateGroupDTO(int idOfAdmin, String name, String desc, int groupColor) {
         this.idOfAdmin = idOfAdmin;
         this.name = name;
         this.desc = desc;
+        this.groupColor = groupColor;
     }
 
     public int getIdOfAdmin() {
@@ -23,6 +25,10 @@ public class CreateGroupDTO {
 
     public String getDesc() {
         return desc;
+    }
+
+    public int getGroupColor() {
+        return groupColor;
     }
 
     @Override
@@ -42,10 +48,11 @@ public class CreateGroupDTO {
 
     @Override
     public String toString() {
-        return "CreateGroupDTO[" +
-                "idOfAdmin=" + idOfAdmin + ", " +
-                "name=" + name + ", " +
-                "desc=" + desc + ']';
+        return "CreateGroupDTO{" +
+                "idOfAdmin=" + idOfAdmin +
+                ", name='" + name + '\'' +
+                ", desc='" + desc + '\'' +
+                ", groupColor=" + groupColor +
+                '}';
     }
-
 }
