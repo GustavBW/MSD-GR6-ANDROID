@@ -40,6 +40,7 @@ public class GroupRegistry implements IGroupRegistry{
                 groupsById.keySet().size() + 1,
                 dto.name(),
                 dto.desc(),
+                dto.groupColor(),
                 admin,
                 new ArrayList<>(List.of(admin))
             );

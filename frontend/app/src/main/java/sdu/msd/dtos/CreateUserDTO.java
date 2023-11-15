@@ -2,14 +2,14 @@ package sdu.msd.dtos;
 
 import java.util.Objects;
 
-public final class CreateUserDTO {
+public class CreateUserDTO {
     private final String username;
     private final String passwordHash;
     private final String name;
     private final String phoneNumber;
     private final String email;
 
-    CreateUserDTO(String username, String passwordHash, String name, String phoneNumber, String email) {
+    public CreateUserDTO(String username, String passwordHash, String name, String phoneNumber, String email) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.name = name;

@@ -1,4 +1,4 @@
 package gbw.sdu.msd.backend.dtos;
 
-public record CreateGroupDTO(int idOfAdmin, String name, String desc) {
+public record CreateGroupDTO(int idOfAdmin, String name, String desc, int groupColor) {
 }
