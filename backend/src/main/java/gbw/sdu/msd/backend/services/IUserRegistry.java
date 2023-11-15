@@ -14,4 +14,5 @@ public interface IUserRegistry {
     User update(int id, UpdateUserDTO dto);
     boolean changePasswordOf(int id, String newPassword);
     User get(UserDTO userDTO);
+    boolean isUnique(String username);
 }
