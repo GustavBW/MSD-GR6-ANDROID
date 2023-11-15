@@ -28,6 +28,7 @@ import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.notifications.NotificationsView;
