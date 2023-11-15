@@ -9,12 +9,15 @@ public final class GroupDTO {
     private final int adminId;
     private final String name;
     private final String descriptions;
+    private final int groupColor;
 
-    GroupDTO(int id, int adminId, String name, String descriptions, List<Integer> users  ){
+
+    public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users  ){
         this.id = id;
         this.adminId = adminId;
         this.name = name;
         this.descriptions = descriptions;
+        this.groupColor = groupColor;
     }
 
     public int id() {
@@ -33,6 +36,10 @@ public final class GroupDTO {
         return descriptions;
     }
 
+    public int getGroupColor() {
+        return groupColor;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
@@ -46,7 +53,7 @@ public final class GroupDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, adminId, name, descriptions);
+        return Objects.hash(id, adminId, name, descriptions,groupColor);
     }
 
     @Override
@@ -55,6 +62,8 @@ public final class GroupDTO {
                 "id=" + id + ", " +
                 "adminId=" + adminId + ", " +
                 "name=" + name + ", " +
-                "descriptions=" + descriptions + ']';
+                "descriptions=" + descriptions + ", " +
+                "groupColor=" + groupColor + "," +
+        ']';
     }
 }

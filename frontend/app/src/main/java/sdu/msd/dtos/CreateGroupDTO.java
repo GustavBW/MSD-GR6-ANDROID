@@ -43,7 +43,7 @@ public class CreateGroupDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idOfAdmin, name, desc);
+        return Objects.hash(idOfAdmin, name, desc,groupColor);
     }
 
     @Override

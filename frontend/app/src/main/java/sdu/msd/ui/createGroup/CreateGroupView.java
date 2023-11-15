@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.util.Objects;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -27,6 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.CreateGroupDTO;
+import sdu.msd.dtos.GroupDTO;
 import sdu.msd.ui.home.HomeView;
 
 public class CreateGroupView extends AppCompatActivity {
@@ -37,13 +39,14 @@ public class CreateGroupView extends AppCompatActivity {
     private EditText groupName;
     private EditText groupDescription;
     private View groupViewColor;
-    private String username;
+    private int userId;
     int color;
+    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/groups/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_create_group); // Load the XML layout for the second activity
-        username = getIntent().getStringExtra("username");
+        userId = getIntent().getIntExtra("userId",-1);
         changeColor = findViewById(R.id.changeColor);
         groupViewColor = findViewById(R.id.groupViewColor);
 
@@ -72,14 +75,13 @@ public class CreateGroupView extends AppCompatActivity {
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(view -> {
             Intent intent = new Intent(CreateGroupView.this, HomeView.class);
+            intent.putExtra("userId",userId);
             startActivity(intent);
         });
     }
 
     private void createGroup(){
-        random = new Random();
         confirmationBtn = findViewById(R.id.confirm);
-        int adminId = random.nextInt();
         groupName = findViewById(R.id.nameEditText);
         groupDescription = findViewById(R.id.descriptionEditText);
         confirmationBtn.setOnClickListener(view -> {
@@ -88,7 +90,7 @@ public class CreateGroupView extends AppCompatActivity {
 
                 return;
             }
-            postData(adminId,groupName.getText().toString(),groupDescription.getText().toString(),this.color);
+            postData(userId,groupName.getText().toString(),groupDescription.getText().toString(),this.color);
 
 
 
@@ -100,22 +102,29 @@ public class CreateGroupView extends AppCompatActivity {
 
     }
 
-    private void postData(int id, String name, String description, int groupColor) {
+    private void postData(int userId, String name, String description, int groupColor) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(HomeView.getBASEURL())
+                .baseUrl(BASEURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GroupAPIService apiService = retrofit.create(GroupAPIService.class);
-        CreateGroupDTO createGroupDTO = new CreateGroupDTO(id,name,description, groupColor);
-        Call<CreateGroupDTO> call = apiService.createGroup(createGroupDTO);
-        call.enqueue(new Callback<CreateGroupDTO>() {
+        CreateGroupDTO createGroupDTO = new CreateGroupDTO(userId,name,description, groupColor);
+        Call<GroupDTO> call = apiService.createGroup(createGroupDTO);
+        call.enqueue(new Callback<GroupDTO>() {
             @Override
-            public void onResponse(Call<CreateGroupDTO> call, Response<CreateGroupDTO> response) {
-                Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-                startActivity(intent);
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                GroupDTO groupDTO = response.body();
+                if (groupDTO !=null){
+                    Toast.makeText(CreateGroupView.this, groupDTO.toString(), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(CreateGroupView.this, HomeView.class);
+                    intent.putExtra("userId",userId);
+                    startActivity(intent);
+
+                }
+
             }
             @Override
-            public void onFailure(Call<CreateGroupDTO> call, Throwable t) {
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
                 Toast.makeText(CreateGroupView.this, t.toString(), Toast.LENGTH_LONG).show();
 
 

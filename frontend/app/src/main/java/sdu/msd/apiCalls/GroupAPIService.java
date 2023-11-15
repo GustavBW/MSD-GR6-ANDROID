@@ -13,8 +13,8 @@ import sdu.msd.dtos.GroupDTO;
 
 public interface GroupAPIService {
 
-    @GET("of-user/{userId}")
-    Call<List<GroupDTO>> getGroupsOfUser(@Path("userId") String email);
+    @GET("{userId}/groups")
+    Call<List<GroupDTO>> getGroupsOfUser(@Path("userId") int userId);
     @POST("create")
-    Call<CreateGroupDTO> createGroup(@Body CreateGroupDTO createGroupDTO);
+    Call<GroupDTO> createGroup(@Body CreateGroupDTO createGroupDTO);
 }

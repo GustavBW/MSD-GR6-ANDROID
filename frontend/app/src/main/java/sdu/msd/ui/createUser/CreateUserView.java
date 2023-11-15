@@ -19,6 +19,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.CreateUserDTO;
+import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.home.HomeView;
 
@@ -67,17 +69,21 @@ public class CreateUserView extends AppCompatActivity {
                 .build();
         UserAPIService userAPIService = retrofit.create(UserAPIService.class);
         CreateUserDTO createUserDTO = new CreateUserDTO(username,password,name,phone,email);
-        Call<CreateUserDTO> call = userAPIService.createUser(createUserDTO);
-        call.enqueue(new Callback<CreateUserDTO>() {
+        Call<UserDTO> call = userAPIService.createUser(createUserDTO);
+        call.enqueue(new Callback<UserDTO>() {
             @Override
-            public void onResponse(Call<CreateUserDTO> call, Response<CreateUserDTO> response) {
-                Intent intent = new Intent(CreateUserView.this, HomeView.class);
-                intent.putExtra("username", createUserDTO.username());
-                startActivity(intent);
+            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                UserDTO userDTO = response.body();
+                if (userDTO != null) {
+                    Intent intent = new Intent(CreateUserView.this, HomeView.class);
+                    intent.putExtra("userId", userDTO.id());
+                    // Pass other user information if needed
+                    startActivity(intent);
+                }
             }
 
             @Override
-            public void onFailure(Call<CreateUserDTO> call, Throwable t) {
+            public void onFailure(Call<UserDTO> call, Throwable t) {
                 Toast.makeText(CreateUserView.this, t.toString(), Toast.LENGTH_LONG).show();
 
             }
