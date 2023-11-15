@@ -96,4 +96,9 @@ public class UserRegistry implements IUserRegistry {
         }
         return null;
     }
+
+    @Override
+    public boolean isUnique(String username) {
+        return !usersByUsername.containsKey(username);
+    }
 }
