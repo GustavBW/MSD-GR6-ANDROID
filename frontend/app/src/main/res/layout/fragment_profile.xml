@@ -6,21 +6,39 @@
     android:orientation="vertical"
     android:background="#282c34"
     tools:ignore="MissingConstraints"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:id="@+id/username"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_weight="0"
-        android:gravity="center"
-        android:text="U"
-        android:textAlignment="center"
-        android:textSize="0dp"
-        android:textStyle="italic"
-        android:textColor="@color/white"
-        tools:ignore="MissingConstraints" />
-        <!-- Fetch username from somewhere and use instead -->
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="U"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="0dp"
+            android:textStyle="italic"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/buttonClose"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/close_button"
+            android:textColor="@color/white"
+            android:text="X"
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,26 +48,71 @@
         android:layout_weight="0"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editTextPhone"
+        <TextView
+            android:id="@+id/textPassword"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:ems="10"
-            android:inputType="phone" />
+            android:background="@drawable/border"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="30dp" />
 
-        <EditText
-            android:id="@+id/editTextTextEmailAddress"
+        <TextView
+            android:id="@+id/textEmailAddress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:ems="10"
-            android:inputType="textEmailAddress" />
+            android:background="@drawable/border"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="30dp"/>
 
-        <EditText
-            android:id="@+id/editTextTextPassword"
+        <TextView
+            android:id="@+id/textPhone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:background="@drawable/border"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="30dp"/>
+
+        <TextView
+            android:id="@+id/textFullName"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:ems="10"
+            android:background="@drawable/border"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginHorizontal="30dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:id="@+id/buttonLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/buttoncolors"
+            android:textColor="@color/white"
+            android:layout_marginHorizontal="30dp"
+            android:layout_gravity="center_vertical"
+            android:text="Logout" />
+
     </LinearLayout>
 
 
