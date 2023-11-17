@@ -55,6 +55,7 @@
             android:name=".ui.profile.profile"
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar">
+
         </activity>
         <activity
             android:name=".ui.Group.GroupView"
