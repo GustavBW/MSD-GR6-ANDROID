@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,13 +19,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.CreateUserDTO;
+import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
+import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.home.HomeView;
 
 public class CreateUserView extends AppCompatActivity {
     private Button cancelBtn,confirmationBtn;
     private EditText name,username,password,confirmPassword,email,phone;
-    private static final String BASEURL =  HomeView.getApi() + "users/";
+    private static final String BASEURL =  "http://192.168.3.5:8080/api/v1/users/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,7 +36,6 @@ public class CreateUserView extends AppCompatActivity {
         cancelCreation();
         createUser();
     }
-
 
     private void cancelCreation(){
         cancelBtn = findViewById(R.id.cancel);
