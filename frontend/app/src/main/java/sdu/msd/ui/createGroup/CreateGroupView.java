@@ -1,6 +1,8 @@
 package sdu.msd.ui.createGroup;
 
+import android.content.Context;
 import  android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
@@ -41,15 +48,15 @@ public class CreateGroupView extends AppCompatActivity {
     private View groupViewColor;
     private int userId;
     int color;
-    private static final String BASEURL =  "http://192.168.3.5:8080/api/v1/groups/";
+    private SharedPreferences sharedPreferences;
+    private static final String BASEURL =  HomeView.getApi() + "groups/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_create_group); // Load the XML layout for the second activity
-        userId = getIntent().getIntExtra("userId",-1);
+        // userId = getIntent().getIntExtra("userId",-1);
         changeColor = findViewById(R.id.changeColor);
         groupViewColor = findViewById(R.id.groupViewColor);
-
         changeColor.setOnClickListener(view -> changeViewColor());
         cancelCreation();
         createGroup();
@@ -75,7 +82,7 @@ public class CreateGroupView extends AppCompatActivity {
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(view -> {
             Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-            intent.putExtra("userId",userId);
+            // intent.putExtra("userId",userId);
             startActivity(intent);
         });
     }
@@ -87,15 +94,10 @@ public class CreateGroupView extends AppCompatActivity {
         confirmationBtn.setOnClickListener(view -> {
             if(groupName.getText().toString().isEmpty() &&  groupDescription.getText().toString().isEmpty()){
                 Toast.makeText(CreateGroupView.this, "Please enter both the values", Toast.LENGTH_SHORT).show();
-
                 return;
             }
-            postData(userId,groupName.getText().toString(),groupDescription.getText().toString(),this.color);
-
-
-
-
-
+            sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+            postData(sharedPreferences.getInt("userId", -1),groupName.getText().toString(),groupDescription.getText().toString(),this.color);
         });
 
 
@@ -116,11 +118,8 @@ public class CreateGroupView extends AppCompatActivity {
                 GroupDTO groupDTO = response.body();
                 if (groupDTO !=null){
                     Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-                    intent.putExtra("userId",userId);
                     startActivity(intent);
-
                 }
-
             }
             @Override
             public void onFailure(Call<GroupDTO> call, Throwable t) {
@@ -130,6 +129,7 @@ public class CreateGroupView extends AppCompatActivity {
             }
         });
     }
+
 }
 
 

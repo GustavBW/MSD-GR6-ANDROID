@@ -10,6 +10,7 @@ public final class GroupDTO {
     private final String name;
     private final String descriptions;
     private final int groupColor;
+    public static GroupDTO groupDTO;
 
 
     public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users  ){

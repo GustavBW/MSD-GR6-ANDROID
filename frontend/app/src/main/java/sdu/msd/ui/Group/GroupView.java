@@ -3,6 +3,7 @@ package sdu.msd.ui.Group;
 import static sdu.msd.ui.home.HomeView.getApi;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
@@ -36,7 +38,7 @@ public class GroupView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userId = getIntent().getIntExtra("userId",-1);
+        // userId = getIntent().getIntExtra("userId",-1);
         groupId = getIntent().getIntExtra("groupId",-1);
         setContentView(R.layout.fragment_group);
         payBtn = findViewById(R.id.pay);
@@ -57,7 +59,6 @@ public class GroupView extends AppCompatActivity {
         payBtn.setOnClickListener(v -> {
             Intent intent = new Intent(GroupView.this, HomeView.class);
             intent.putExtra("groupId", groupId);
-            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
@@ -73,7 +74,6 @@ public class GroupView extends AppCompatActivity {
                     createGroupView(groupDTO);
                 }
                 }
-
             @Override
             public void onFailure(Call<GroupDTO> call, Throwable t) {
                 Toast.makeText(GroupView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
@@ -95,14 +95,12 @@ public class GroupView extends AppCompatActivity {
         notification.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, NotificationsView.class);
             intent.putExtra("groupId", groupId);
-            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
         profile.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupView.this, ProfileView.class);
+            Intent intent = new Intent(GroupView.this, GroupInfoView.class);
             intent.putExtra("groupId", groupId);
-            intent.putExtra("userId", userId);
             startActivity(intent);
         });
     }

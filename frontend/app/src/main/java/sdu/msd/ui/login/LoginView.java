@@ -1,6 +1,7 @@
 package sdu.msd.ui.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +69,6 @@ public class LoginView extends AppCompatActivity {
                 UserDTO userDTO = response.body();
                 if (userDTO != null) {
                     Intent intent = new Intent(LoginView.this, HomeView.class);
-                    intent.putExtra("userId", userDTO.id());
                     // Pass other user information if needed
                     startActivity(intent);
                 }
@@ -80,5 +80,4 @@ public class LoginView extends AppCompatActivity {
             }
         });
     }
-
 }
