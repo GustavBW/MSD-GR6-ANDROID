@@ -41,7 +41,7 @@ public class CreateGroupView extends AppCompatActivity {
     private View groupViewColor;
     private int userId;
     int color;
-    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/groups/";
+    private static final String BASEURL =  HomeView.getApi() + "groups/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

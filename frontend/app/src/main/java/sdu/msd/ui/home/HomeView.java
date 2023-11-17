@@ -43,10 +43,10 @@ import sdu.msd.ui.profile.profile;
 public class HomeView extends AppCompatActivity {
     private Context context;
     WifiManager wm;
-    String ip;
+    private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
 
-    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/users/";
+    private static final String BASEURL =  API + "users/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +63,7 @@ public class HomeView extends AppCompatActivity {
 
         btnNotifications.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, NotificationsView.class);
+            intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
@@ -140,5 +141,9 @@ public class HomeView extends AppCompatActivity {
 
         }
 
+    }
+
+    public static String getApi() {
+        return API;
     }
 }
