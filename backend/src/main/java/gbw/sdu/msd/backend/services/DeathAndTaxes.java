@@ -6,12 +6,19 @@ import gbw.sdu.msd.backend.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DeathAndTaxes implements IDeptService {
 
     private final DebtGraph graph = new DebtGraph();
+
+    @Override
+    public void distributeDebt(User debtor, List<User> creditors, double amount) {
+        double amountPerCreditor = amount / creditors.size();
+        for(User creditor : creditors){
+            addDebt(debtor, creditor, amountPerCreditor);
+        }
+    }
 
     @Override
     public void addDebt(User debtor, User creditor, double amount) {
