@@ -46,7 +46,7 @@ public class HomeView extends AppCompatActivity {
     String ip;
     private GroupAPIService apiService;
 
-    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/users/";
+    private static final String BASEURL =  "http://192.168.3.5:8080/api/v1/users/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
