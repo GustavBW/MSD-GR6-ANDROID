@@ -1,7 +1,5 @@
 package sdu.msd.ui.home;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,19 +9,14 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,13 +25,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
-import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupDTO;
-import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.notifications.NotificationsView;
-import sdu.msd.ui.profile.profile;
+import sdu.msd.ui.profile.ProfileView;
 
 public class HomeView extends AppCompatActivity {
     private Context context;
@@ -47,17 +38,18 @@ public class HomeView extends AppCompatActivity {
     private GroupAPIService apiService;
 
     private static final String BASEURL =  API + "users/";
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
-        int userId = getIntent().getIntExtra("userId",-1);
+        userId = getIntent().getIntExtra("userId",-1);
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
         btnProfile.setOnClickListener(view -> {
-            Intent intent = new Intent(HomeView.this, profile.class);
+            Intent intent = new Intent(HomeView.this, ProfileView.class);
             startActivity(intent);
         });
 
@@ -136,7 +128,10 @@ public class HomeView extends AppCompatActivity {
             groupButtonContainer.addView(groupButton);
             groupButton.setTextSize(20);
             groupButton.setOnClickListener(view -> {
-
+                Intent intent = new Intent(HomeView.this, GroupView.class);
+                intent.putExtra("userId", userGroup.adminId());
+                intent.putExtra("groupId", userGroup.id());
+                startActivity(intent);
             });
 
         }
