@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import sdu.msd.R;
 import sdu.msd.ui.home.HomeView;
-import sdu.msd.ui.profile.profile;
 
 public class NotificationsView extends AppCompatActivity {
     @Override
