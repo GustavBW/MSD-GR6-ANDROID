@@ -2,6 +2,7 @@ package sdu.msd.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -37,14 +38,19 @@ public class HomeView extends AppCompatActivity {
     private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
 
-    private static final String BASEURL =  API + "users/";
+    private static final String BASEURL = API + "users/";
     int userId;
+
+    private SharedPreferences sharedPreferences;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
-        userId = getIntent().getIntExtra("userId",-1);
+        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        int userId = retrieveUserIdLocally();
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
@@ -55,14 +61,14 @@ public class HomeView extends AppCompatActivity {
 
         btnNotifications.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, NotificationsView.class);
-            intent.putExtra("userId", userId);
+            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
 
         btnCreateGroup.setOnClickListener(v -> {
             Intent intent = new Intent(HomeView.this, CreateGroupView.class);
-            intent.putExtra("userId", userId);
+            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
         Retrofit retrofit = new Retrofit.Builder()
@@ -74,7 +80,10 @@ public class HomeView extends AppCompatActivity {
 
     }
 
-
+    private int retrieveUserIdLocally() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        return sharedPreferences.getInt("userId", -1);
+    }
 
 
     private void getGroupsOfUser(int userId){
@@ -101,7 +110,7 @@ public class HomeView extends AppCompatActivity {
 
     }
 
-    private void createGroupViews(List<GroupDTO> userGroups){
+    private void createGroupViews(List<GroupDTO> userGroups) {
         LinearLayout groupButtonContainer = findViewById(R.id.groupButtonContainer);
         for (GroupDTO userGroup : userGroups) {
             GradientDrawable gradientDrawable = new GradientDrawable();
