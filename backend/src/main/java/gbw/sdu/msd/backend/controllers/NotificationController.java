@@ -1,6 +1,7 @@
 package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.NotificationDTO;
+import gbw.sdu.msd.backend.dtos.UserPreferencesDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.Notification;
 import gbw.sdu.msd.backend.models.User;
@@ -43,7 +44,7 @@ public class NotificationController {
         if(userRegistry.get(userId) == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(NotificationDTO.of(notifications.getFor(userId)));
+        return ResponseEntity.ok(NotificationDTO.of(notifications.getFor(userId)).toList());
     }
 
     /**

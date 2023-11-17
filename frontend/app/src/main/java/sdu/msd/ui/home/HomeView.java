@@ -15,6 +15,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -26,7 +27,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.notifications.NotificationsView;
@@ -37,6 +40,7 @@ public class HomeView extends AppCompatActivity {
     WifiManager wm;
     private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
+    private UserAPIService userAPIService;
 
     private static final String BASEURL = API + "users/";
     int userId;
@@ -54,6 +58,10 @@ public class HomeView extends AppCompatActivity {
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
+        TextView userNameText = findViewById(R.id.userNameText);
+
+        userNameText.setText("asd");
+
         btnProfile.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, ProfileView.class);
             startActivity(intent);
@@ -84,8 +92,6 @@ public class HomeView extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         return sharedPreferences.getInt("userId", -1);
     }
-
-
     private void getGroupsOfUser(int userId){
         Call<List<GroupDTO>> call = apiService.getGroupsOfUser(userId);
         call.enqueue(new Callback<List<GroupDTO>>() {
