@@ -13,7 +13,7 @@ public interface UserAPIService {
     @POST("create")
     Call<UserDTO> createUser(@Body CreateUserDTO createUserDTO);
     @POST("login")
-    Call<UserCredentialsDTO> checkCredentials(@Body UserCredentialsDTO userCredentialsDTO);
+    Call<UserDTO> checkCredentials(@Body UserCredentialsDTO userCredentialsDTO);
 
 
 }
