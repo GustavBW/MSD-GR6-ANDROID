@@ -11,24 +11,19 @@ public class ProfileView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_profile); // Load the XML layout for the second activity
+        setContentView(R.layout.fragment_profile);
 
         scaleUsernameText();
-
-
     }
 
     private void scaleUsernameText() {
         // Choose the appropriate dimension based on the length of the username
         TextView usernameTextView = findViewById(R.id.username);
         String username = usernameTextView.getText().toString();
-
         float textSize;
-
         textSize = (float)((2.0 / username.length()) * (username.length() / 20.0));
-
         usernameTextView.setTextSize(textSize);
+
+
     }
 }
-
-
