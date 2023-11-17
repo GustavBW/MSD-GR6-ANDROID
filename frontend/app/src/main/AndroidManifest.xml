@@ -52,7 +52,7 @@
             android:theme="@style/Theme.Frontend.NoActionBar">
         </activity>
         <activity
-            android:name=".ui.profile.profile"
+            android:name=".ui.profile.ProfileView"
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar">
 
