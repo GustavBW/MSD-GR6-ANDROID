@@ -11,6 +11,7 @@ import gbw.sdu.msd.backend.services.IUserRegistry;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,21 +49,32 @@ public class UserController {
 
     /**
      * Users of listed ids. URI Example: /api/v1/users?ids=1,7,32,45
+     * Request parameters are mutually exclusive
      */
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Invalid id list"),
+            @ApiResponse(responseCode = "400", description = "Invalid or missing id list"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @GetMapping
-    public @ResponseBody ResponseEntity<List<UserDTO>> getUsers(@RequestParam List<Integer> ids){
-        if(ids == null || ids.isEmpty()){
+    public @ResponseBody ResponseEntity<List<UserDTO>> getUsers(@RequestParam(required = false) List<Integer> ids, @RequestParam(required = false) List<String> usernames){
+        if((ids == null || ids.isEmpty()) && (usernames == null || usernames.isEmpty())){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(
-                UserDTO.of(
-                        ids.stream().map(userRegistry::get).toList()
-                )
-        );
+        if(ids != null && !ids.isEmpty()){
+            return ResponseEntity.ok(
+                    UserDTO.of(
+                            ids.stream().map(userRegistry::get).toList()
+                    )
+            );
+        }
+        if(usernames != null && !usernames.isEmpty()){
+            return ResponseEntity.ok(
+                    UserDTO.of(
+                            usernames.stream().map(userRegistry::get).toList()
+                    )
+            );
+        }
+        return ResponseEntity.internalServerError().build();
     }
 
     /**
@@ -84,12 +96,19 @@ public class UserController {
      * Creates a new user from the information given
      */
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "Unauthorized, this Username is already taken."),
+            @ApiResponse(responseCode = "400", description = "Missing required data for user creation"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/create")
     public @ResponseBody ResponseEntity<UserDTO> create(@RequestBody CreateUserDTO dto){
         //Check if username is unique
-
+        if(dto.username() == null || dto.username().isBlank()){
+            return ResponseEntity.badRequest().build();
+        }
+        if(!userRegistry.isUnique(dto.username())){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         User user = userRegistry.create(dto);
         return ResponseEntity.ok(UserDTO.of(user));
     }

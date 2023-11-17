@@ -31,11 +31,12 @@ public class DebtGraph {
         if (userA == userB) return;
         if (amount <= 0) return;
 
-        //Allocating resources up front if missing
+        //doing it manually avoids 1 if statement per insert per potential .computeIfAbsent, but is actually not significantly faster, even at scale
         whoDoesThisUserOweMoney.computeIfAbsent(userA, k -> new HashMap<>());
         whoDoesThisUserOweMoney.computeIfAbsent(userB, k -> new HashMap<>());
-        whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>());
         whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>());
+        whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>());
+
 
         double whatAowesB = amount;
         double whatBMayBeOwingA = getAmountOwedBy(userB, userA);

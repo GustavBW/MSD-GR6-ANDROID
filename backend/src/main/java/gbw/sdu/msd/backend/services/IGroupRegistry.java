@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IGroupRegistry {
     Group get(int id);
-    Group create(CreateGroupDTO dto);
+    Group create(CreateGroupDTO dto, User admin);
     Boolean removeUser(int idOfGroup, User user);
     Boolean addUser(int idOfGroup, User user);
     List<Group> ofUser(int userId);
