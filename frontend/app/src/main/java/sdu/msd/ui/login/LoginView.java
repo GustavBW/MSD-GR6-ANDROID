@@ -32,8 +32,6 @@ public class LoginView extends AppCompatActivity {
         setContentView(R.layout.fragment_login);
         register();
         login();
-        // For the user login there is an interface is created user that can be used to check credetnials and then direct user to home view.
-
     }
 
     private void register() {

@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,9 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.CreateUserDTO;
-import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
-import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.home.HomeView;
 
 public class CreateUserView extends AppCompatActivity {
