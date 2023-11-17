@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-11-17T12:20:17.242Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="jCsTj7GIm3bc2xw2-qAP" version="22.1.2" type="device">
+<mxfile host="app.diagrams.net" modified="2023-11-17T12:52:25.034Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36" etag="lgOPCKxCHr_gH0Pse5Cs" version="22.1.2" type="device">
   <diagram name="Side-1" id="GuKJpiVkrJ8dO57iZTPQ">
-    <mxGraphModel dx="1546" dy="374" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1695" dy="452" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -510,6 +510,9 @@
         </mxCell>
         <mxCell id="spJXYD7yS6-pVbVan2_o-202" value="Retake" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="-36.25" y="1010" width="72.5" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="k--4-FOAuJHvPxpocm_6-1" value="Invoices" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="128.75" y="585" width="102.5" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
