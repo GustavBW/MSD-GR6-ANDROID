@@ -1,9 +1,6 @@
 package gbw.sdu.msd.backend.controllers;
 
-import gbw.sdu.msd.backend.dtos.CreateUserDTO;
-import gbw.sdu.msd.backend.dtos.GroupDTO;
-import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
-import gbw.sdu.msd.backend.dtos.UserDTO;
+import gbw.sdu.msd.backend.dtos.*;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.IGroupRegistry;
@@ -48,7 +45,7 @@ public class UserController {
 
 
     /**
-     * Users of listed ids. URI Example: /api/v1/users?ids=1,7,32,45
+     * Users of listed ids URI Example: /api/v1/users?ids=1,7,32,45
      * Request parameters are mutually exclusive
      */
     @ApiResponses(value = {
@@ -78,7 +75,7 @@ public class UserController {
     }
 
     /**
-     * All groups the user is part of. An empty list of none.
+     * All groups the user is part of. An empty list if none.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success")
@@ -114,7 +111,7 @@ public class UserController {
     }
 
     /**
-     * The user information for the user with matching username and password
+     * Retrieves the user information for the user with matching username and password
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user"),
@@ -128,5 +125,54 @@ public class UserController {
         }
 
         return ResponseEntity.ok(UserDTO.of(user));
+    }
+
+    /**
+     * Returns the preferences of a given user
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path = "/{userId}/preferences")
+    public @ResponseBody ResponseEntity<UserPreferencesDTO> getUserPreferences(@PathVariable Integer userId){
+        User user = userRegistry.get(userId);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(UserPreferencesDTO.of(user));
+    }
+
+    /**
+     * Updates user preferences
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path = "/{userId}/preferences")
+    public @ResponseBody ResponseEntity<UserPreferencesDTO> postUserPreferences(@PathVariable Integer userId, @RequestBody UpdateUserPreferencesDTO dto){
+        User user = userRegistry.get(userId);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+        userRegistry.updatePreferences(userId, dto);
+        return ResponseEntity.ok(UserPreferencesDTO.of(user));
+    }
+
+    /**
+     * Update user information
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path="/{userId}")
+    public @ResponseBody ResponseEntity<UserDTO> updateUser(@PathVariable Integer userId, @RequestBody UpdateUserDTO dto){
+        User user = userRegistry.get(userId);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(UserDTO.of(userRegistry.update(userId, dto)));
     }
 }
