@@ -90,7 +90,7 @@ public class GroupView extends AppCompatActivity {
         profile = findViewById(R.id.btnProfile);
         // TODO: 17-11-2023
         /*
-        The rest will be added soon when other features are done
+        The rest will be added soon when other features are done.
          */
         notification.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, NotificationsView.class);
