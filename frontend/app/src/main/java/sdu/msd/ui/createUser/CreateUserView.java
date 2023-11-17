@@ -28,7 +28,7 @@ import sdu.msd.ui.home.HomeView;
 public class CreateUserView extends AppCompatActivity {
     private Button cancelBtn,confirmationBtn;
     private EditText name,username,password,confirmPassword,email,phone;
-    private static final String BASEURL =  "http://192.168.3.5:8080/api/v1/users/";
+    private static final String BASEURL = HomeView.getApi() + "users/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

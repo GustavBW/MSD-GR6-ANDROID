@@ -60,7 +60,7 @@ public class HomeView extends AppCompatActivity {
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
         TextView userNameText = findViewById(R.id.userNameText);
 
-        userNameText.setText("asd");
+        userNameText.setText(sharedPreferences.getString("name",null));
 
         btnProfile.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, ProfileView.class);
