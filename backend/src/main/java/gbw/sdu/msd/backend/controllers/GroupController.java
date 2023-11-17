@@ -32,6 +32,24 @@ public class GroupController {
         this.groupRegistry = groups;
         this.auth = auth;
     }
+
+    /**
+     * Checks if the user is the admin of said group or not
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user or no such group"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path = "/{groupId}/is-admin/{userId}")
+    public @ResponseBody ResponseEntity<Boolean> checkAdmin(@PathVariable Integer groupId, @PathVariable Integer userId){
+        User user = userRegistry.get(userId);
+        Group group = groupRegistry.get(groupId);
+        if(user == null || group == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user.id() == group.admin().id());
+    }
+
     /**
      * Adds a user to an existing group
      * @return Adds a user to an existing group
