@@ -57,6 +57,9 @@ public class CreateUserView extends AppCompatActivity {
                 if(password.getText().toString().equals(confirmPassword.getText().toString())){
                     postData(name.getText().toString(),username.getText().toString(),password.getText().toString(),email.getText().toString(),phone.getText().toString());
                 }
+                else{
+                    Toast.makeText(CreateUserView.this, "Passwords do not match", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

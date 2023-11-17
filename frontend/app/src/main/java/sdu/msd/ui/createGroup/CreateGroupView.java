@@ -115,7 +115,6 @@ public class CreateGroupView extends AppCompatActivity {
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 GroupDTO groupDTO = response.body();
                 if (groupDTO !=null){
-                    Toast.makeText(CreateGroupView.this, groupDTO.toString(), Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(CreateGroupView.this, HomeView.class);
                     intent.putExtra("userId",userId);
                     startActivity(intent);

@@ -48,7 +48,7 @@
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        android:inputType="text"
+        android:inputType="textPassword"
         />
     <EditText
         android:id="@+id/confrmPassword"
@@ -62,7 +62,7 @@
         android:textAlignment="center"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
-        android:inputType="text"
+        android:inputType="textPassword"
         />
     <EditText
         android:id="@+id/email"

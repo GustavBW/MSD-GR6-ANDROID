@@ -89,8 +89,6 @@ public class HomeView extends AppCompatActivity {
         call.enqueue(new Callback<List<GroupDTO>>() {
             @Override
             public void onResponse(Call<List<GroupDTO>> call, Response<List<GroupDTO>> response) {
-                Toast.makeText(HomeView.this, response.toString(), Toast.LENGTH_SHORT).show();
-
                 if (response.isSuccessful() && response.body() != null) {
                     List<GroupDTO> userGroups = response.body();
                     createGroupViews(userGroups);
@@ -136,10 +134,11 @@ public class HomeView extends AppCompatActivity {
             groupButton.setLayoutParams(layoutParams);
             groupButtonContainer.addView(groupButton);
             groupButton.setTextSize(20);
+            groupButton.setOnClickListener(view -> {
+
+            });
+
         }
 
-    }
-    public static String getBASEURL() {
-        return BASEURL;
     }
 }
