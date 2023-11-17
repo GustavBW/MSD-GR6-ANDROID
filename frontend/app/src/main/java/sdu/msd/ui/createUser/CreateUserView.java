@@ -34,6 +34,7 @@ public class CreateUserView extends AppCompatActivity {
         createUser();
     }
 
+
     private void cancelCreation(){
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(view -> {
