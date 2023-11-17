@@ -25,7 +25,7 @@ public class LoginView extends AppCompatActivity {
     private EditText username, password;
     private Button register, login;
 
-    private static final String BASEURL =  "http://10.0.2.2:8080/api/v1/users/";
+    private static final String BASEURL =  HomeView.getApi() + "users/";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

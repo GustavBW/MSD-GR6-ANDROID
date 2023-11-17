@@ -17,4 +17,6 @@ public interface GroupAPIService {
     Call<List<GroupDTO>> getGroupsOfUser(@Path("userId") int userId);
     @POST("create")
     Call<GroupDTO> createGroup(@Body CreateGroupDTO createGroupDTO);
+    @GET("{groupId}")
+    Call<GroupDTO> getGroup (@Path("groupId") int groupId);
 }
