@@ -6,7 +6,7 @@ public final class UserCredentialsDTO {
     private final String username;
     private final String password;
 
-    UserCredentialsDTO(String username, String password) {
+    public UserCredentialsDTO(String username, String password) {
         this.username = username;
         this.password = password;
     }
