@@ -1,5 +1,6 @@
 package gbw.sdu.msd.backend.controllers;
 
+import gbw.sdu.msd.backend.dtos.DebtDTO;
 import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
@@ -115,7 +116,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @GetMapping(path="/creditors-of/{userA}")
-    public @ResponseBody ResponseEntity<List<Debt>> getWhoOwesThisUserMoney(@PathVariable Integer userA){
+    public @ResponseBody ResponseEntity<List<DebtDTO>> getWhoOwesThisUserMoney(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();
         }
@@ -123,7 +124,7 @@ public class DebtController {
         if(userAFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.whoDoesThisUserOweMoney(userAFound));
+        return ResponseEntity.ok(DebtDTO.of(deptService.whoDoesThisUserOweMoney(userAFound)));
     }
 
     /**
@@ -137,7 +138,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @GetMapping(path="/who-owes/{userA}")
-    public @ResponseBody ResponseEntity<List<Debt>> whoOwesMoneyToThisUser(@PathVariable Integer userA){
+    public @ResponseBody ResponseEntity<List<DebtDTO>> whoOwesMoneyToThisUser(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();
         }
@@ -145,7 +146,7 @@ public class DebtController {
         if(userAFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.whoOwesMoneyToThisUser(userAFound));
+        return ResponseEntity.ok(DebtDTO.of(deptService.whoOwesMoneyToThisUser(userAFound)));
     }
 
     /**

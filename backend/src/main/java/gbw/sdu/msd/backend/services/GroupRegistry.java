@@ -1,6 +1,7 @@
 package gbw.sdu.msd.backend.services;
 
 import gbw.sdu.msd.backend.dtos.CreateGroupDTO;
+import gbw.sdu.msd.backend.dtos.UpdateGroupDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,17 @@ public class GroupRegistry implements IGroupRegistry{
         this.userRegistry = userRegistry;
     }
 
+    @Override
+    public Group update(int groupId, UpdateGroupDTO dto) {
+        Group groupToUpdate = groupsById.get(groupId);
+        if(groupToUpdate == null) return null;
+
+        groupToUpdate.setGroupColor(dto.updatedColor());
+        groupToUpdate.setDescription(dto.updatedDescription());
+        groupToUpdate.setName(dto.updatedTitle());
+
+        return groupToUpdate;
+    }
     @Override
     public Group get(int id) {
         return groupsById.get(id);
@@ -76,6 +88,8 @@ public class GroupRegistry implements IGroupRegistry{
         List<Group> groups = groupsOfUser.get(userId);
         return groups == null ? Collections.emptyList() : groups;
     }
+
+
 
     /**
      * @return false on not found
