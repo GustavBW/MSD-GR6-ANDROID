@@ -1,5 +1,6 @@
 package gbw.sdu.msd.backend.controllers;
 
+import gbw.sdu.msd.backend.dtos.DebtDTO;
 import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,6 +32,35 @@ public class DebtController {
     }
 
     /**
+     * Distributes debt of UserA between all users listed. I.e. api/v1/debt/{UserA}/distribute/200?creditors=1,2,3,4
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "UserA not found or any creditor not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid amount"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path = "/{userA}/distribute/{amount}")
+    public @ResponseBody ResponseEntity<Boolean> distributeDebt(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "creditors") List<Integer> creditorIds){
+        User found = userRegistry.get(userA);
+        if(found == null){
+            return ResponseEntity.notFound().build();
+        }
+        List<User> creditors = new ArrayList<>();
+        for(Integer i : creditorIds){
+            User creditor = userRegistry.get(i);
+            if(creditor == null){
+                return ResponseEntity.notFound().build();
+            }
+            creditors.add(creditor);
+        }
+        if(amount == null || amount <= 0){
+            return ResponseEntity.badRequest().build();
+        }
+        deptService.distributeDebt(found, creditors, amount);
+        return ResponseEntity.ok(true);
+    }
+
+    /**
      * How much money a user owes a certain group in total
      * @param groupId id of group
      * @param userId id of user
@@ -40,7 +71,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing group id or missing user id"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @GetMapping(path="/of-user/{userId}/to-group/{groupId}")
+    @GetMapping(path="/{userId}/to-group/{groupId}")
     public @ResponseBody ResponseEntity<Double> getHowMuchUserOwesGroup(@PathVariable Integer userId, @PathVariable Integer groupId){
         if(userId == null || groupId == null){
             return ResponseEntity.badRequest().build();
@@ -65,7 +96,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @GetMapping(path="/of-user/{userA}/to-user/{userB}")
+    @GetMapping(path="/{userA}/to-user/{userB}")
     public @ResponseBody ResponseEntity<Double> getHowMuchUserOwesUser(@PathVariable Integer userA, @PathVariable Integer userB){
         if(userA == null || userB == null){
             return ResponseEntity.badRequest().build();
@@ -90,7 +121,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id or missing amount"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @PostMapping(path="/{userA}/paid-for/{userB}/amount/{amount}")
+    @PostMapping(path="/{userA}/add/{userB}/amount/{amount}")
     public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();
@@ -114,8 +145,8 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @GetMapping(path="/creditors-of/{userA}")
-    public @ResponseBody ResponseEntity<List<Debt>> getWhoOwesThisUserMoney(@PathVariable Integer userA){
+    @GetMapping(path="/{userA}/creditors")
+    public @ResponseBody ResponseEntity<List<DebtDTO>> getWhoOwesThisUserMoney(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();
         }
@@ -123,7 +154,7 @@ public class DebtController {
         if(userAFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.whoDoesThisUserOweMoney(userAFound));
+        return ResponseEntity.ok(DebtDTO.of(deptService.whoDoesThisUserOweMoney(userAFound)));
     }
 
     /**
@@ -137,7 +168,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @GetMapping(path="/who-owes/{userA}")
-    public @ResponseBody ResponseEntity<List<Debt>> whoOwesMoneyToThisUser(@PathVariable Integer userA){
+    public @ResponseBody ResponseEntity<List<DebtDTO>> whoOwesMoneyToThisUser(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();
         }
@@ -145,7 +176,7 @@ public class DebtController {
         if(userAFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.whoOwesMoneyToThisUser(userAFound));
+        return ResponseEntity.ok(DebtDTO.of(deptService.whoOwesMoneyToThisUser(userAFound)));
     }
 
     /**
@@ -158,7 +189,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @GetMapping(path="/of-user/{userA}/total")
+    @GetMapping(path="/{userA}")
     public @ResponseBody ResponseEntity<Double> totalDebtByUser(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();
@@ -180,7 +211,7 @@ public class DebtController {
             @ApiResponse(responseCode = "400", description = "Missing user id"),
             @ApiResponse(responseCode = "200", description = "Success")
     })
-    @GetMapping(path="/to-user/{userA}/total")
+    @GetMapping(path="/who-owes/{userA}/total")
     public @ResponseBody ResponseEntity<Double> totalDebtOwedToUser(@PathVariable Integer userA){
         if(userA == null ){
             return ResponseEntity.badRequest().build();

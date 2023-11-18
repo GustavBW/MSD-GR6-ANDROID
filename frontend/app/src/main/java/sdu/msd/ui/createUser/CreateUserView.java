@@ -1,6 +1,7 @@
 package sdu.msd.ui.createUser;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +28,7 @@ import sdu.msd.ui.home.HomeView;
 public class CreateUserView extends AppCompatActivity {
     private Button cancelBtn,confirmationBtn;
     private EditText name,username,password,confirmPassword,email,phone;
-    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/users/";
+    private static final String BASEURL = HomeView.getApi() + "users/";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +80,8 @@ public class CreateUserView extends AppCompatActivity {
                 UserDTO userDTO = response.body();
                 if (userDTO != null) {
                     Intent intent = new Intent(CreateUserView.this, HomeView.class);
-                    intent.putExtra("userId", userDTO.id());
+                    saveUserDataLocally(userDTO);
+                    // intent.putExtra("userId", userDTO.id());
                     // Pass other user information if needed
                     startActivity(intent);
                 }
@@ -91,6 +93,17 @@ public class CreateUserView extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void saveUserDataLocally(UserDTO userDTO) {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("userId", userDTO.id());
+        editor.putString("username", userDTO.username());
+        editor.putString("name", userDTO.name());
+        editor.putString("email", userDTO.email());
+        editor.putString("phoneNumber", userDTO.phoneNumber());
+        editor.apply();
     }
 
 }

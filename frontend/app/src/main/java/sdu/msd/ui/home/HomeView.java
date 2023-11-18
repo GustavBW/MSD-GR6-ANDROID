@@ -2,6 +2,7 @@ package sdu.msd.ui.home;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -25,7 +27,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserDTO;
+import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
@@ -33,19 +38,30 @@ import sdu.msd.ui.profile.ProfileView;
 public class HomeView extends AppCompatActivity {
     private Context context;
     WifiManager wm;
-    String ip;
+    private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
+    private UserAPIService userAPIService;
 
-    private static final String BASEURL =  "http://192.168.185.1:8080/api/v1/users/";
+    private static final String BASEURL = API + "users/";
+    int userId;
+
+    private SharedPreferences sharedPreferences;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
-        int userId = getIntent().getIntExtra("userId",-1);
+        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        int userId = retrieveUserIdLocally();
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
+        TextView userNameText = findViewById(R.id.userNameText);
+
+        userNameText.setText(sharedPreferences.getString("name",null));
+
         btnProfile.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, ProfileView.class);
             startActivity(intent);
@@ -53,13 +69,14 @@ public class HomeView extends AppCompatActivity {
 
         btnNotifications.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, NotificationsView.class);
+            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
 
         btnCreateGroup.setOnClickListener(v -> {
             Intent intent = new Intent(HomeView.this, CreateGroupView.class);
-            intent.putExtra("userId", userId);
+            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
         Retrofit retrofit = new Retrofit.Builder()
@@ -71,9 +88,10 @@ public class HomeView extends AppCompatActivity {
 
     }
 
-
-
-
+    private int retrieveUserIdLocally() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        return sharedPreferences.getInt("userId", -1);
+    }
     private void getGroupsOfUser(int userId){
         Call<List<GroupDTO>> call = apiService.getGroupsOfUser(userId);
         call.enqueue(new Callback<List<GroupDTO>>() {
@@ -98,7 +116,7 @@ public class HomeView extends AppCompatActivity {
 
     }
 
-    private void createGroupViews(List<GroupDTO> userGroups){
+    private void createGroupViews(List<GroupDTO> userGroups) {
         LinearLayout groupButtonContainer = findViewById(R.id.groupButtonContainer);
         for (GroupDTO userGroup : userGroups) {
             GradientDrawable gradientDrawable = new GradientDrawable();
@@ -125,10 +143,17 @@ public class HomeView extends AppCompatActivity {
             groupButtonContainer.addView(groupButton);
             groupButton.setTextSize(20);
             groupButton.setOnClickListener(view -> {
-
+                Intent intent = new Intent(HomeView.this, GroupView.class);
+                intent.putExtra("userId", userGroup.adminId());
+                intent.putExtra("groupId", userGroup.id());
+                startActivity(intent);
             });
 
         }
 
+    }
+
+    public static String getApi() {
+        return API;
     }
 }

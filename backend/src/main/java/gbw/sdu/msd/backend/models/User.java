@@ -5,6 +5,7 @@ public class User {
 
     private final int id;
     private String username, password, email, phoneNumber, name;
+    private boolean showNotifications = true;
 
     public User(int id, String username, String password, String email, String phoneNumber, String name){
         this.id = id;
@@ -13,6 +14,12 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.name = name;
+    }
+    public void setShowNotifications(boolean onOff){
+        this.showNotifications = onOff;
+    }
+    public boolean isShowNotifications(){
+        return showNotifications;
     }
     public String name() {return name;}
     public void setName(String name){this.name = name;}

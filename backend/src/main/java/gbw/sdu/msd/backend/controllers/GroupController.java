@@ -2,6 +2,7 @@ package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.CreateGroupDTO;
 import gbw.sdu.msd.backend.dtos.GroupDTO;
+import gbw.sdu.msd.backend.dtos.UpdateGroupDTO;
 import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
@@ -31,6 +32,24 @@ public class GroupController {
         this.groupRegistry = groups;
         this.auth = auth;
     }
+
+    /**
+     * Checks if the user is the admin of said group or not
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such user or no such group"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path = "/{groupId}/is-admin/{userId}")
+    public @ResponseBody ResponseEntity<Boolean> checkAdmin(@PathVariable Integer groupId, @PathVariable Integer userId){
+        User user = userRegistry.get(userId);
+        Group group = groupRegistry.get(groupId);
+        if(user == null || group == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(user.id() == group.admin().id());
+    }
+
     /**
      * Adds a user to an existing group
      * @return Adds a user to an existing group
@@ -66,6 +85,34 @@ public class GroupController {
 
         Group group = groupRegistry.create(dto, admin);
         return ResponseEntity.ok(GroupDTO.of(group));
+    }
+
+    /**
+     * Update the group information to be xxx, admin only.
+     * Returns the full updated information of the group.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Invalid values to be updated"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, acting user is not admin"),
+            @ApiResponse(responseCode = "404", description = "No such group or no such acting user")
+    })
+    @PostMapping(path="/{groupId}/update")
+    public @ResponseBody ResponseEntity<GroupDTO> updateGroup(@PathVariable Integer groupId, @RequestBody UpdateGroupDTO dto){
+        User actingUser = userRegistry.get(dto.idOfActingUser());
+        Group group = groupRegistry.get(groupId);
+        if(actingUser == null || group == null){
+            return ResponseEntity.notFound().build();
+        }
+        if(actingUser.id() != group.admin().id()){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if(dto.updatedColor() < 0 || dto.updatedDescription() == null
+                || dto.updatedDescription().isBlank() || dto.updatedTitle() == null
+                || dto.updatedTitle().isBlank()){
+            return ResponseEntity.badRequest().build();
+        }
+        Group updatedGroup = groupRegistry.update(groupId, dto);
+        return ResponseEntity.ok(GroupDTO.of(updatedGroup));
     }
 
     /**
@@ -174,26 +221,5 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(groupRegistry.delete(groupId));
-    }
-
-    /**
-     * Returns the Ids of all the groups the user is in.
-     * @param userId, id of user
-     */
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "No such user"),
-            @ApiResponse(responseCode = "400", description = "Missing or invalid userId"),
-            @ApiResponse(responseCode = "200", description = "Success")
-    })
-    @GetMapping(path="/of-user/{userId}")
-    public @ResponseBody ResponseEntity<List<Integer>> getGroupsOfUser(@PathVariable Integer userId){
-        if(userId == null || userId < 0){
-            return ResponseEntity.badRequest().build();
-        }
-        User found = userRegistry.get(userId);
-        if(found == null){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(groupRegistry.ofUser(userId).stream().map(Group::id).toList());
     }
 }

@@ -37,7 +37,6 @@ public class DebtGraph {
         whoOwesThisUserMoney.computeIfAbsent(userA, k -> new HashMap<>());
         whoOwesThisUserMoney.computeIfAbsent(userB, k -> new HashMap<>());
 
-
         double whatAowesB = amount;
         double whatBMayBeOwingA = getAmountOwedBy(userB, userA);
 

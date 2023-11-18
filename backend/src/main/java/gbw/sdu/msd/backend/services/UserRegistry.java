@@ -1,9 +1,6 @@
 package gbw.sdu.msd.backend.services;
 
-import gbw.sdu.msd.backend.dtos.CreateUserDTO;
-import gbw.sdu.msd.backend.dtos.UpdateUserDTO;
-import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
-import gbw.sdu.msd.backend.dtos.UserDTO;
+import gbw.sdu.msd.backend.dtos.*;
 import gbw.sdu.msd.backend.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +63,6 @@ public class UserRegistry implements IUserRegistry {
         if(found == null){
             return null;
         }
-        found.setUsername(dto.username());
         found.setName(dto.name());
         found.setPhoneNumber(dto.phoneNumber());
         found.setEmail(dto.email());
@@ -100,5 +96,13 @@ public class UserRegistry implements IUserRegistry {
     @Override
     public boolean isUnique(String username) {
         return !usersByUsername.containsKey(username);
+    }
+
+    @Override
+    public void updatePreferences(Integer userId, UpdateUserPreferencesDTO dto) {
+        User user = usersById.get(userId);
+        if(user == null) return;
+
+        user.setShowNotifications(dto.updatedShowNotifications());
     }
 }
