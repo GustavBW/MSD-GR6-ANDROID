@@ -16,6 +16,14 @@ public class Authorization implements Auth{
     }
 
     @Override
+    public boolean mayDeleteUsersFrom(int userInQuestion, int actingUser, int group) {
+        if(userInQuestion == actingUser){
+            return true;
+        }
+        return mayDeleteUsersFrom(userInQuestion, group);
+    }
+
+    @Override
     public boolean mayDeleteUsersFrom(int actingUser, int group) {
         if(groupRegistry.get(group) == null){
             return false;

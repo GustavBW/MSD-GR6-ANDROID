@@ -159,7 +159,11 @@ public class GroupController {
             return ResponseEntity.notFound().build();
         }
         User maybeAdmin = userRegistry.get(actingUser);
-        if(maybeAdmin == null || !auth.mayDeleteUsersFrom(maybeAdmin.id(),groupId)){
+        if(maybeAdmin == null){
+            System.out.println("User not found");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }else if(!auth.mayDeleteUsersFrom(maybeAdmin.id(), userInQuestion, groupId)){
+            System.out.println("User not authorized: " + maybeAdmin);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if(userInQuestion == null){

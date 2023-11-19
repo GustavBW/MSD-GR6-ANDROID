@@ -43,7 +43,6 @@ public class UserController {
         return ResponseEntity.ok(UserDTO.of(user));
     }
 
-
     /**
      * Users of listed ids URI Example: /api/v1/users?ids=1,7,32,45
      * Request parameters are mutually exclusive
