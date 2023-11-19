@@ -102,6 +102,7 @@ public class CreateUserView extends AppCompatActivity {
         editor.putString("username", userDTO.username());
         editor.putString("name", userDTO.name());
         editor.putString("email", userDTO.email());
+        editor.putString("password", password.getText().toString());
         editor.putString("phoneNumber", userDTO.phoneNumber());
         editor.apply();
     }

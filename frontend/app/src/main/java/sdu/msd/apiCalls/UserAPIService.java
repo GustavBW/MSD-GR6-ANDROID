@@ -16,6 +16,8 @@ public interface UserAPIService {
     Call<UserDTO> createUser(@Body CreateUserDTO createUserDTO);
     @POST("login")
     Call<UserDTO> checkCredentials(@Body UserCredentialsDTO userCredentialsDTO);
+    @GET("user")
+    Call<UserDTO> getUser(@Path("userId") int userId);
 
 
 }

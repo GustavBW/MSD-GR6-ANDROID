@@ -38,7 +38,7 @@ import sdu.msd.ui.profile.ProfileView;
 public class HomeView extends AppCompatActivity {
     private Context context;
     WifiManager wm;
-    private static final String API = "http://192.168.185.1:8080/api/v1/";
+    private static final String API = "http://192.168.0.167:8080/api/v1/";
     private GroupAPIService apiService;
     private UserAPIService userAPIService;
 
