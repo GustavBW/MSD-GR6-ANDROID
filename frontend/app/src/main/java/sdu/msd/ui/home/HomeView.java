@@ -38,7 +38,7 @@ import sdu.msd.ui.profile.ProfileView;
 public class HomeView extends AppCompatActivity {
     private Context context;
     WifiManager wm;
-    private static final String API = "http://192.168.0.167:8080/api/v1/";
+    private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
     private UserAPIService userAPIService;
 
@@ -69,14 +69,12 @@ public class HomeView extends AppCompatActivity {
 
         btnNotifications.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, NotificationsView.class);
-            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
 
 
         btnCreateGroup.setOnClickListener(v -> {
             Intent intent = new Intent(HomeView.this, CreateGroupView.class);
-            // intent.putExtra("userId", userId);
             startActivity(intent);
         });
         Retrofit retrofit = new Retrofit.Builder()

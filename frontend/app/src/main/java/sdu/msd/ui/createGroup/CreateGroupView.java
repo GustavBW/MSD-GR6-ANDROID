@@ -53,18 +53,13 @@ public class CreateGroupView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_create_group); // Load the XML layout for the second activity
-        // userId = getIntent().getIntExtra("userId",-1);
+        setContentView(R.layout.fragment_create_group);
         changeColor = findViewById(R.id.changeColor);
         groupViewColor = findViewById(R.id.groupViewColor);
         changeColor.setOnClickListener(view -> changeViewColor());
         cancelCreation();
         createGroup();
-
-
-
     }
-
     private void changeViewColor(){
         //Generate Random Color
         Random randomColor = new Random();
@@ -82,7 +77,6 @@ public class CreateGroupView extends AppCompatActivity {
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(view -> {
             Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-            // intent.putExtra("userId",userId);
             startActivity(intent);
         });
     }
@@ -99,11 +93,7 @@ public class CreateGroupView extends AppCompatActivity {
             sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
             postData(sharedPreferences.getInt("userId", -1),groupName.getText().toString(),groupDescription.getText().toString(),this.color);
         });
-
-
-
     }
-
     private void postData(int userId, String name, String description, int groupColor) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURL)

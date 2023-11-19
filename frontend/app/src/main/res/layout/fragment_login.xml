@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:width="20dp"
-        android:text="APP NAME"
+        android:text="PayBack™"
         android:textStyle="italic"
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -29,9 +29,9 @@
 
     <ImageView
         android:id="@+id/loginImage"
-        app:srcCompat="@drawable/placeholder_view_vector"
+        app:srcCompat="@drawable/payback_icon"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:paddingBottom="30dp"
         />
 

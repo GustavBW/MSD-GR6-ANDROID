@@ -15,9 +15,9 @@
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
+        android:textStyle="italic"
         android:textSize="34sp"
-        tools:layout_editor_absoluteX="91dp"
-        tools:layout_editor_absoluteY="16dp" />
+        />
 
     <TextView
         android:id="@+id/userNameText"
@@ -28,8 +28,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
         android:textSize="34sp"
-        tools:layout_editor_absoluteX="145dp"
-        tools:layout_editor_absoluteY="73dp" />
+        android:textStyle="italic"
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/allGroups"

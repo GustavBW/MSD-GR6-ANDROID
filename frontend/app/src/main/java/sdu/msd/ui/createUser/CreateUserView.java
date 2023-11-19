@@ -24,6 +24,7 @@ import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.home.HomeView;
+import sdu.msd.ui.login.LoginView;
 
 public class CreateUserView extends AppCompatActivity {
     private Button cancelBtn,confirmationBtn;
@@ -42,7 +43,7 @@ public class CreateUserView extends AppCompatActivity {
     private void cancelCreation(){
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(view -> {
-            Intent intent = new Intent(CreateUserView.this, HomeView.class);
+            Intent intent = new Intent(CreateUserView.this, LoginView.class);
             startActivity(intent);
         });
     }
@@ -82,12 +83,10 @@ public class CreateUserView extends AppCompatActivity {
                 if (userDTO != null) {
                     Intent intent = new Intent(CreateUserView.this, HomeView.class);
                     saveUserDataLocally(userDTO);
-                    // intent.putExtra("userId", userDTO.id());
-                    // Pass other user information if needed
                     startActivity(intent);
+                    finish();
                 }
             }
-
             @Override
             public void onFailure(Call<UserDTO> call, Throwable t) {
                 Toast.makeText(CreateUserView.this, t.toString(), Toast.LENGTH_LONG).show();
@@ -107,5 +106,6 @@ public class CreateUserView extends AppCompatActivity {
         editor.putString("phoneNumber", userDTO.phoneNumber());
         editor.apply();
     }
+
 
 }

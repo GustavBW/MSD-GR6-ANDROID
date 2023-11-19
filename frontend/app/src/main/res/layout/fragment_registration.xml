@@ -8,6 +8,24 @@
     android:background="@color/backGroundColor"
     tools:ignore="MissingConstraints"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:id="@+id/createGroupView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:width="20dp"
+        android:text="Create Account"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        tools:ignore="MissingConstraints"/>
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginBottom="50dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/createGroupView"
+        android:background="@drawable/border"
+        tools:ignore="MissingConstraints" />
     <EditText
         android:id="@+id/name"
         android:layout_width="match_parent"
