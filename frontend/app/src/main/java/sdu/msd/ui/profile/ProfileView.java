@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import sdu.msd.R;
+import sdu.msd.dtos.UpdateUserDTO;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.login.LoginView;
@@ -54,10 +55,15 @@ import sdu.msd.ui.profile.ProfileView;
 
 public class ProfileView extends AppCompatActivity {
     private static final String BASEURL =  getApi() + "users/";
-    private UserAPIService userAPIService;
+    private UserAPIService apiService;
     private UserDTO userDTO;
     int userId;
     private SharedPreferences sharedPreferences;
+    private EditText currentPassword;
+    private EditText editTextEmail;
+    private EditText editTextPhone;
+    private EditText editTextFullName;
+    private String username;
 
 
     @Override
@@ -68,12 +74,15 @@ public class ProfileView extends AppCompatActivity {
         userId = sharedPreferences.getInt("userId", -1);
         createProfileView();
 
-        scaleUsernameText();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASEURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apiService = retrofit.create(UserAPIService.class);
     }
 
-    private void scaleUsernameText() {
+    private void scaleUsernameText(String username) {
         TextView usernameTextView = findViewById(R.id.username);
-        String username = ""; // Replace with the actual username value
         usernameTextView.setText(username);
 
         // float textSize = (float)(75.0 / (1.0 + (float)Math.exp(0.4055 * ((float)(username.length()) - 1.0))));
@@ -83,20 +92,19 @@ public class ProfileView extends AppCompatActivity {
     }
 
     private void createProfileView(){
+        username = sharedPreferences.getString("username", "Value not found!");
         TextView textViewUsername = findViewById(R.id.username);
-        textViewUsername.setText(sharedPreferences.getString("username", "Value not found!"));
+        textViewUsername.setText(username);
+        scaleUsernameText(username);
 
-        EditText editTextPassword = findViewById(R.id.textPassword);
-        editTextPassword.setText(convertStringToCircles(sharedPreferences.getString("password", "Value not found!"))); // TODO: maybe add new password section?
-
-        EditText editTextEmail = findViewById(R.id.textEmailAddress);
+        editTextEmail = findViewById(R.id.textEmailAddress);
         editTextEmail.setText(sharedPreferences.getString("email", "Value not found!"));
 
-        EditText editTextPhone = findViewById(R.id.textPhone);
+        editTextPhone = findViewById(R.id.textPhone);
         editTextPhone.setText(sharedPreferences.getString("phoneNumber", "Value not found!"));
 
-        EditText editTextFullName = findViewById(R.id.textFullName);
-        editTextPhone.setText(sharedPreferences.getString("name", "Value not found!"));
+        editTextFullName = findViewById(R.id.textFullName);
+        editTextFullName.setText(sharedPreferences.getString("name", "Value not found!"));
 
         Button closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
@@ -115,19 +123,44 @@ public class ProfileView extends AppCompatActivity {
             Intent intent = new Intent(ProfileView.this, HomeView.class); // TODO: change to InvoiceView.class when possible.
             startActivity(intent);
         });
+
+        Button updateButton = findViewById(R.id.buttonUpdate);
+        currentPassword = findViewById(R.id.textPassword);
+        updateButton.setOnClickListener(view -> {
+            updateData();
+        });
     }
 
-    private String convertStringToCircles(String input) {
-        int hashCode = input.hashCode();
-        String hashCodeString = Integer.toString(hashCode);
+    private void updateData() {
+        if (currentPassword.getText().toString().equals(sharedPreferences.getString("password", ""))) {
+            UpdateUserDTO updateUserDTO = new UpdateUserDTO(username, editTextFullName.getText().toString(), editTextPhone.getText().toString(), editTextEmail.getText().toString());
+            Call<UserDTO> call = apiService.updateUser(userId, updateUserDTO);
+            call.enqueue(new Callback<UserDTO>() {
+                @Override
+                public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                    UserDTO userDTOUpdatedInformation = response.body();
+                    if (userDTOUpdatedInformation != null) {
+                        editTextFullName.setText(userDTOUpdatedInformation.name());
+                        editTextPhone.setText(userDTOUpdatedInformation.phoneNumber());
+                        editTextEmail.setText(userDTOUpdatedInformation.email());
 
-        // Replace each character in the hash code string with a circle (Unicode character ●)
-        StringBuilder result = new StringBuilder();
-        for (char c : hashCodeString.toCharArray()) {
-            result.append("●");
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("name", userDTOUpdatedInformation.name());
+                        editor.putString("email", userDTOUpdatedInformation.email());
+                        editor.putString("phoneNumber", userDTOUpdatedInformation.phoneNumber());
+                        editor.apply();
+                    }
+
+                    Toast.makeText(ProfileView.this, "Information updated!", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<UserDTO> call, Throwable t) {
+                    Toast.makeText(ProfileView.this, t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(ProfileView.this, "Incorrect password!", Toast.LENGTH_SHORT).show();
         }
-
-        return result.toString();
     }
-
 }

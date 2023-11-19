@@ -8,7 +8,7 @@ public final class UpdateUserDTO {
     private final String phoneNumber;
     private final String email;
 
-    UpdateUserDTO(String username, String name, String phoneNumber, String email) {
+    public UpdateUserDTO(String username, String name, String phoneNumber, String email) {
         this.username = username;
         this.name = name;
         this.phoneNumber = phoneNumber;

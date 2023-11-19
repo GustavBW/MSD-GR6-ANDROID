@@ -7,6 +7,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import sdu.msd.dtos.CreateUserDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UpdateUserDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 import sdu.msd.dtos.UserDTO;
 
@@ -16,8 +17,9 @@ public interface UserAPIService {
     Call<UserDTO> createUser(@Body CreateUserDTO createUserDTO);
     @POST("login")
     Call<UserDTO> checkCredentials(@Body UserCredentialsDTO userCredentialsDTO);
-    @GET("user")
-    Call<UserDTO> getUser(@Path("userId") int userId);
+    @POST("{userId}")
+    Call<UserDTO> updateUser(@Path("userId") int userId, @Body UpdateUserDTO updateUserDTO);
+
 
 
 }

@@ -37,98 +37,117 @@
 
     </LinearLayout>
 
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_gravity="top"
-        android:layout_marginTop="100dp"
-        android:layout_weight="0"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/textPassword"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:ems="10"
-            android:background="@drawable/border"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginHorizontal="30dp"
-            android:hint="test"/>
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            tools:layout_editor_absoluteY="631dp">
 
-        <EditText
-            android:id="@+id/textEmailAddress"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:ems="10"
-            android:background="@drawable/border"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginHorizontal="30dp"
-            android:hint="test"/>
+            <EditText
+                android:id="@+id/textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:hint="Current password"
+                android:inputType="textPassword"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/textPhone"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:ems="10"
-            android:background="@drawable/border"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginHorizontal="30dp"
-            android:hint="test"/>
+            <EditText
+                android:id="@+id/textEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:hint="Email address"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/textFullName"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:ems="10"
-            android:background="@drawable/border"
-            android:textAlignment="center"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginHorizontal="30dp"
-            android:hint="test"/>
-    </LinearLayout>
+            <EditText
+                android:id="@+id/textPhone"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:hint="Phone number"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
-        >
+            <EditText
+                android:id="@+id/textFullName"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/border"
+                android:ems="10"
+                android:hint="Full name"
+                android:textAlignment="center"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/buttonInvoices"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttoncolors"
-            android:textColor="@color/white"
-            android:layout_marginHorizontal="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="20dp"
-            android:text="Invoices" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/buttonLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/buttoncolors"
-            android:textColor="@color/white"
-            android:layout_marginHorizontal="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="20dp"
-            android:text="Logout" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
-    </LinearLayout>
+                    <Button
+                        android:id="@+id/buttonUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/buttoncolors"
+                        android:text="Update"
+                        android:textColor="@color/white" />
 
+                    <Button
+                        android:id="@+id/buttonInvoices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/buttoncolors"
+                        android:text="Invoices"
+                        android:textColor="@color/white" />
+
+                    <Button
+                        android:id="@+id/buttonLogout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/buttoncolors"
+                        android:text="Logout"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

@@ -36,6 +36,7 @@ public class CreateUserView extends AppCompatActivity {
         setContentView(R.layout.fragment_registration);
         cancelCreation();
         createUser();
+
     }
 
     private void cancelCreation(){
