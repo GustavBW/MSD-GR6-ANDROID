@@ -23,6 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -40,15 +42,12 @@ import sdu.msd.ui.home.HomeView;
 
 public class CreateGroupView extends AppCompatActivity {
     private Random random;
-    private Button cancelBtn;
-    private Button confirmationBtn;
-    private Button changeColor;
-    private EditText groupName;
-    private EditText groupDescription;
+    private Button cancelBtn,confirmationBtn, changeColor;
+    private EditText groupName,groupDescription;
     private View groupViewColor;
-    private int userId;
-    int color;
+    private int color;
     private SharedPreferences sharedPreferences;
+    private static List<GroupDTO> groupDTOList = new LinkedList<>();
     private static final String BASEURL =  HomeView.getApi() + "groups/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,20 +104,37 @@ public class CreateGroupView extends AppCompatActivity {
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
-                GroupDTO groupDTO = response.body();
-                if (groupDTO !=null){
-                    Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-                    startActivity(intent);
+                if (response.isSuccessful()) {
+                    GroupDTO groupDTO = response.body();
+                    if (groupDTO != null) {
+                        saveGroupsLocally(groupDTO);
+                        Intent intent = new Intent(CreateGroupView.this, HomeView.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    Toast.makeText(CreateGroupView.this, "error in" + response.code(), Toast.LENGTH_SHORT).show();
+                    // Handle the error, you can check the error body using response.errorBody()
                 }
             }
             @Override
             public void onFailure(Call<GroupDTO> call, Throwable t) {
                 Toast.makeText(CreateGroupView.this, t.toString(), Toast.LENGTH_LONG).show();
-
-
             }
         });
     }
+
+
+    private void saveGroupsLocally(GroupDTO groupDTO) {
+        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        groupDTOList.add(groupDTO);
+        String json = gson.toJson(groupDTOList);
+        editor.putString("groups", json);
+        editor.apply();
+    }
+
+
 
 }
 

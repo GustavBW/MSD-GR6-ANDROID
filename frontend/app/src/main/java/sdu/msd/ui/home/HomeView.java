@@ -18,6 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,7 +59,7 @@ public class HomeView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        int userId = retrieveUserIdLocally();
+        userId = retrieveUserIdLocally();
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
         Button btnCreateGroup = findViewById(R.id.btnCreateGroup);
@@ -82,6 +87,8 @@ public class HomeView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(GroupAPIService.class);
+        //List<GroupDTO> userGroups = getGroupsById(userId);
+        //createGroupViews(userGroups);
         getGroupsOfUser(userId);
 
     }
@@ -153,5 +160,25 @@ public class HomeView extends AppCompatActivity {
 
     public static String getApi() {
         return API;
+    }
+
+    private List<GroupDTO>  getGroups() {
+        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String groupJson = sharedPreferences.getString("groups", null);
+        Type listType = new TypeToken<ArrayList<GroupDTO>>(){}.getType();
+        return gson.fromJson(groupJson, listType);
+
+    }
+    private List<GroupDTO> getGroupsById(int adminId) {
+        List<GroupDTO> allGroups = getGroups();
+        List<GroupDTO> filteredGroups = new ArrayList<>();
+
+        for (GroupDTO group : allGroups) {
+            if (group.adminId() == adminId) {
+                filteredGroups.add(group);
+            }
+        }
+        return filteredGroups;
     }
 }

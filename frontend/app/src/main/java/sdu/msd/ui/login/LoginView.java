@@ -31,15 +31,18 @@ public class LoginView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_login);
+        /*
         if (isLoggedIn()) {
             Intent intent = new Intent(LoginView.this, HomeView.class);
             startActivity(intent);
             finish();
         } else {
+
+         */
             setContentView(R.layout.fragment_login);
             register();
             login();
-        }
+       // }
     }
 
     private void register() {
