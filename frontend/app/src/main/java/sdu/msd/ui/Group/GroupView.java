@@ -103,6 +103,7 @@ public class GroupView extends AppCompatActivity {
             intent.putExtra("groupNme", groupDTO.name());
             intent.putExtra("groupDescription", groupDTO.descriptions());
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
 

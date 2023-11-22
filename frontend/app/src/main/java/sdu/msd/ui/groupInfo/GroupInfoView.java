@@ -2,6 +2,7 @@ package sdu.msd.ui.groupInfo;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -78,10 +79,10 @@ public class GroupInfoView extends AppCompatActivity {
         Intent intent = new Intent(GroupInfoView.this, GroupView.class);
         intent.putExtra("groupId", groupId);
         startActivity(intent);
+        overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         finish();
-
-
     }
+
     private void leaveGroup(int userId, int groupId) {
         String username = sharedPreferences.getString("username", null);
         String password = sharedPreferences.getString("password", null);

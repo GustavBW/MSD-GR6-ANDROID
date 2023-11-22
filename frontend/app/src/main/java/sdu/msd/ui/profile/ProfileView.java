@@ -110,6 +110,7 @@ public class ProfileView extends AppCompatActivity {
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(ProfileView.this, HomeView.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
         Button logoutButton = findViewById(R.id.buttonLogout); // Go to login

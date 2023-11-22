@@ -68,6 +68,7 @@ public class HomeView extends AppCompatActivity {
         btnProfile.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, ProfileView.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
         btnNotifications.setOnClickListener(view -> {
