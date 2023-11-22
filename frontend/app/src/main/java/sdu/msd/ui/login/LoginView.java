@@ -23,26 +23,27 @@ import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.home.HomeView;
 
 public class LoginView extends AppCompatActivity {
-    private EditText username, password;
+    private EditText usernameEditText, passwordEditText;
     private Button register, login;
 
     private static final String BASEURL =  HomeView.getApi() + "users/";
+    private  SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         setContentView(R.layout.fragment_login);
-        /*
+        usernameEditText = findViewById(R.id.username_login);
+        passwordEditText = findViewById(R.id.password_login);
         if (isLoggedIn()) {
+            postLoginData(sharedPreferences.getString("username",""),sharedPreferences.getString("password",""));
             Intent intent = new Intent(LoginView.this, HomeView.class);
             startActivity(intent);
             finish();
         } else {
-
-         */
-            setContentView(R.layout.fragment_login);
             register();
             login();
-       // }
+        }
     }
 
     private void register() {
@@ -55,14 +56,11 @@ public class LoginView extends AppCompatActivity {
     }
 
     private void login() {
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
         login = findViewById(R.id.login);
         login.setOnClickListener(view -> {
-            if(!username.getText().toString().isEmpty() && !password.getText().toString().isEmpty()) {
-                    postLoginData(username.getText().toString(),password.getText().toString());
-            }
-            else{
+            if(!usernameEditText.getText().toString().trim().isEmpty() && !passwordEditText.getText().toString().trim().isEmpty()) {
+                postLoginData(usernameEditText.getText().toString().trim(), passwordEditText.getText().toString().trim());
+            } else {
                 Toast.makeText(LoginView.this, "Enter username and password", Toast.LENGTH_LONG).show();
             }
         });
@@ -85,9 +83,21 @@ public class LoginView extends AppCompatActivity {
                     saveUserDataLocally(userDTO);
                     startActivity(intent);
                     finish();
+
+
                 }
                 else{
-                    Toast.makeText(LoginView.this, "Wrong credentials", Toast.LENGTH_LONG).show();
+                    if(!usernameEditText.getText().toString().trim().isEmpty() && !passwordEditText.getText().toString().trim().isEmpty()) {
+                        Toast.makeText(LoginView.this, "Wrong credentials", Toast.LENGTH_LONG).show();
+                    }
+                    if(!sharedPreferences.getAll().isEmpty()){
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.clear();
+                        editor.apply();
+                        finish();
+                        startActivity(new Intent(LoginView.this, LoginView.class));  // Start a new instance of LoginView
+                    }
+
 
                 }
             }
@@ -100,18 +110,18 @@ public class LoginView extends AppCompatActivity {
     }
 
     private void saveUserDataLocally(UserDTO userDTO) {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("userId", userDTO.id());
         editor.putString("username", userDTO.username());
         editor.putString("name", userDTO.name());
         editor.putString("email", userDTO.email());
-        editor.putString("password", password.getText().toString());
+        if(!passwordEditText.getText().toString().trim().isEmpty()){
+            editor.putString("password", passwordEditText.getText().toString());
+        }
         editor.putString("phoneNumber", userDTO.phoneNumber());
         editor.apply();
     }
     private boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        return sharedPreferences.contains("userId") && sharedPreferences.contains("username");
+        return sharedPreferences.contains("userId") && sharedPreferences.contains("username") && sharedPreferences.contains("password");
     }
 }

@@ -56,7 +56,6 @@ import sdu.msd.ui.profile.ProfileView;
 public class ProfileView extends AppCompatActivity {
     private static final String BASEURL =  getApi() + "users/";
     private UserAPIService apiService;
-    private UserDTO userDTO;
     int userId;
     private SharedPreferences sharedPreferences;
     private EditText currentPassword;
@@ -73,12 +72,12 @@ public class ProfileView extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
         createProfileView();
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(UserAPIService.class);
+
     }
 
     private void scaleUsernameText(String username) {
@@ -115,8 +114,10 @@ public class ProfileView extends AppCompatActivity {
 
         Button logoutButton = findViewById(R.id.buttonLogout); // Go to login
         logoutButton.setOnClickListener(view -> {
+            deleteLocalUser();
             Intent intent = new Intent(ProfileView.this, LoginView.class);
             startActivity(intent);
+            finish();
         });
 
         Button invoicesButton = findViewById(R.id.buttonInvoices); // Go to invoices
@@ -130,6 +131,12 @@ public class ProfileView extends AppCompatActivity {
         updateButton.setOnClickListener(view -> {
             updateData();
         });
+    }
+
+    private void deleteLocalUser() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
     }
 
     private void updateData() {
