@@ -30,7 +30,7 @@
 
 
         <ImageView
-            android:id="@+id/btnNotifications"
+            android:id="@+id/editGroupBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_weight=".5"
@@ -55,7 +55,7 @@
             tools:layout_editor_absoluteX="0dp" />
 
         <ImageView
-            android:id="@+id/btnProfile"
+            android:id="@+id/groupInfo"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_weight="1"

@@ -31,14 +31,13 @@ public class GroupView extends AppCompatActivity {
     private Button payBtn;
     private GroupAPIService apiService;
 
-    private ImageView notification, profile;
+    private ImageView groupInfo, editGroup;
 
     private static final String BASEURL =  getApi() + "groups/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // userId = getIntent().getIntExtra("userId",-1);
         groupId = getIntent().getIntExtra("groupId",-1);
         setContentView(R.layout.fragment_group);
         payBtn = findViewById(R.id.pay);
@@ -86,22 +85,26 @@ public class GroupView extends AppCompatActivity {
     private void createGroupView(GroupDTO groupDTO){
         TextView textView = findViewById(R.id.groupName);
         textView.setText(groupDTO.name());
-        notification = findViewById(R.id.btnNotifications);
-        profile = findViewById(R.id.btnProfile);
+        groupInfo = findViewById(R.id.groupInfo);
+        editGroup = findViewById(R.id.editGroupBtn);
         // TODO: 17-11-2023
         /*
         The rest will be added soon when other features are done.
          */
-        notification.setOnClickListener(view -> {
+        editGroup.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, NotificationsView.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         });
 
-        profile.setOnClickListener(view -> {
+        groupInfo.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, GroupInfoView.class);
             intent.putExtra("groupId", groupId);
+            intent.putExtra("groupNme", groupDTO.name());
+            intent.putExtra("groupDescription", groupDTO.descriptions());
             startActivity(intent);
         });
+
+
     }
 }

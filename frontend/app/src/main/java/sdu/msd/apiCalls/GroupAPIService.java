@@ -10,6 +10,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserCredentialsDTO;
 
 public interface GroupAPIService {
 
@@ -19,4 +20,7 @@ public interface GroupAPIService {
     Call<GroupDTO> createGroup(@Body CreateGroupDTO createGroupDTO);
     @GET("{groupId}")
     Call<GroupDTO> getGroup (@Path("groupId") int groupId);
+
+    @POST("{groupId}/remove-user/{userInQuestion}")
+    Call<Boolean> leaveGroup(@Path("groupId") int groupId, @Path("userInQuestion") int targetedUserId, @Body UserCredentialsDTO userCredentialsDTO);
 }
