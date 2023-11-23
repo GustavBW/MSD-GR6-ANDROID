@@ -14,6 +14,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -92,6 +97,8 @@ public class GroupInfoView extends AppCompatActivity {
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if(response.isSuccessful()){
                     Intent intent = new Intent(GroupInfoView.this, HomeView.class);
+                    intent.putExtra("UserLeftGroup", true);
+                    deleteGroupLocally(groupId);
                     startActivity(intent);
                     Toast.makeText(GroupInfoView.this, "You have successfully leaved the group", Toast.LENGTH_SHORT).show();
                     finish();
@@ -105,5 +112,30 @@ public class GroupInfoView extends AppCompatActivity {
             }
         });
     }
+
+    private void deleteGroupLocally(int targetedGroupId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("groups", "");
+        Type type = new TypeToken<List<GroupDTO>>() {
+        }.getType();
+        List<GroupDTO> groupDTOList = gson.fromJson(json, type);
+        // Check if the group exists in the list and remove it
+        if (groupDTOList != null) {
+            Iterator<GroupDTO> iterator = groupDTOList.iterator();
+            while (iterator.hasNext()) {
+                GroupDTO existingGroup = iterator.next();
+                if (existingGroup.id() == targetedGroupId) {
+                    iterator.remove();
+                    break;
+                }
+            }
+            json = gson.toJson(groupDTOList);
+            editor.putString("groups", json);
+            editor.apply();
+        }
+    }
+
 }
 
