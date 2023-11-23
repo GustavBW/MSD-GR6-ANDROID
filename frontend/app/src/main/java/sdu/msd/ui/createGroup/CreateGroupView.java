@@ -109,6 +109,7 @@ public class CreateGroupView extends AppCompatActivity {
                     if (groupDTO != null) {
                         saveGroupsLocally(groupDTO);
                         Intent intent = new Intent(CreateGroupView.this, HomeView.class);
+                        intent.putExtra("groupIsCreated", true);
                         startActivity(intent);
                     }
                 } else {
