@@ -160,16 +160,32 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/btnCreateGroup"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:text="Add attachment                                                     📎"
-        android:layout_gravity="center"
-        android:layout_marginVertical="20dp"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:background="@drawable/buttoncolors"
-        android:textColor="@color/white"/>
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Attachment"
+            android:textSize="20sp"
+
+            android:textColor="@color/white"
+            />
+        <ImageView
+            android:id="@+id/attachment"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/Attachment_1"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
