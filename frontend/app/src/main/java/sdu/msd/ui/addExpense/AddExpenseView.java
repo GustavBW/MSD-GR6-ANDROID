@@ -74,16 +74,17 @@ public class AddExpenseView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragement_add_expense);
+        sharedPreferencesUsers = getSharedPreferences("user_data", MODE_PRIVATE);
 
         createProfileView();
 
         // User Api service:
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURLUser)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         userApiService = retrofit.create(UserAPIService.class);
-        sharedPreferencesUsers = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferencesUsers.getInt("userId", -1);
         confirmButton = findViewById(R.id.confirm);
 
@@ -109,6 +110,41 @@ public class AddExpenseView extends AppCompatActivity {
         checkIfMemberIsSelected();
 
         confirm();
+
+
+    }
+    private void createProfileView(){
+        // Load and display username:
+        username = sharedPreferencesUsers.getString("username", "Value not found!");
+        TextView textViewUsername = findViewById(R.id.user);
+        textViewUsername.setText(username);
+        scaleUsernameText(username);
+
+        // EditText:
+        amountEditText = findViewById(R.id.amount);
+
+        // Buttons:
+        Button closeButton = findViewById(R.id.buttonClose); // Go to group view:
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
+
+        Button cancelButton = findViewById(R.id.cancel); // Go to group view:
+        cancelButton.setOnClickListener(view -> {
+            Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
+
+        LinearLayout attachmentButton = findViewById(R.id.attachment); // Go to take camera view:
+        attachmentButton.setOnClickListener(view -> {
+            Intent intent = new Intent(AddExpenseView.this, CameraView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
+
     }
 
     private void getGroupInformation(int groupId) {
@@ -134,10 +170,12 @@ public class AddExpenseView extends AppCompatActivity {
     private void getMembers(List<Integer> userIds) {
         Call<List<UserDTO>> call = userApiService.getUserFromId(userIds);
         call.enqueue(new Callback<List<UserDTO>>() {
+            // TODO: 24-11-2023 Something is wrong with the response 
             @Override
             public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<UserDTO> members = response.body();
+                    Toast.makeText(AddExpenseView.this, "size + " + members.size(), Toast.LENGTH_SHORT).show();
                     addMembersToView(members);
                 }
             }
@@ -184,39 +222,7 @@ public class AddExpenseView extends AppCompatActivity {
         }
     }
 
-    private void createProfileView(){
-        // Load and display username:
-        username = sharedPreferencesUsers.getString("username", "Value not found!");
-        TextView textViewUsername = findViewById(R.id.user);
-        textViewUsername.setText(username);
-        scaleUsernameText(username);
 
-        // EditText:
-        amountEditText = findViewById(R.id.amount);
-
-        // Buttons:
-        Button closeButton = findViewById(R.id.buttonClose); // Go to group view:
-        closeButton.setOnClickListener(view -> {
-            Intent intent = new Intent(AddExpenseView.this, GroupView.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
-        });
-
-        Button cancelButton = findViewById(R.id.cancel); // Go to group view:
-        cancelButton.setOnClickListener(view -> {
-            Intent intent = new Intent(AddExpenseView.this, GroupView.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
-        });
-
-        LinearLayout attachmentButton = findViewById(R.id.attachment); // Go to take camera view:
-        attachmentButton.setOnClickListener(view -> {
-            Intent intent = new Intent(AddExpenseView.this, CameraView.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
-        });
-
-    }
 
     private void scaleUsernameText(String username) {
         TextView usernameTextView = findViewById(R.id.user);
@@ -241,13 +247,24 @@ public class AddExpenseView extends AppCompatActivity {
     }
 
     private void confirm() {
-        amount = Double.parseDouble(amountEditText.getText().toString()) / (double)selectedMembers.size();
+        Toast.makeText(this, "0", Toast.LENGTH_SHORT).show();
+        if(amountEditText.getText().length() !=0){
+            amount = Double.parseDouble(amountEditText.getText().toString()) / (double)selectedMembers.size();
+        }
+        else{
+            amount = 0;
+        }
+        Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
         confirmButton.setOnClickListener(view -> {
         Call<Boolean> call = debtAPIService.addDebtToMembers(userId, amount, selectedMembers, groupId);
-        call.enqueue(new Callback<Boolean>() {
+            Toast.makeText(this, "2", Toast.LENGTH_SHORT).show();
+
+            call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                Toast.makeText(AddExpenseView.this, "3", Toast.LENGTH_SHORT).show();
                 if (response.isSuccessful()) {
+                    Toast.makeText(AddExpenseView.this, "4", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(AddExpenseView.this, GroupView.class);
                     Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
                     startActivity(intent);

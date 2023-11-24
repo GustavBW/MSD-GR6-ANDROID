@@ -28,6 +28,6 @@ public interface UserAPIService {
     Call<List<UserDTO>> checkUser(@Query("usernames") String usernames);
 
     @GET("{userId}")
-    Call<List<UserDTO>> getUserFromId(@Query("userID") List<Integer> userId);
+    Call<List<UserDTO>> getUserFromId(@Query("userId") List<Integer> userId);
 
 }
