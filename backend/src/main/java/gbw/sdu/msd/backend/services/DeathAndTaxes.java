@@ -1,8 +1,12 @@
 package gbw.sdu.msd.backend.services;
 
+import gbw.sdu.msd.backend.dtos.GroupActivityDTO;
+import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.DebtGraph;
+import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,6 +15,14 @@ import java.util.List;
 public class DeathAndTaxes implements IDeptService {
 
     private final DebtGraph graph = new DebtGraph();
+    private final IInvoiceRegistry invoiceRegistry;
+    private final IGroupRegistry groupRegistry;
+
+    @Autowired
+    public DeathAndTaxes(IInvoiceRegistry invoiceRegistry, IGroupRegistry groupRegistry){
+        this.invoiceRegistry = invoiceRegistry;
+        this.groupRegistry = groupRegistry;
+    }
 
     @Override
     public void distributeDebt(User debtor, List<User> creditors, double amount) {
@@ -44,7 +56,30 @@ public class DeathAndTaxes implements IDeptService {
 
     @Override
     public double processPayment(User userA, User userB, double amount) {
-        return graph.processPayment(userA, userB, amount);
+        double remaining = graph.processPayment(userA, userB, amount);
+        double actualPayedAmount = amount - remaining;
+        invoiceRegistry.add(userA, userB, actualPayedAmount);
+        return remaining;
+    }
+
+    @Override
+    public double processPayment(User user, Group group, double amount) {
+        double remaining = amount;
+        for(User creditor : group.users()){
+            double userSpecificDebt = getAmountOwedBy(user, creditor);
+            if(userSpecificDebt <= 0) continue;
+            if(remaining <= 0) break;
+            remaining = processPayment(user, creditor, remaining);
+        }
+        groupRegistry.addActivity(group.id(),
+                new GroupActivityDTO(
+                        UserDTO.of(user),
+                        amount - remaining,
+                        UserDTO.of(group.users()),
+                        false
+                )
+        );
+        return remaining;
     }
 
     @Override

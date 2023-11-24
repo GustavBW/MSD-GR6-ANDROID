@@ -31,7 +31,7 @@ public class InvoiceController {
     }
 
     /**
-     * Gives the invoices for the given user.
+     * Gets the invoices for the given user.
      * Optionally use query param "amount" to limit length
      */
     @ApiResponses(value = {
@@ -47,7 +47,23 @@ public class InvoiceController {
         if(amount == null){
             amount = -1;
         }
-        return ResponseEntity.ok(invoiceRegistry.getInvoices(user, amount));
+        return ResponseEntity.ok(invoiceRegistry.get(user, amount));
+    }
+
+    /**
+     * Gets a specific invoice.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such invoice"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path = "/by-id/{invoiceId}")
+    public @ResponseBody ResponseEntity<InvoiceDTO> getInvoicesForUser(@PathVariable Integer invoiceId){
+        InvoiceDTO invoice = invoiceRegistry.get(invoiceId);
+        if(invoice == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(invoice);
     }
 
 

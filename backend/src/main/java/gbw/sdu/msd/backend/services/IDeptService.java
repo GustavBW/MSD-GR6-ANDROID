@@ -1,6 +1,7 @@
 package gbw.sdu.msd.backend.services;
 
 import gbw.sdu.msd.backend.models.Debt;
+import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public interface IDeptService {
     double totalOwedByUser(User entity);
     double totalOwedToUser(User user);
     double processPayment(User userA, User userB, double amount);
+    double processPayment(User user, Group group, double amount);
     /**
      * @param userA by
      * @param userB to

@@ -14,20 +14,28 @@ import java.util.Map;
 public class InvoiceRegistry implements IInvoiceRegistry {
 
     private final Map<User,List<InvoiceDTO>> invoicesPerUser = new HashMap<>();
+    private final Map<Integer, InvoiceDTO> invoicePerId = new HashMap<>();
+    private static int idOfNext = 0;
 
     @Override
-    public List<InvoiceDTO> getInvoices(User user, int listLength) {
+    public List<InvoiceDTO> get(User user, int listLength) {
         List<InvoiceDTO> invoices = invoicesPerUser.computeIfAbsent(user, k -> new ArrayList<>());
         if(invoices.size() < listLength || listLength == -1){
             return invoices;
         }
-        return invoices.subList(invoices.size() - (listLength + 1), invoices.size() - 1);
+        return invoices.subList(invoices.size() - listLength, invoices.size());
     }
 
     @Override
-    public void addInvoice(User debtee, User creditor, double amount) {
-        InvoiceDTO invoice = new InvoiceDTO(UserDTO.of(debtee), UserDTO.of(creditor), amount);
+    public void add(User debtee, User creditor, double amount) {
+        InvoiceDTO invoice = new InvoiceDTO(idOfNext++, UserDTO.of(debtee), UserDTO.of(creditor), amount);
+        invoicePerId.put(invoice.id(), invoice);
         invoicesPerUser.computeIfAbsent(debtee, k -> new ArrayList<>()).add(invoice);
         invoicesPerUser.computeIfAbsent(creditor, k -> new ArrayList<>()).add(invoice);
+    }
+
+    @Override
+    public InvoiceDTO get(int id) {
+        return invoicePerId.get(id);
     }
 }

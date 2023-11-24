@@ -1,6 +1,7 @@
 package gbw.sdu.msd.backend.services;
 
 import gbw.sdu.msd.backend.dtos.CreateGroupDTO;
+import gbw.sdu.msd.backend.dtos.GroupActivityDTO;
 import gbw.sdu.msd.backend.dtos.UpdateGroupDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
@@ -20,12 +21,7 @@ public class GroupRegistry implements IGroupRegistry{
      * Key = Id of user, value = their groups
      */
     private final Map<Integer, List<Group>> groupsOfUser = new HashMap<>();
-    private final IUserRegistry userRegistry;
-
-    @Autowired
-    public GroupRegistry(IUserRegistry userRegistry){
-        this.userRegistry = userRegistry;
-    }
+    private final Map<Integer, List<GroupActivityDTO>> activitiesOfGroup = new HashMap<>();
 
     @Override
     public Group update(int groupId, UpdateGroupDTO dto) {
@@ -89,8 +85,6 @@ public class GroupRegistry implements IGroupRegistry{
         return groups == null ? Collections.emptyList() : groups;
     }
 
-
-
     /**
      * @return false on not found
      */
@@ -103,5 +97,19 @@ public class GroupRegistry implements IGroupRegistry{
         groupsById.remove(groupId);
         groupsOfUser.values().forEach(list -> list.remove(group));
         return true;
+    }
+
+    @Override
+    public List<GroupActivityDTO> activitiesOf(int groupId, int listLength) {
+        List<GroupActivityDTO> activities = activitiesOfGroup.computeIfAbsent(groupId, k -> new ArrayList<>());
+        if(activities.size() < listLength || listLength == -1){
+            return activities;
+        }
+        return activities.subList(activities.size() - listLength, activities.size());
+    }
+
+    @Override
+    public void addActivity(int groupId, GroupActivityDTO activity) {
+        activitiesOfGroup.computeIfAbsent(groupId, k -> new ArrayList<>()).add(activity);
     }
 }

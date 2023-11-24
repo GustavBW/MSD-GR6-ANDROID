@@ -1,4 +1,4 @@
 package gbw.sdu.msd.backend.dtos;
 
-public record InvoiceDTO(UserDTO paymentFrom, UserDTO paymentTo, double amount) {
+public record InvoiceDTO(int id, UserDTO paymentFrom, UserDTO paymentTo, double amount) {
 }

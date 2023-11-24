@@ -152,7 +152,10 @@ public class GroupController {
         if(group == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(List.of());
+        if(amount == null){
+            amount = -1;
+        }
+        return ResponseEntity.ok(groupRegistry.activitiesOf(groupId, amount));
     }
 
     /**
@@ -185,11 +188,9 @@ public class GroupController {
         }
         User user = userRegistry.get(userInQuestion);
         if(user == null){
-            System.out.println("user not found");
             return ResponseEntity.notFound().build();
         }
         if(!groupRegistry.removeUser(groupId, user)){
-            System.out.println("couldn't remove user");
             return ResponseEntity.notFound().build();
         }
 

@@ -1,7 +1,6 @@
 package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.DebtDTO;
-import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.*;
@@ -245,9 +244,27 @@ public class DebtController {
         if(userAFound == null || userBFound == null){
             return ResponseEntity.notFound().build();
         }
-        double remaining = deptService.processPayment(userAFound, userBFound, amount);
-        double actualPayedAmount = amount - remaining;
-        invoiceRegistry.addInvoice(userAFound, userBFound, actualPayedAmount);
-        return ResponseEntity.ok(remaining);
+        return ResponseEntity.ok(deptService.processPayment(userAFound, userBFound, amount));
+    }
+
+    /**
+     * Pays the users dept to the group and returns the remaining dept to the group
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such users or no such group"),
+            @ApiResponse(responseCode = "400", description = "Missing user id or missing amount"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path="/{userId}/pay-group/{groupId}/amount/{amount}")
+    public @ResponseBody ResponseEntity<Double> payGroupDept(@PathVariable Integer userId, @PathVariable Integer groupId, @PathVariable Double amount){
+        if(userId == null || groupId == null || amount == null){
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userRegistry.get(userId);
+        Group group = groupRegistry.get(groupId);
+        if(user == null || group == null){
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }
