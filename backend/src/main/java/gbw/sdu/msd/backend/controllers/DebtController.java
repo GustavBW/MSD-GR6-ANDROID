@@ -1,7 +1,8 @@
 package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.DebtDTO;
-import gbw.sdu.msd.backend.models.Debt;
+import gbw.sdu.msd.backend.dtos.GroupActivityDTO;
+import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path="/api/v1/debt")
@@ -31,7 +33,8 @@ public class DebtController {
     }
 
     /**
-     * Distributes debt of UserA between all users listed. I.e. api/v1/debt/{UserA}/distribute/200?creditors=1,2,3,4
+     * Distributes debt of UserA between all users listed. I.e. api/v1/debt/{UserA}/distribute/200?creditors=1,2,3,4.
+     * Append the groupId if this is a group activity.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "UserA not found or any creditor not found"),
@@ -39,7 +42,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path = "/{userA}/distribute/{amount}")
-    public @ResponseBody ResponseEntity<Boolean> distributeDebt(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "creditors") List<Integer> creditorIds){
+    public @ResponseBody ResponseEntity<Boolean> distributeDebt(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "creditors") List<Integer> creditorIds, @RequestParam(required = false) Integer groupId){
         User found = userRegistry.get(userA);
         if(found == null){
             return ResponseEntity.notFound().build();
@@ -55,7 +58,55 @@ public class DebtController {
         if(amount == null || amount <= 0){
             return ResponseEntity.badRequest().build();
         }
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(found),
+                            amount,
+                            UserDTO.of(creditors),
+                            true
+                    ));
+        }
         deptService.distributeDebt(found, creditors, amount);
+        return ResponseEntity.ok(true);
+    }
+
+    /**
+     * Distributes debt of the debtees to userA. I.e. api/v1/debt/{UserA}/distribute/200/reverse?debtees=1,2,3,4.
+     * Append the groupId if this is a group activity.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "UserA not found or any creditor not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid amount"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path = "/{userA}/reverse-distribute/{amount}")
+    public @ResponseBody ResponseEntity<Boolean> distributeDebtReverse(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "debtees") List<Integer> debteeIds, @RequestParam(required = false) Integer groupId){
+        User creditor = userRegistry.get(userA);
+        if(creditor == null){
+            return ResponseEntity.notFound().build();
+        }
+        List<User> debtees = new ArrayList<>();
+        for(Integer i : debteeIds){
+            User debtee = userRegistry.get(i);
+            if(debtee == null){
+                return ResponseEntity.notFound().build();
+            }
+            debtees.add(creditor);
+        }
+        if(amount == null || amount <= 0){
+            return ResponseEntity.badRequest().build();
+        }
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(creditor),
+                            amount,
+                            UserDTO.of(debtees),
+                            true
+                    ));
+        }
+        deptService.distributeDebtReverse(creditor, debtees, amount);
         return ResponseEntity.ok(true);
     }
 
@@ -110,7 +161,9 @@ public class DebtController {
     }
 
     /**
-     * Add debt between two users
+     * Add debt between two users.
+     * If this is in the context of a group, a groupId can be provided as a query parameter to append the proper group activity.
+     * Duly note that if the group does not exist, this is ignored.
      * @param userA id of user who owes money
      * @param userB id of user who is receiving this money
      * @return Add debt between two users
@@ -121,7 +174,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/{userA}/add/{userB}/amount/{amount}")
-    public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
+    public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount, @RequestParam(required = false) Integer groupId){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();
         }
@@ -131,6 +184,16 @@ public class DebtController {
             return ResponseEntity.notFound().build();
         }
         deptService.addDebt(userAFound, userBFound, amount);
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(userBFound),
+                            amount,
+                            UserDTO.of(List.of(userAFound)),
+                            true
+                    )
+            );
+        }
         return ResponseEntity.ok(true);
     }
 
@@ -225,10 +288,10 @@ public class DebtController {
     /**
      * Pay debt between two users.
      * If the amount paid was too much, the remainder is returned.
+     * Append the groupId if this was a group activity.
      * @param userA id of user who pays
      * @param userB id of user to receive payment
      * @param amount how much
-     * @return Pay debt between two users
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user"),
@@ -236,7 +299,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/{userA}/pay/{userB}/amount/{amount}")
-    public @ResponseBody ResponseEntity<Double> totalDebtOwedToUser(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
+    public @ResponseBody ResponseEntity<Double> totalDebtOwedToUser(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount, @RequestParam(required = false) Integer groupId){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();
         }
@@ -245,9 +308,38 @@ public class DebtController {
         if(userAFound == null || userBFound == null){
             return ResponseEntity.notFound().build();
         }
-        double remaining = deptService.processPayment(userAFound, userBFound, amount);
-        double actualPayedAmount = amount - remaining;
-        invoiceRegistry.addInvoice(userAFound, userBFound, actualPayedAmount);
-        return ResponseEntity.ok(remaining);
+        double remainder = deptService.processPayment(userAFound, userBFound, amount);
+        double actualPayedAmount = amount - remainder;
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(userAFound),
+                            actualPayedAmount,
+                            UserDTO.of(List.of(userBFound)),
+                            false
+                    ));
+        }
+        return ResponseEntity.ok(remainder);
+    }
+
+    /**
+     * Pays the users dept to the group and returns the remaining dept to the group
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such users or no such group"),
+            @ApiResponse(responseCode = "400", description = "Missing user id or missing amount"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path="/{userId}/pay-group/{groupId}/amount/{amount}")
+    public @ResponseBody ResponseEntity<Double> payGroupDept(@PathVariable Integer userId, @PathVariable Integer groupId, @PathVariable Double amount){
+        if(userId == null || groupId == null || amount == null){
+            return ResponseEntity.badRequest().build();
+        }
+        User user = userRegistry.get(userId);
+        Group group = groupRegistry.get(groupId);
+        if(user == null || group == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(deptService.processPayment(user, group, amount));
     }
 }

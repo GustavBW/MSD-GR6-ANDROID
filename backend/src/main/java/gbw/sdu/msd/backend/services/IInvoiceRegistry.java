@@ -8,9 +8,10 @@ import java.util.List;
 public interface IInvoiceRegistry {
     /**
      * @param user
-     * @param amount -1 for all
+     * @param listLength -1 for all
      * @return
      */
-    List<InvoiceDTO> getInvoices(User user, int listLength);
-    void addInvoice(User debtee, User creditor, double amount);
+    List<InvoiceDTO> get(User user, int listLength);
+    void add(User debtee, User creditor, double amount);
+    InvoiceDTO get(int id);
 }

@@ -6,7 +6,7 @@ import jakarta.annotation.Nullable;
 
 import java.util.List;
 
-public record GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users) {
+public record GroupDTO(int id, int adminId, String name, String description, int groupColor, List<Integer> users) {
 
     public static GroupDTO of(Group group){
         if (group == null) {
