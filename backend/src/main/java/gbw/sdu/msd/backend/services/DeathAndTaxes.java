@@ -33,6 +33,14 @@ public class DeathAndTaxes implements IDeptService {
     }
 
     @Override
+    public void distributeDebtReverse(User creditor, List<User> debtees, double amount) {
+        double amountPerDebtee = amount / debtees.size();
+        for(User debtee : debtees){
+            addDebt(debtee, creditor, amountPerDebtee);
+        }
+    }
+
+    @Override
     public void addDebt(User debtor, User creditor, double amount) {
         graph.recordDebt(debtor, creditor, amount);
     }
