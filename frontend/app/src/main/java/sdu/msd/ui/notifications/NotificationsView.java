@@ -18,13 +18,10 @@ public class NotificationsView extends AppCompatActivity {
         // int userId = getIntent().getIntExtra("userId",-1);
         Button btnBack = findViewById(R.id.back);
 
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(NotificationsView.this, HomeView.class);
-                // intent.putExtra("userId", userId);
-                startActivity(intent);
-            }
+        btnBack.setOnClickListener(view -> {
+            Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            // intent.putExtra("userId", userId);
+            startActivity(intent);
         });
     }
 }

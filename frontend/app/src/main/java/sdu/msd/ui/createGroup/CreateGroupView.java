@@ -107,9 +107,7 @@ public class CreateGroupView extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     GroupDTO groupDTO = response.body();
                     if (groupDTO != null) {
-                        saveGroupsLocally(groupDTO);
                         Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-                        intent.putExtra("groupIsCreated", true);
                         startActivity(intent);
                     }
                 } else {
@@ -122,17 +120,6 @@ public class CreateGroupView extends AppCompatActivity {
                 Toast.makeText(CreateGroupView.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-
-    private void saveGroupsLocally(GroupDTO groupDTO) {
-        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        groupDTOList.add(groupDTO);
-        String json = gson.toJson(groupDTOList);
-        editor.putString("groups", json);
-        editor.apply();
     }
 
 
