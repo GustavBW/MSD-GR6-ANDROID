@@ -98,7 +98,6 @@ public class LoginView extends AppCompatActivity {
                         startActivity(new Intent(LoginView.this, LoginView.class));  // Start a new instance of LoginView
                     }
 
-
                 }
             }
 
