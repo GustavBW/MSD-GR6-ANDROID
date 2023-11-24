@@ -4,11 +4,17 @@ import static sdu.msd.ui.home.HomeView.getApi;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +65,11 @@ public class GroupInfoView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(GroupAPIService.class);
+        Retrofit retrofit2 = new Retrofit.Builder()
+                .baseUrl(getApi())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        userAPIService = retrofit2.create(UserAPIService.class);
         groupNameTextView = findViewById(R.id.groupNameText);
         descriptionTextView = findViewById(R.id.groupDescText);
         leaveGroup = findViewById(R.id.leaveGroup);
@@ -81,6 +92,7 @@ public class GroupInfoView extends AppCompatActivity {
                     .setNegativeButton(android.R.string.no, null)
                     .show();
         });
+        getUsersOfGroup(groupId);
     }
 
     private void createView() {
@@ -123,11 +135,6 @@ public class GroupInfoView extends AppCompatActivity {
         });
     }
     private void addUserPopup() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(getApi())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        userAPIService = retrofit.create(UserAPIService.class);
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.fragment_add_group_members_popup, null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
@@ -155,6 +162,7 @@ public class GroupInfoView extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     List<UserDTO> rs = response.body();
                    addUserToGroupHelper(rs.get(0).id());
+                    createCardView(rs);
                 } else {
                     Toast.makeText(GroupInfoView.this, "User not found.", Toast.LENGTH_SHORT).show();
                 }
@@ -182,6 +190,65 @@ public class GroupInfoView extends AppCompatActivity {
                 Toast.makeText(GroupInfoView.this, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void getUsersOfGroup(int groupId) {
+        Call<GroupDTO> call = apiService.getGroup(groupId);
+        call.enqueue(new Callback<GroupDTO>() {
+            @Override
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    getUsersFromId(response.body().getUsers());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
+                Toast.makeText(GroupInfoView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getUsersFromId(int[] userIds) {
+        Call<List<UserDTO>> call = userAPIService.getUserFromId(userIds);
+        call.enqueue(new Callback<List<UserDTO>>() {
+            @Override
+            public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    createCardView(response.body());
+                    }
+                }
+
+            @Override
+            public void onFailure(Call<List<UserDTO>> call, Throwable t) {
+                Toast.makeText(GroupInfoView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void createCardView(List<UserDTO> users) {
+        LinearLayout userButtonContainer = findViewById(R.id.userButtonContainer);
+        for (UserDTO user : users) {
+            GradientDrawable gradientDrawable = new GradientDrawable();
+            gradientDrawable.setCornerRadius((getResources().getDimension(R.dimen.corner_radius)));
+            TextView textView = new TextView(this);
+            textView.setText(user.name());
+            textView.setGravity(1);
+            textView.setTextColor(Color.BLACK);
+            gradientDrawable.setColor(-1);
+            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
+            textView.setBackground(layerDrawable);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.activity_vertical_margin));
+            textView.setLayoutParams(layoutParams);
+            userButtonContainer.addView(textView);
+            textView.setTextSize(20);
+        }
     }
 }
 

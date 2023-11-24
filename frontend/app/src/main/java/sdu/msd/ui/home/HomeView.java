@@ -41,7 +41,7 @@ import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
 
 public class HomeView extends AppCompatActivity {
-    private static final String API = "http://192.168.185.1:8080/api/v1/";
+    private static final String API = "http://10.0.2.2:8080/api/v1/";
     private GroupAPIService apiService;
     private static final String BASEURL = API + "users/";
     int userId;
@@ -100,7 +100,6 @@ public class HomeView extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<GroupDTO> userGroups = response.body();
                     createGroupViews(userGroups);
-
                 }
             }
 

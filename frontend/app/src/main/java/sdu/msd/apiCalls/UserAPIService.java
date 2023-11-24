@@ -27,6 +27,7 @@ public interface UserAPIService {
     @GET("users")
     Call<List<UserDTO>> checkUser(@Query("usernames") String usernames);
 
-
+    @GET("users")
+    Call<List<UserDTO>> getUserFromId(@Query("ids") int[] userId);
 
 }
