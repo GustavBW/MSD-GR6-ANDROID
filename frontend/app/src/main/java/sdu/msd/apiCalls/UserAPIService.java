@@ -30,4 +30,8 @@ public interface UserAPIService {
     @GET("{userId}")
     Call<List<UserDTO>> getUserFromId(@Query("userId") List<Integer> userId);
 
+
+    Call<List<UserDTO>> getUsersFromId(@Query("ids") List<Integer> userIds);
+
+
 }
