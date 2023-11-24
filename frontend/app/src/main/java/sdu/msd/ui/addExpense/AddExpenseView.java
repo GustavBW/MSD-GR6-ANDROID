@@ -1,4 +1,4 @@
-package sdu.msd.ui.AddExpense;
+package sdu.msd.ui.addExpense;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.camera.CameraView;
-import sdu.msd.ui.home.HomeView;
 
 public class AddExpenseView extends AppCompatActivity {
     // Debt Api
@@ -68,6 +66,8 @@ public class AddExpenseView extends AppCompatActivity {
     // Payment information:
     private ArrayList<Integer> selectedMembers;
     private Button confirmButton;
+    private EditText amountEditText;
+    private double amount;
 
 
     @Override
@@ -144,7 +144,7 @@ public class AddExpenseView extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<UserDTO>> call, Throwable t) {
-
+                Toast.makeText(AddExpenseView.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -191,8 +191,8 @@ public class AddExpenseView extends AppCompatActivity {
         textViewUsername.setText(username);
         scaleUsernameText(username);
 
-        // Load users in group:
-
+        // EditText:
+        amountEditText = findViewById(R.id.amount);
 
         // Buttons:
         Button closeButton = findViewById(R.id.buttonClose); // Go to group view:
@@ -241,14 +241,25 @@ public class AddExpenseView extends AppCompatActivity {
     }
 
     private void confirm() {
-        // Get payee id's:
+        amount = Double.parseDouble(amountEditText.getText().toString()) / (double)selectedMembers.size();
         confirmButton.setOnClickListener(view -> {
+        Call<Boolean> call = debtAPIService.addDebtToMembers(userId, amount, selectedMembers, groupId);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()) {
+                    Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+                    Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+                }
+            }
 
-
-            Intent intent = new Intent(AddExpenseView.this, GroupView.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
-            // TODO: add logic that adds expense to group
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(AddExpenseView.this, t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
         });
     }
 }

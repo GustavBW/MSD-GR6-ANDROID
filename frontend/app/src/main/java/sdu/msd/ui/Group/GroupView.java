@@ -3,7 +3,6 @@ package sdu.msd.ui.Group;
 import static sdu.msd.ui.home.HomeView.getApi;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -21,11 +20,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.GroupDTO;
-import sdu.msd.ui.AddExpense.AddExpenseView;
+import sdu.msd.ui.addExpense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
-import sdu.msd.ui.profile.ProfileView;
 
 public class GroupView extends AppCompatActivity {
     int userId, groupId;

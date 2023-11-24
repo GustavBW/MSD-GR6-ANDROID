@@ -14,6 +14,9 @@ import sdu.msd.dtos.UserCredentialsDTO;
 
 public interface DebtAPIService {
     @POST("{userA}/distribute/{amount}")
-    Call<Boolean> addDebtTiMembers(@Path("userA") int userA, @Path("amount") double amount, @Query("creditors") List<Integer> creditors, @Query("groupId") Integer groupI);
+    Call<Boolean> addDebtToMember(@Path("userA") int userA, @Path("amount") double amount, @Query("creditors") List<Integer> creditors, @Query("groupId") Integer groupI);
+
+    @POST("{userA}/reverse-distribute/{amount}")
+    Call<Boolean> addDebtToMembers(@Path("userA") int userA, @Path("amount") double amount, @Query("debtees") List<Integer> debtees , @Query("groupId") Integer groupI);
 
 }
