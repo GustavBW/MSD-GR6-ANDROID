@@ -1,9 +1,6 @@
 package gbw.sdu.msd.backend.controllers;
 
-import gbw.sdu.msd.backend.dtos.CreateGroupDTO;
-import gbw.sdu.msd.backend.dtos.GroupDTO;
-import gbw.sdu.msd.backend.dtos.UpdateGroupDTO;
-import gbw.sdu.msd.backend.dtos.UserCredentialsDTO;
+import gbw.sdu.msd.backend.dtos.*;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.Auth;
@@ -139,6 +136,23 @@ public class GroupController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(GroupDTO.of(groupRegistry.get(groupId)));
+    }
+
+    /**
+     * Get the activities for the group.
+     * Optionally, you can use the query param "amount" to limit the... amount.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "No such group"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @GetMapping(path = "/{groupId}/activities")
+    public @ResponseBody ResponseEntity<List<GroupActivityDTO>> getActivities(@PathVariable Integer groupId, @RequestParam(required = false) Integer amount){
+        Group group = groupRegistry.get(groupId);
+        if(group == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(List.of());
     }
 
     /**
