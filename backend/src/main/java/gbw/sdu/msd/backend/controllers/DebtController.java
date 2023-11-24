@@ -72,6 +72,45 @@ public class DebtController {
     }
 
     /**
+     * Distributes debt of the debtees to userA. I.e. api/v1/debt/{UserA}/distribute/200/reverse?debtees=1,2,3,4.
+     * Append the groupId if this is a group activity.
+     */
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "UserA not found or any creditor not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid amount"),
+            @ApiResponse(responseCode = "200", description = "Success")
+    })
+    @PostMapping(path = "/{userA}/reverse-distribute/{amount}")
+    public @ResponseBody ResponseEntity<Boolean> distributeDebtReverse(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "debtees") List<Integer> debteeIds, @RequestParam(required = false) Integer groupId){
+        User creditor = userRegistry.get(userA);
+        if(creditor == null){
+            return ResponseEntity.notFound().build();
+        }
+        List<User> debtees = new ArrayList<>();
+        for(Integer i : debteeIds){
+            User debtee = userRegistry.get(i);
+            if(debtee == null){
+                return ResponseEntity.notFound().build();
+            }
+            debtees.add(creditor);
+        }
+        if(amount == null || amount <= 0){
+            return ResponseEntity.badRequest().build();
+        }
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(creditor),
+                            amount,
+                            UserDTO.of(debtees),
+                            true
+                    ));
+        }
+        deptService.distributeDebtReverse(creditor, debtees, amount);
+        return ResponseEntity.ok(true);
+    }
+
+    /**
      * How much money a user owes a certain group in total
      * @param groupId id of group
      * @param userId id of user

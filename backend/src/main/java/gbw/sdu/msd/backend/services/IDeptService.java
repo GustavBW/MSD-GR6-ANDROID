@@ -10,6 +10,7 @@ import java.util.Map;
 public interface IDeptService {
 
     void distributeDebt(User debtor, List<User> creditors, double amount);
+    void distributeDebtReverse(User creditor, List<User> debtees, double amount);
     void addDebt(User debtor, User creditor, double amount);
     List<Debt> whoDoesThisUserOweMoney(User entity);
     double totalOwedByUser(User entity);
