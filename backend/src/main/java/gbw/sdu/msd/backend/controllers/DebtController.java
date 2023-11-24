@@ -1,6 +1,8 @@
 package gbw.sdu.msd.backend.controllers;
 
 import gbw.sdu.msd.backend.dtos.DebtDTO;
+import gbw.sdu.msd.backend.dtos.GroupActivityDTO;
+import gbw.sdu.msd.backend.dtos.UserDTO;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
 import gbw.sdu.msd.backend.services.*;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path="/api/v1/debt")
@@ -38,7 +41,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path = "/{userA}/distribute/{amount}")
-    public @ResponseBody ResponseEntity<Boolean> distributeDebt(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "creditors") List<Integer> creditorIds){
+    public @ResponseBody ResponseEntity<Boolean> distributeDebt(@PathVariable Integer userA, @PathVariable Double amount, @RequestParam(name = "creditors") List<Integer> creditorIds, @RequestParam(required = false) Integer groupId){
         User found = userRegistry.get(userA);
         if(found == null){
             return ResponseEntity.notFound().build();
@@ -53,6 +56,15 @@ public class DebtController {
         }
         if(amount == null || amount <= 0){
             return ResponseEntity.badRequest().build();
+        }
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(found),
+                            amount,
+                            UserDTO.of(creditors),
+                            true
+                    ));
         }
         deptService.distributeDebt(found, creditors, amount);
         return ResponseEntity.ok(true);
@@ -109,7 +121,9 @@ public class DebtController {
     }
 
     /**
-     * Add debt between two users
+     * Add debt between two users.
+     * If this is in the context of a group, a groupId can be provided as a query parameter to append the proper group activity.
+     * Duly note that if the group does not exist, this is ignored.
      * @param userA id of user who owes money
      * @param userB id of user who is receiving this money
      * @return Add debt between two users
@@ -120,7 +134,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/{userA}/add/{userB}/amount/{amount}")
-    public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
+    public @ResponseBody ResponseEntity<Boolean> addDebt(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount, @RequestParam(required = false) Integer groupId){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();
         }
@@ -130,6 +144,16 @@ public class DebtController {
             return ResponseEntity.notFound().build();
         }
         deptService.addDebt(userAFound, userBFound, amount);
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(userBFound),
+                            amount,
+                            UserDTO.of(List.of(userAFound)),
+                            true
+                    )
+            );
+        }
         return ResponseEntity.ok(true);
     }
 
