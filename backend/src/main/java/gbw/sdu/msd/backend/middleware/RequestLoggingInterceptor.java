@@ -11,9 +11,13 @@ public class RequestLoggingInterceptor implements HandlerInterceptor {
         // Log the incoming request URI and source here
         String requestURI = request.getRequestURI();
         String remoteAddress = request.getRemoteAddr();
-        System.out.println("Incoming request, Source: " + remoteAddress + " URI: " + requestURI);
+        String queryParams = request.getQueryString();
+        if(queryParams != null){
+            System.out.println("Incoming request, Source: " + remoteAddress + " URI: " + requestURI + "?" + queryParams);
+        }else{
+            System.out.println("Incoming request, Source: " + remoteAddress + " URI: " + requestURI);
+        }
         return true;
     }
 
-    // You can implement postHandle and afterCompletion methods if needed
 }
