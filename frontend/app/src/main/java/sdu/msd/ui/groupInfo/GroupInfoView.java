@@ -69,12 +69,7 @@ public class GroupInfoView extends AppCompatActivity {
             closeView();
         });
 
-        addGroupMembers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addUserPopup();
-            }
-        });
+        addGroupMembers.setOnClickListener(view -> addUserPopup());
 
         leaveGroup.setOnClickListener(view -> {
             new AlertDialog.Builder(GroupInfoView.this)
@@ -114,7 +109,6 @@ public class GroupInfoView extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     Intent intent = new Intent(GroupInfoView.this, HomeView.class);
                     intent.putExtra("UserLeftGroup", true);
-                    deleteGroupLocally(groupId);
                     startActivity(intent);
                     Toast.makeText(GroupInfoView.this, "You have successfully leaved the group", Toast.LENGTH_SHORT).show();
                     finish();
@@ -128,31 +122,6 @@ public class GroupInfoView extends AppCompatActivity {
             }
         });
     }
-
-    private void deleteGroupLocally(int targetedGroupId) {
-        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("groups", "");
-        Type type = new TypeToken<List<GroupDTO>>() {
-        }.getType();
-        List<GroupDTO> groupDTOList = gson.fromJson(json, type);
-        // Check if the group exists in the list and remove it
-        if (groupDTOList != null) {
-            Iterator<GroupDTO> iterator = groupDTOList.iterator();
-            while (iterator.hasNext()) {
-                GroupDTO existingGroup = iterator.next();
-                if (existingGroup.id() == targetedGroupId) {
-                    iterator.remove();
-                    break;
-                }
-            }
-            json = gson.toJson(groupDTOList);
-            editor.putString("groups", json);
-            editor.apply();
-        }
-    }
-
     private void addUserPopup() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(getApi())
