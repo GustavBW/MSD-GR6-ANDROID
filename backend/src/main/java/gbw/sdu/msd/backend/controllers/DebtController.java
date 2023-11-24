@@ -4,10 +4,7 @@ import gbw.sdu.msd.backend.dtos.DebtDTO;
 import gbw.sdu.msd.backend.models.Debt;
 import gbw.sdu.msd.backend.models.Group;
 import gbw.sdu.msd.backend.models.User;
-import gbw.sdu.msd.backend.services.IDeptService;
-import gbw.sdu.msd.backend.services.IGroupRegistry;
-import gbw.sdu.msd.backend.services.INotificationService;
-import gbw.sdu.msd.backend.services.IUserRegistry;
+import gbw.sdu.msd.backend.services.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +21,13 @@ public class DebtController {
     private final IUserRegistry userRegistry;
     private final IGroupRegistry groupRegistry;
     private final IDeptService deptService;
+    private final IInvoiceRegistry invoiceRegistry;
     @Autowired
-    public DebtController(IUserRegistry userRegistry, IGroupRegistry groupRegistry,IDeptService deptService){
+    public DebtController(IUserRegistry userRegistry, IGroupRegistry groupRegistry, IDeptService deptService, IInvoiceRegistry invoiceRegistry){
         this.userRegistry = userRegistry;
         this.groupRegistry = groupRegistry;
         this.deptService = deptService;
+        this.invoiceRegistry = invoiceRegistry;
     }
 
     /**
@@ -224,7 +223,8 @@ public class DebtController {
     }
 
     /**
-     * Pay debt between two users
+     * Pay debt between two users.
+     * If the amount paid was too much, the remainder is returned.
      * @param userA id of user who pays
      * @param userB id of user to receive payment
      * @param amount how much
@@ -245,6 +245,9 @@ public class DebtController {
         if(userAFound == null || userBFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.processPayment(userAFound, userBFound, amount));
+        double remaining = deptService.processPayment(userAFound, userBFound, amount);
+        double actualPayedAmount = amount - remaining;
+        invoiceRegistry.addInvoice(userAFound, userBFound, actualPayedAmount);
+        return ResponseEntity.ok(remaining);
     }
 }
