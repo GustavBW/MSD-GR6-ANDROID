@@ -4,9 +4,7 @@ import static sdu.msd.ui.home.HomeView.getApi;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -163,14 +160,16 @@ public class GroupInfoView extends AppCompatActivity {
                 .build();
         userAPIService = retrofit.create(UserAPIService.class);
         LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.fragment_add_group_members, null);
+        View view = inflater.inflate(R.layout.fragment_add_group_members_popup, null);
         final AlertDialog alertD = new AlertDialog.Builder(this).create();
-        EditText editTextUsername = (EditText) view.findViewById(R.id.addUsernameInput);
-        EditText editTextLink = (EditText) view.findViewById(R.id.inviteLink);
-        Button copyLinkButton = (Button) view.findViewById(R.id.copyInviteLink);
-        Button addGroupMemberButton = (Button) view.findViewById(R.id.addUsernameButton);
+        EditText editTextUsername = view.findViewById(R.id.addUsernameInput);
+        EditText editTextLink = view.findViewById(R.id.inviteLink);
+        editTextLink.setEnabled(false);
+        Button copyLinkButton = view.findViewById(R.id.copyInviteLink);
+        Button addGroupMemberButton = view.findViewById(R.id.addUsernameButton);
+        Button closePopup = view.findViewById(R.id.closePopup);
 
-        copyLinkButton.setOnClickListener(popupView -> alertD.dismiss());
+        closePopup.setOnClickListener(popupView -> alertD.dismiss());
         addGroupMemberButton.setOnClickListener(popupView -> {
             addUserToGroup(editTextUsername.getText().toString());
         });

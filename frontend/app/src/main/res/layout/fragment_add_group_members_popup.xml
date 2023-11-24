@@ -8,6 +8,31 @@
     android:orientation="vertical">
 
 
+        <TextView
+            android:id="@+id/inviteMembersText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="20dp"
+            android:text="Invite Members"
+            android:textAlignment="center"
+            android:layout_toLeftOf="@id/closePopup"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:paddingTop="20dp"
+            />
+
+        <Button
+            android:id="@+id/closePopup"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/close_button"
+            android:textColor="@color/white"
+            android:text="X"
+            android:textSize="24sp"
+            />
+
+
 
         <EditText
             android:id="@+id/inviteLink"
@@ -19,6 +44,7 @@
             android:textAlignment="center"
             android:layout_height="wrap_content"
             android:inputType="none"
+            android:layout_below="@id/closePopup"
             />
 
         <Button
@@ -55,7 +81,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/buttoncolors"
             android:layout_marginTop="10dp"
-            android:text="Add User"
+            android:text="Invite User"
             android:textColor="@color/white"
             android:layout_below="@id/addUsernameInput"
             android:layout_centerInParent="true"
