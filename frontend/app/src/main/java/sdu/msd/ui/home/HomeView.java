@@ -41,7 +41,7 @@ import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
 
 public class HomeView extends AppCompatActivity {
-    private static final String API = "http://192.168.0.100:8080/api/v1/";
+    private static final String API = "http://10.0.2.2:8080/api/v1/";
     private GroupAPIService apiService;
     private static final String BASEURL = API + "users/";
     int userId;
@@ -177,6 +177,11 @@ public class HomeView extends AppCompatActivity {
     private List<GroupDTO> getSavedGroupsById(int adminId) {
         List<GroupDTO> allGroups = getSavedGroups();
         List<GroupDTO> filteredGroups = new ArrayList<>();
+
+        // Mnadatory check as if no groups exists the application will crash.
+        if (allGroups == null) {
+            return filteredGroups;
+        }
 
         for (GroupDTO group : allGroups) {
             if (group.adminId() == adminId) {

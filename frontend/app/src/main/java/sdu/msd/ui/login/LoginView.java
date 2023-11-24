@@ -49,8 +49,8 @@ public class LoginView extends AppCompatActivity {
     private void register() {
         register = findViewById(R.id.register);
         register.setOnClickListener(view -> {
-            Intent intet = new Intent(LoginView.this, CreateUserView.class);
-            startActivity(intet);
+            Intent intent = new Intent(LoginView.this, CreateUserView.class);
+            startActivity(intent);
 
         });
     }
