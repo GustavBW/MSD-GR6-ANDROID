@@ -265,6 +265,6 @@ public class DebtController {
         if(user == null || group == null){
             return ResponseEntity.notFound().build();
         }
-
+        return ResponseEntity.ok(deptService.processPayment(user, group, amount));
     }
 }
