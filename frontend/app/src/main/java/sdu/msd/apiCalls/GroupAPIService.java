@@ -23,4 +23,7 @@ public interface GroupAPIService {
 
     @POST("{groupId}/remove-user/{userInQuestion}")
     Call<Boolean> leaveGroup(@Path("groupId") int groupId, @Path("userInQuestion") int targetedUserId, @Body UserCredentialsDTO userCredentialsDTO);
+
+    @POST("{groupId}/add-user/{userId}")
+    Call<Boolean> addUserToGroup(@Path("groupId") int groupId, @Path("userId") int userId);
 }

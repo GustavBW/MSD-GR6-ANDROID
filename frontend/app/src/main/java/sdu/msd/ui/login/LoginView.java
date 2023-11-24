@@ -49,8 +49,8 @@ public class LoginView extends AppCompatActivity {
     private void register() {
         register = findViewById(R.id.register);
         register.setOnClickListener(view -> {
-            Intent intet = new Intent(LoginView.this, CreateUserView.class);
-            startActivity(intet);
+            Intent intent = new Intent(LoginView.this, CreateUserView.class);
+            startActivity(intent);
 
         });
     }
@@ -97,7 +97,6 @@ public class LoginView extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(LoginView.this, LoginView.class));  // Start a new instance of LoginView
                     }
-
 
                 }
             }

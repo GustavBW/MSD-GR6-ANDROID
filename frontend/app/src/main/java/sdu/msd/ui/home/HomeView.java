@@ -41,7 +41,7 @@ import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
 
 public class HomeView extends AppCompatActivity {
-    private static final String API = "http://192.168.0.100:8080/api/v1/";
+    private static final String API = "http://192.168.185.1:8080/api/v1/";
     private GroupAPIService apiService;
     private static final String BASEURL = API + "users/";
     int userId;
@@ -84,16 +84,7 @@ public class HomeView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(GroupAPIService.class);
-        boolean groupIsCreated = getIntent().getBooleanExtra("groupIsCreated",false);
-        boolean userLeftGroup = getIntent().getBooleanExtra("UserLeftGroup", false);
-        if(groupIsCreated || userLeftGroup){
-            getGroupsOfUser(userId);
-        }
-        else{
-            List<GroupDTO> userGroups = getSavedGroupsById(userId);
-            createGroupViews(userGroups);
-
-        }
+        getGroupsOfUser(userId);
 
     }
 
@@ -153,7 +144,6 @@ public class HomeView extends AppCompatActivity {
             groupButton.setTextSize(20);
             groupButton.setOnClickListener(view -> {
                 Intent intent = new Intent(HomeView.this, GroupView.class);
-                intent.putExtra("userId", userGroup.adminId());
                 intent.putExtra("groupId", userGroup.id());
                 startActivity(intent);
             });
@@ -164,25 +154,5 @@ public class HomeView extends AppCompatActivity {
 
     public static String getApi() {
         return API;
-    }
-
-    private List<GroupDTO>  getSavedGroups() {
-        SharedPreferences sharedPreferences = getSharedPreferences("group_data", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String groupJson = sharedPreferences.getString("groups", null);
-        Type listType = new TypeToken<ArrayList<GroupDTO>>(){}.getType();
-        return gson.fromJson(groupJson, listType);
-
-    }
-    private List<GroupDTO> getSavedGroupsById(int adminId) {
-        List<GroupDTO> allGroups = getSavedGroups();
-        List<GroupDTO> filteredGroups = new ArrayList<>();
-
-        for (GroupDTO group : allGroups) {
-            if (group.adminId() == adminId) {
-                filteredGroups.add(group);
-            }
-        }
-        return filteredGroups;
     }
 }

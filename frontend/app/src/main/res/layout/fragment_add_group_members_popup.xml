@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#282c34"
+    android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/inviteMembersText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:width="20dp"
+            android:text="Invite Members"
+            android:textAlignment="center"
+            android:layout_toLeftOf="@id/closePopup"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:paddingTop="20dp"
+            />
+
+        <Button
+            android:id="@+id/closePopup"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/close_button"
+            android:textColor="@color/white"
+            android:text="X"
+            android:textSize="24sp"
+            />
+
+
+
+        <EditText
+            android:id="@+id/inviteLink"
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border"
+            android:layout_marginHorizontal="20dp"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:layout_below="@id/closePopup"
+            />
+
+        <Button
+            android:id="@+id/copyInviteLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/buttoncolors"
+            android:layout_below="@id/inviteLink"
+            android:layout_centerInParent="true"
+            android:text="Copy link"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white" />
+
+
+        <EditText
+            android:id="@+id/addUsernameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/border"
+            android:hint="Username"
+            android:inputType="text"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:layout_below="@id/copyInviteLink"
+
+            />
+
+        <Button
+            android:id="@+id/addUsernameButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttoncolors"
+            android:layout_marginTop="10dp"
+            android:text="Invite User"
+            android:textColor="@color/white"
+            android:layout_below="@id/addUsernameInput"
+            android:layout_centerInParent="true"
+            />
+
+
+</RelativeLayout>
