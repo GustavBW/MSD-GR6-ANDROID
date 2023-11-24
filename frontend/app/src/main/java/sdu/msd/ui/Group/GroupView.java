@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.ui.AddExpense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
@@ -28,7 +29,7 @@ import sdu.msd.ui.profile.ProfileView;
 
 public class GroupView extends AppCompatActivity {
     int userId, groupId;
-    private Button payBtn;
+    private Button payBtn, addExpense;
     private GroupAPIService apiService;
 
     private ImageView groupInfo, editGroup;
@@ -87,6 +88,7 @@ public class GroupView extends AppCompatActivity {
         textView.setText(groupDTO.name());
         groupInfo = findViewById(R.id.groupInfo);
         editGroup = findViewById(R.id.editGroupBtn);
+        addExpense = findViewById(R.id.addExpense);
         // TODO: 17-11-2023
         /*
         The rest will be added soon when other features are done.
@@ -95,6 +97,15 @@ public class GroupView extends AppCompatActivity {
             Intent intent = new Intent(GroupView.this, NotificationsView.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
+        });
+
+        addExpense.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupView.this, AddExpenseView.class);
+            intent.putExtra("groupId", groupId);
+            intent.putExtra("groupNme", groupDTO.name());
+            intent.putExtra("groupDescription", groupDTO.descriptions());
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
         groupInfo.setOnClickListener(view -> {

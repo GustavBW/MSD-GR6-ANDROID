@@ -41,19 +41,18 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp" />
 
-        <TextView
-            android:id="@+id/activitesText"
+        <Button
+            android:id="@+id/addExpense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:width="10dp"
-            android:text="Activites"
+            android:layout_marginHorizontal="70dp"
+            android:background="@drawable/buttoncolors"
+            android:text="Add Expense"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp" />
-
+            tools:layout_editor_absoluteX="70dp" />
         <ImageView
             android:id="@+id/groupInfo"
             android:layout_width="50dp"
@@ -65,6 +64,19 @@
             tools:layout_editor_absoluteY="22dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/activitesText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:width="10dp"
+        android:text="Activites"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
 
 
 
