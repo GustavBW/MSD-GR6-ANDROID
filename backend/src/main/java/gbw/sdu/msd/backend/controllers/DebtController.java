@@ -33,7 +33,8 @@ public class DebtController {
     }
 
     /**
-     * Distributes debt of UserA between all users listed. I.e. api/v1/debt/{UserA}/distribute/200?creditors=1,2,3,4
+     * Distributes debt of UserA between all users listed. I.e. api/v1/debt/{UserA}/distribute/200?creditors=1,2,3,4.
+     * Append the groupId if this is a group activity.
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "UserA not found or any creditor not found"),
@@ -248,10 +249,10 @@ public class DebtController {
     /**
      * Pay debt between two users.
      * If the amount paid was too much, the remainder is returned.
+     * Append the groupId if this was a group activity.
      * @param userA id of user who pays
      * @param userB id of user to receive payment
      * @param amount how much
-     * @return Pay debt between two users
      */
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "No such user"),
@@ -259,7 +260,7 @@ public class DebtController {
             @ApiResponse(responseCode = "200", description = "Success")
     })
     @PostMapping(path="/{userA}/pay/{userB}/amount/{amount}")
-    public @ResponseBody ResponseEntity<Double> totalDebtOwedToUser(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount){
+    public @ResponseBody ResponseEntity<Double> totalDebtOwedToUser(@PathVariable Integer userA, @PathVariable Integer userB, @PathVariable Double amount, @RequestParam(required = false) Integer groupId){
         if(userA == null || userB == null || amount == null){
             return ResponseEntity.badRequest().build();
         }
@@ -268,7 +269,18 @@ public class DebtController {
         if(userAFound == null || userBFound == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(deptService.processPayment(userAFound, userBFound, amount));
+        double remainder = deptService.processPayment(userAFound, userBFound, amount);
+        double actualPayedAmount = amount - remainder;
+        if(groupId != null && groupRegistry.get(groupId) != null){
+            groupRegistry.addActivity(groupId,
+                    new GroupActivityDTO(
+                            UserDTO.of(userAFound),
+                            actualPayedAmount,
+                            UserDTO.of(List.of(userBFound)),
+                            false
+                    ));
+        }
+        return ResponseEntity.ok(remainder);
     }
 
     /**
