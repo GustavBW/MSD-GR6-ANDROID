@@ -11,6 +11,7 @@ public final class GroupDTO {
     private final String descriptions;
     private final int groupColor;
     public static GroupDTO groupDTO;
+    public final List<Integer> users;
 
 
     public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users  ){
@@ -19,6 +20,7 @@ public final class GroupDTO {
         this.name = name;
         this.descriptions = descriptions;
         this.groupColor = groupColor;
+        this.users = users;
     }
 
     public int id() {
@@ -39,6 +41,10 @@ public final class GroupDTO {
 
     public int getGroupColor() {
         return groupColor;
+    }
+
+    public List<Integer> getUsers() {
+        return users;
     }
 
     @Override

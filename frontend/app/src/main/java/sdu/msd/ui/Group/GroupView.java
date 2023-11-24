@@ -102,8 +102,6 @@ public class GroupView extends AppCompatActivity {
         addExpense.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, AddExpenseView.class);
             intent.putExtra("groupId", groupId);
-            intent.putExtra("groupNme", groupDTO.name());
-            intent.putExtra("groupDescription", groupDTO.descriptions());
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
