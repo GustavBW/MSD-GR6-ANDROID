@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -74,7 +75,7 @@ public class AddExpenseView extends AppCompatActivity {
     private Button confirmButton;
     private EditText amountEditText;
     private double amount;
-
+    LinearLayout attachmentButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +83,7 @@ public class AddExpenseView extends AppCompatActivity {
         setContentView(R.layout.fragement_add_expense);
         sharedPreferencesUsers = getSharedPreferences("user_data", MODE_PRIVATE);
 
+        attachmentButton = findViewById(R.id.attachment);
         createProfileView();
 
         // User Api service:
@@ -145,11 +147,9 @@ public class AddExpenseView extends AppCompatActivity {
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
-        LinearLayout attachmentButton = findViewById(R.id.attachment); // Go to take camera view:
         attachmentButton.setOnClickListener(view -> {
-            Intent intent = new Intent(AddExpenseView.this, CameraView.class);
+           Intent intent = new Intent(AddExpenseView.this,CameraView.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
     }
