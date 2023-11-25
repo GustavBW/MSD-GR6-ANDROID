@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.GroupDTO;
-import sdu.msd.ui.addExpense.AddExpenseView;
+import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;

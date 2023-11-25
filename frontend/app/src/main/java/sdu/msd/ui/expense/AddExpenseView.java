@@ -1,4 +1,4 @@
-package sdu.msd.ui.addExpense;
+package sdu.msd.ui.expense;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
@@ -9,13 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,7 +22,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +63,7 @@ public class AddExpenseView extends AppCompatActivity {
     private GroupAPIService groupApiService;
 
     // Group Information:
-    int groupId;
+    private int groupId;
 
     // Payment information:
     private ArrayList<Integer> selectedMembers;
@@ -136,6 +132,7 @@ public class AddExpenseView extends AppCompatActivity {
         Button closeButton = findViewById(R.id.buttonClose); // Go to group view:
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
@@ -143,12 +140,14 @@ public class AddExpenseView extends AppCompatActivity {
         Button cancelButton = findViewById(R.id.cancel); // Go to group view:
         cancelButton.setOnClickListener(view -> {
             Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
         attachmentButton.setOnClickListener(view -> {
            Intent intent = new Intent(AddExpenseView.this,CameraView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
         });
 
