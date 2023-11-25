@@ -17,6 +17,6 @@ public interface DebtAPIService {
     Call<Boolean> addDebtToMember(@Path("userA") int userA, @Path("amount") double amount, @Query("creditors") List<Integer> creditors, @Query("groupId") Integer groupI);
 
     @POST("{userA}/reverse-distribute/{amount}")
-    Call<Boolean> addDebtToMembers(@Path("userA") int userA, @Path("amount") double amount, @Query("debtees") List<Integer> debtees , @Query("groupId") Integer groupI);
+    Call<Boolean> addDebtToMembers(@Path("userA") int userA, @Path("amount") double amount, @Query("debtees") List<Integer> debtees, @Query("groupId") Integer groupI);
 
 }
