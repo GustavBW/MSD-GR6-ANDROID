@@ -7,8 +7,8 @@ import java.util.Objects;
 public final class GroupDTO {
     private final int id;
     private final int adminId;
-    private final String name;
-    private final String descriptions;
+    private String name;
+    private String descriptions;
     private final int groupColor;
     public static GroupDTO groupDTO;
 
@@ -35,6 +35,10 @@ public final class GroupDTO {
     public String name() {
         return name;
     }
+
+    public void updateName(String updatedName){name = updatedName;}
+
+    public void updateDescription(String updatedDescription){descriptions = updatedDescription;}
 
     public String descriptions() {
         return descriptions;

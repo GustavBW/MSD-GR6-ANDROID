@@ -21,6 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.ui.editGroup.EditGroup;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
@@ -48,9 +49,6 @@ public class GroupView extends AppCompatActivity {
         apiService = retrofit.create(GroupAPIService.class);
         getGroup(groupId);
         doPay();
-
-
-
     }
 
     private void doPay(){
@@ -92,7 +90,7 @@ public class GroupView extends AppCompatActivity {
         The rest will be added soon when other features are done.
          */
         editGroup.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupView.this, NotificationsView.class);
+            Intent intent = new Intent(GroupView.this, EditGroup.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         });

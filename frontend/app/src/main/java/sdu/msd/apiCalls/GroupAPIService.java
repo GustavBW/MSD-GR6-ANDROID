@@ -26,4 +26,12 @@ public interface GroupAPIService {
 
     @POST("{groupId}/add-user/{userId}")
     Call<Boolean> addUserToGroup(@Path("groupId") int groupId, @Path("userId") int userId);
+
+    @GET("{groupId}/is-admin/{userId}")
+    Call<Boolean> getUserIsAdmin(@Path("groupId") int groupId, @Path("userId") int userId);
+
+    @POST("{groupId}/delete")
+    Call<GroupDTO> deleteGroup(@Path("groupId") int groupId);
+
+
 }
