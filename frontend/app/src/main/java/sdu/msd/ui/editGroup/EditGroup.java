@@ -22,7 +22,11 @@ import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UpdateGroupDTO;
+import sdu.msd.dtos.UserCredentialsDTO;
 import sdu.msd.ui.Group.GroupView;
+import sdu.msd.ui.createUser.CreateUserView;
+import sdu.msd.ui.home.HomeView;
+import sdu.msd.ui.login.LoginView;
 
 public class EditGroup extends AppCompatActivity {
 
@@ -36,14 +40,6 @@ public class EditGroup extends AppCompatActivity {
 
 
     private static final String BASEURLGROUP =  getApi() + "groups/";
-
-
-    /*
-    1- check if admin
-    2- update data
-     */
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +57,16 @@ public class EditGroup extends AppCompatActivity {
         groupNameEditText = findViewById(R.id.groupNameEditText);
         saveChangesButton = findViewById(R.id.saveButton);
         deleteGroupButton = findViewById(R.id.deleteGroup);
+        cancelCreation();
         getGroup(groupId);
+    }
 
+    private void cancelCreation(){
+        closeButton = findViewById(R.id.buttonClose);
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(EditGroup.this, HomeView.class);
+            startActivity(intent);
+        });
     }
 
     private void checkIfAdmin(int userId) {
@@ -71,8 +75,7 @@ public class EditGroup extends AppCompatActivity {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()){
-                    updateData();
-
+                    deleteGroup();
                 }
             }
 
@@ -108,26 +111,54 @@ public class EditGroup extends AppCompatActivity {
         groupDescriptionEditText.setText(groupDTO.descriptions());
 
         saveChangesButton.setOnClickListener(view -> {
+            updateData();
+        });
+
+        deleteGroupButton.setOnClickListener(view -> {
             checkIfAdmin(userId);
         });
     }
 
-    public void updateData(){
-        UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString());
-        Call<GroupDTO> call = groupApiService.updateGroup(updateGroupDTO.getIdOfActingUser(),updateGroupDTO);
+    public void deleteGroup(){
+        String username = sharedPreferences.getString("username","");
+        String password = sharedPreferences.getString("password","");
+        UserCredentialsDTO userCredentialsDTO = new UserCredentialsDTO(username,password);
+        Call<GroupDTO> call = groupApiService.deleteGroup(groupId,userCredentialsDTO);
+
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
-                Toast.makeText(EditGroup.this, "false", Toast.LENGTH_SHORT).show();
+                if(response.isSuccessful() && response.body() != null){
+                    Toast.makeText(EditGroup.this,"works",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(EditGroup.this, HomeView.class);
+                    intent.putExtra("groupId",groupId);
+                    startActivity(intent);
+                    finish();
+                } else {Toast.makeText(EditGroup.this,"fail",Toast.LENGTH_LONG).show();}
+            }
+
+            @Override
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
+                Toast.makeText(EditGroup.this,t.toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+    public void updateData(){
+        UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(groupId,userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString(),0);
+        Call<GroupDTO> call = groupApiService.updateGroup(groupId,updateGroupDTO);
+        call.enqueue(new Callback<GroupDTO>() {
+            @Override
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if(response.isSuccessful() && response.body() != null){
                     Toast.makeText(EditGroup.this, "true", Toast.LENGTH_SHORT).show();
                     GroupDTO groupDTO = response.body();
                     Toast.makeText(EditGroup.this, "Group info has been updated", Toast.LENGTH_LONG).show();
-                    updateView(groupDTO);
                     Intent intent = new Intent(EditGroup.this, GroupView.class);
                     intent.putExtra("groupId", groupId);
                     startActivity(intent);
                     finish();
+                } else {Toast.makeText(EditGroup.this, "false", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -137,12 +168,6 @@ public class EditGroup extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void updateView(GroupDTO groupDTO){
-        groupNameEditText.setText(groupDTO.name());
-        groupDescriptionEditText.setText(groupDTO.descriptions());
-
     }
 
 }

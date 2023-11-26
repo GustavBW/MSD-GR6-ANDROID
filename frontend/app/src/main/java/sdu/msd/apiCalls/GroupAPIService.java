@@ -33,7 +33,7 @@ public interface GroupAPIService {
     Call<Boolean> getUserIsAdmin(@Path("groupId") int groupId, @Path("userId") int userId);
 
     @POST("{groupId}/delete")
-    Call<GroupDTO> deleteGroup(@Path("groupId") int groupId);
+    Call<GroupDTO> deleteGroup(@Path("groupId") int groupId, @Body UserCredentialsDTO userCredentialsDTO);
 
     @GET("{groupId}/activites")
     Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId, @Query("amount") Integer amount);
