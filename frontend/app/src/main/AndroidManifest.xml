@@ -79,6 +79,10 @@
             android:name=".ui.displayPicture.DisplayPictureView"
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar"></activity>
+        <activity
+            android:name=".ui.editGroup.EditGroup"
+            android:exported="true"
+            android:theme="@style/Theme.Frontend.NoActionBar"></activity>
         
 
     </application>

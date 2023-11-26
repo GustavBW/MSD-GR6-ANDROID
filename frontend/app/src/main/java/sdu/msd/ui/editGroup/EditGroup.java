@@ -21,6 +21,7 @@ import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UpdateGroupDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.createGroup.CreateGroupView;
 import sdu.msd.ui.home.HomeView;
@@ -33,6 +34,7 @@ public class EditGroup extends AppCompatActivity {
     private GroupAPIService apiService;
     private SharedPreferences sharedPreferences;
 
+
     private static final String BASEURL =  getApi() + "groups/";
 
 
@@ -42,12 +44,15 @@ public class EditGroup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         groupId = getIntent().getIntExtra("groupId",-1);
+        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId",-1);
         setContentView(R.layout.fragment_edit_group);
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(GroupAPIService.class);
+
         getGroup(groupId);
 
     }
@@ -59,6 +64,7 @@ public class EditGroup extends AppCompatActivity {
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GroupDTO groupDTO = response.body();
+                    Toast.makeText(EditGroup.this,groupDTO.descriptions(),Toast.LENGTH_LONG).show();
                     createGroupEditView(groupDTO);
                 }
             }
@@ -76,13 +82,40 @@ public class EditGroup extends AppCompatActivity {
         groupNameEditText = findViewById(R.id.groupNameEditText);
         saveChangesButton = findViewById(R.id.saveButton);
         deleteGroupButton = findViewById(R.id.deleteGroup);
-        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+
+        groupNameEditText.setText(groupDTO.name());
+        groupDescriptionEditText.setText(groupDTO.descriptions());
 
         saveChangesButton.setOnClickListener(view -> {
-            groupDTO.updateName(groupNameEditText.getText().toString());
-            groupDTO.updateDescription(groupDescriptionEditText.getText().toString());
-                
+            updateData();
         });
+    }
+
+    public void updateData(){
+        UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString());
+        Call<GroupDTO> call = apiService.updateGroup(updateGroupDTO.getIdOfActingUser(),updateGroupDTO);
+        call.enqueue(new Callback<GroupDTO>() {
+            @Override
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    GroupDTO groupDTO = response.body();
+                    Toast.makeText(EditGroup.this, "Group info has been updated", Toast.LENGTH_LONG).show();
+                    updateView(groupDTO);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
+                Toast.makeText(EditGroup.this, t.toString(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+
+    public void updateView(GroupDTO groupDTO){
+        groupNameEditText.setText(groupDTO.name());
+        groupDescriptionEditText.setText(groupDTO.descriptions());
 
     }
+
 }

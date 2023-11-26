@@ -35,6 +35,7 @@ import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
+import sdu.msd.ui.editGroup.EditGroup;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
@@ -248,7 +249,7 @@ public class GroupView extends AppCompatActivity {
         The rest will be added soon when other features are done.
          */
         editGroup.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupView.this, NotificationsView.class);
+            Intent intent = new Intent(GroupView.this, EditGroup.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         });
