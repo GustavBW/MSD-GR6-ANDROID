@@ -28,8 +28,8 @@ public interface GroupAPIService {
     @POST("{groupId}/add-user/{userId}")
     Call<Boolean> addUserToGroup(@Path("groupId") int groupId, @Path("userId") int userId);
 
-    @GET("{groupId}/activites")
-    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId, @Query("amount") Integer amount);
+    @GET("{groupId}/activities")
+    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId);
 
 
 }

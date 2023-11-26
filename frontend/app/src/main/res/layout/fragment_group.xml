@@ -6,43 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#282c34"
-    tools:ignore="MissingConstraints">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/upperNavigation"
+    android:background="#282c34">
+    <TextView
+        android:id="@+id/groupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="20dp"
-        >
-
-        <Button
-            android:id="@+id/buttonClose"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:background="@drawable/close_button"
-            android:text="X"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/groupName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:width="20dp"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:layout_marginRight="75dp"
-            android:textSize="30sp"
-            android:textStyle="italic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+        android:width="20dp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="italic"
+        tools:ignore="MissingConstraints"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/allGroups"
@@ -110,22 +84,24 @@
         android:id="@+id/view3"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBaseline_toBaselineOf="@id/createGroupView"
         android:background="@drawable/border"
         tools:ignore="MissingConstraints" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:layout_marginHorizontal="20dp"
         >
         <LinearLayout
+            android:id="@+id/activitiesContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/activites"
             >
+            <!--
             <TextView
                 android:id="@+id/activity1"
                 android:layout_width="match_parent"
@@ -163,73 +139,33 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/divider_line" />
 
+                !-->
+
 
         </LinearLayout>
 
 
     </ScrollView>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/createGroupView"
+        android:background="@drawable/border"
+        tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <FrameLayout
             android:id="@+id/paymentPopUp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="80"
+            android:layout_height="match_parent"
             android:gravity="bottom"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints">
-
-            <!--
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/activites"
-                android:layout_marginBottom="10dp"
-                android:background="#1f2328"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="40dp"
-                        android:text="You owe"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="20dp" />
-                    <TextView
-                        android:id="@+id/oweMomey"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="0 DKK"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="20dp"
-                        />
-
-
-                </LinearLayout>
-
-
-
-
-                <Button
-                    android:id="@+id/pay"
-                    android:layout_width="match_parent"
-                    android:layout_marginHorizontal="70dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/buttoncolors"
-                    android:text="Pay"
-                    android:textAlignment="center"
-                    android:textColor="@color/white" />
-
-            </LinearLayout>
-            !-->
 
         </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

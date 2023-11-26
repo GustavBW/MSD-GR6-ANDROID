@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 public class CameraView extends AppCompatActivity {
 
@@ -92,7 +93,7 @@ public class CameraView extends AppCompatActivity {
                         // Start DisplayPictureActivity and pass the image URI
                         Intent intent = new Intent(CameraView.this, DisplayPictureView.class);
                         intent.putExtra("groupId", groupId);
-                        saveImageLocally(output.getSavedUri());
+                        saveImageLocally(Objects.requireNonNull(output.getSavedUri()));
                         startActivity(intent);
                         Log.d(TAG, msg);
                     }
