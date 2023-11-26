@@ -1,33 +1,34 @@
 package sdu.msd.dtos;
 
 public class UpdateGroupDTO {
-    private int idOfActingUser, updateColor, groupId;
-    private String updateTitle, updateDescription;
+    private int idOfActingUser, updatedColor, groupId;
+    private String updatedTitle, updatedDescription;
 
-    public UpdateGroupDTO(int groupId, int idOfActingUser, String updateTitle, String updateDescription){
+    public UpdateGroupDTO(int groupId, int idOfActingUser, String updatedTitle, String updatedDescription){
+        this.groupId = groupId;
         this.idOfActingUser = idOfActingUser;
-        this.updateTitle = updateTitle;
-        this.updateDescription = updateDescription;
+        this.updatedTitle = updatedTitle;
+        this.updatedDescription = updatedDescription;
     }
 
-    public UpdateGroupDTO(int groupId, int idOfActingUser, String updateTitle, String updateDescription, int updateColor){
+    public UpdateGroupDTO(int groupId, int idOfActingUser, String updateTitle, String updateDescription, int updatedColor){
         this(groupId, idOfActingUser,updateTitle,updateDescription);
-        this.updateColor = updateColor;
+        this.updatedColor = updatedColor;
     }
 
-    public int getIdOfActingUser() {
+    public int idOfActingUser() {
         return idOfActingUser;
     }
 
-    public int getUpdateColor() {
-        return updateColor;
+    public int updatedColor() {
+        return updatedColor;
     }
 
-    public String getUpdateDescription() {
-        return updateDescription;
+    public String updatedDescription() {
+        return updatedDescription;
     }
 
-    public String getUpdateTitle() {
-        return updateTitle;
+    public String updatedTitle() {
+        return updatedTitle;
     }
 }

@@ -57,12 +57,12 @@ public class EditGroup extends AppCompatActivity {
         groupNameEditText = findViewById(R.id.groupNameEditText);
         saveChangesButton = findViewById(R.id.saveButton);
         deleteGroupButton = findViewById(R.id.deleteGroup);
+        closeButton = findViewById(R.id.buttonClose);
         cancelCreation();
         getGroup(groupId);
     }
 
     private void cancelCreation(){
-        closeButton = findViewById(R.id.buttonClose);
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(EditGroup.this, HomeView.class);
             startActivity(intent);
@@ -100,20 +100,15 @@ public class EditGroup extends AppCompatActivity {
             public void onFailure(Call<GroupDTO> call, Throwable t) {
                 Toast.makeText(EditGroup.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
                 t.printStackTrace(); // Log the exception for debugging purposes
-
             }
         });
     }
-
     private void createGroupEditView(GroupDTO groupDTO){
-
         groupNameEditText.setText(groupDTO.name());
         groupDescriptionEditText.setText(groupDTO.descriptions());
-
         saveChangesButton.setOnClickListener(view -> {
             updateData();
         });
-
         deleteGroupButton.setOnClickListener(view -> {
             checkIfAdmin(userId);
         });
