@@ -7,18 +7,17 @@ import java.util.Objects;
 public final class GroupDTO {
     private final int id;
     private final int adminId;
-    private String name;
-    private String descriptions;
+    private final String name;
+    private final String description;
     private final int groupColor;
-    public static GroupDTO groupDTO;
     public final List<Integer> users;
 
 
-    public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users  ){
+    public GroupDTO(int id, int adminId, String name, String description, int groupColor, List<Integer> users  ){
         this.id = id;
         this.adminId = adminId;
         this.name = name;
-        this.descriptions = descriptions;
+        this.description = description;
         this.groupColor = groupColor;
         this.users = users;
     }
@@ -35,12 +34,8 @@ public final class GroupDTO {
         return name;
     }
 
-    public void updateName(String updatedName){name = updatedName;}
-
-    public void updateDescription(String updatedDescription){descriptions = updatedDescription;}
-
     public String descriptions() {
-        return descriptions;
+        return description;
     }
 
     public int getGroupColor() {
@@ -52,28 +47,12 @@ public final class GroupDTO {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        GroupDTO that = (GroupDTO) obj;
-        return this.id == that.id &&
-                this.adminId == that.adminId &&
-                Objects.equals(this.name, that.name) &&
-                Objects.equals(this.descriptions, that.descriptions);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, adminId, name, descriptions,groupColor);
-    }
-
-    @Override
     public String toString() {
         return "GroupDTO[" +
                 "id=" + id + ", " +
                 "adminId=" + adminId + ", " +
                 "name=" + name + ", " +
-                "descriptions=" + descriptions + ", " +
+                "descriptions=" + description + ", " +
                 "groupColor=" + groupColor + "," +
         ']';
     }

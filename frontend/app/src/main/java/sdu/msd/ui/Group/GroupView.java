@@ -40,6 +40,7 @@ import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
+import sdu.msd.ui.profile.ProfileView;
 
 public class GroupView extends AppCompatActivity {
     private int userId, groupId;
@@ -89,6 +90,25 @@ public class GroupView extends AppCompatActivity {
 
 
 
+    }
+    private void getGroup(int groupId){
+        Call<GroupDTO> call = apiService.getGroup(groupId);
+        call.enqueue(new Callback<GroupDTO>() {
+            @Override
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GroupDTO groupDTO = response.body();
+                    Toast.makeText(GroupView.this, "ss" + response.body().descriptions(), Toast.LENGTH_SHORT).show();
+                    createGroupView(groupDTO);
+                }
+            }
+            @Override
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
+                Toast.makeText(GroupView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
+                t.printStackTrace(); // Log the exception for debugging purposes
+
+            }
+        });
     }
 
     private void getGroupActivities(){
@@ -219,24 +239,7 @@ public class GroupView extends AppCompatActivity {
 
     }
 
-    private void getGroup(int groupId){
-        Call<GroupDTO> call = apiService.getGroup(groupId);
-        call.enqueue(new Callback<GroupDTO>() {
-            @Override
-            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    GroupDTO groupDTO = response.body();
-                    createGroupView(groupDTO);
-                }
-                }
-            @Override
-            public void onFailure(Call<GroupDTO> call, Throwable t) {
-                Toast.makeText(GroupView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
-                t.printStackTrace(); // Log the exception for debugging purposes
 
-            }
-        });
-    }
 
     private void createGroupView(GroupDTO groupDTO){
         TextView textView = findViewById(R.id.groupName);
@@ -270,6 +273,11 @@ public class GroupView extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
-
+        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupView.this, HomeView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
     }
 }
