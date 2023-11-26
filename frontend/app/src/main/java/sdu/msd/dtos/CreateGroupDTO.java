@@ -15,36 +15,20 @@ public class CreateGroupDTO {
         this.groupColor = groupColor;
     }
 
-    public int getIdOfAdmin() {
+
+    public int idOfAdmin() {
         return idOfAdmin;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDesc() {
+    public String desc() {
         return desc;
     }
 
-    public int getGroupColor() {
+
+    public int groupColor() {
         return groupColor;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        CreateGroupDTO that = (CreateGroupDTO) obj;
-        return this.idOfAdmin == that.idOfAdmin &&
-                Objects.equals(this.name, that.name) &&
-                Objects.equals(this.desc, that.desc);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idOfAdmin, name, desc,groupColor);
-    }
 
     @Override
     public String toString() {

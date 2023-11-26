@@ -104,7 +104,8 @@ public class CreateGroupView extends AppCompatActivity {
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(CreateGroupView.this, "name" + response.body().name() + "desc" + response.body().descriptions(), Toast.LENGTH_SHORT).show();
                     GroupDTO groupDTO = response.body();
                     if (groupDTO != null) {
                         Intent intent = new Intent(CreateGroupView.this, HomeView.class);
