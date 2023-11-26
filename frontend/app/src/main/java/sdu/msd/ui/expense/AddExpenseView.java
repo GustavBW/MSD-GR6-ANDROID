@@ -1,4 +1,4 @@
-package sdu.msd.ui.addExpense;
+package sdu.msd.ui.expense;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
@@ -11,10 +11,8 @@ import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -24,7 +22,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +63,7 @@ public class AddExpenseView extends AppCompatActivity {
     private GroupAPIService groupApiService;
 
     // Group Information:
-    int groupId;
+    private int groupId;
 
     // Payment information:
     private ArrayList<Integer> selectedMembers;
@@ -74,7 +71,7 @@ public class AddExpenseView extends AppCompatActivity {
     private Button confirmButton;
     private EditText amountEditText;
     private double amount;
-
+    LinearLayout attachmentButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +79,7 @@ public class AddExpenseView extends AppCompatActivity {
         setContentView(R.layout.fragement_add_expense);
         sharedPreferencesUsers = getSharedPreferences("user_data", MODE_PRIVATE);
 
+        attachmentButton = findViewById(R.id.attachment);
         createProfileView();
 
         // User Api service:
@@ -134,6 +132,7 @@ public class AddExpenseView extends AppCompatActivity {
         Button closeButton = findViewById(R.id.buttonClose); // Go to group view:
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
@@ -141,15 +140,15 @@ public class AddExpenseView extends AppCompatActivity {
         Button cancelButton = findViewById(R.id.cancel); // Go to group view:
         cancelButton.setOnClickListener(view -> {
             Intent intent = new Intent(AddExpenseView.this, GroupView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
-        LinearLayout attachmentButton = findViewById(R.id.attachment); // Go to take camera view:
         attachmentButton.setOnClickListener(view -> {
-            Intent intent = new Intent(AddExpenseView.this, CameraView.class);
+           Intent intent = new Intent(AddExpenseView.this,CameraView.class);
+            intent.putExtra("groupId", groupId);
             startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
     }
@@ -175,6 +174,7 @@ public class AddExpenseView extends AppCompatActivity {
     }
 
     private void getMembers(List<Integer> userIds) {
+        userIds.removeIf(userId -> userId == this.userId);
         Call<List<UserDTO>> call = userApiService.getUsersFromId(userIds);
         call.enqueue(new Callback<List<UserDTO>>() {
             @Override
@@ -278,7 +278,7 @@ public class AddExpenseView extends AppCompatActivity {
         confirmButton.setOnClickListener(view -> {
             checkIfMemberIsSelected();
             if (amountEditText.getText().length() != 0) {
-                amount = Double.parseDouble(amountEditText.getText().toString()) / (double) selectedMembers.size();
+                amount = Double.parseDouble(amountEditText.getText().toString());
             } else {
                 amount = 0;
                 Toast.makeText(this, "Please Choose the amount", Toast.LENGTH_SHORT).show();
@@ -300,6 +300,7 @@ public class AddExpenseView extends AppCompatActivity {
                         intent.putExtra("groupId", groupId);
                         Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
                         startActivity(intent);
+                        finish();
                         overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
                     }
                 }

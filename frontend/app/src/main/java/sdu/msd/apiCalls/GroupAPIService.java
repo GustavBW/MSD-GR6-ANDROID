@@ -9,6 +9,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import sdu.msd.dtos.CreateGroupDTO;
+import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 
@@ -26,4 +27,9 @@ public interface GroupAPIService {
 
     @POST("{groupId}/add-user/{userId}")
     Call<Boolean> addUserToGroup(@Path("groupId") int groupId, @Path("userId") int userId);
+
+    @GET("{groupId}/activites")
+    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId, @Query("amount") Integer amount);
+
+
 }

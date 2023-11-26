@@ -74,8 +74,10 @@ public class GroupRegistry implements IGroupRegistry{
     public Boolean addUser(int idOfGroup, User user) {
         Group group = groupsById.get(idOfGroup);
         if(group == null) return false;
-        group.users().add(user);
-        groupsOfUser.computeIfAbsent(user.id(), k -> new ArrayList<>()).add(group);
+        if(!group.users().contains(user)){
+            group.users().add(user);
+            groupsOfUser.computeIfAbsent(user.id(), k -> new ArrayList<>()).add(group);
+        }
         return true;
     }
 

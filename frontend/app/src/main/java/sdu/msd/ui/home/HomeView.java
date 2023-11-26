@@ -100,7 +100,6 @@ public class HomeView extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<GroupDTO> userGroups = response.body();
                     createGroupViews(userGroups);
-
                 }
             }
 
