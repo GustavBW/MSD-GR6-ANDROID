@@ -210,8 +210,8 @@ public class GroupInfoView extends AppCompatActivity {
         });
     }
 
-    private void getUsersFromId(int[] userIds) {
-        Call<List<UserDTO>> call = userAPIService.getUserFromId(userIds);
+    private void getUsersFromId(List<Integer> userIds) {
+        Call<List<UserDTO>> call = userAPIService.getUsersFromId(userIds);
         call.enqueue(new Callback<List<UserDTO>>() {
             @Override
             public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {

@@ -33,5 +33,8 @@ public interface GroupAPIService {
     @POST("{groupId}/delete")
     Call<GroupDTO> deleteGroup(@Path("groupId") int groupId);
 
+    @GET("{groupId}/activites")
+    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId, @Query("amount") Integer amount);
+
 
 }
