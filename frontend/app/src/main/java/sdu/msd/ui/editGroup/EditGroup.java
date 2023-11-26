@@ -19,24 +19,29 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
-import sdu.msd.dtos.CreateGroupDTO;
+import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UpdateGroupDTO;
 import sdu.msd.ui.Group.GroupView;
-import sdu.msd.ui.createGroup.CreateGroupView;
-import sdu.msd.ui.home.HomeView;
 
 public class EditGroup extends AppCompatActivity {
 
     int userId, groupId;
     private Button saveChangesButton, deleteGroupButton, closeButton;
     private EditText groupNameEditText, groupDescriptionEditText;
-    private GroupAPIService apiService;
+    private GroupAPIService groupApiService;
+    private UserAPIService userAPIService;
+    private  Retrofit retrofit;
     private SharedPreferences sharedPreferences;
 
 
-    private static final String BASEURL =  getApi() + "groups/";
+    private static final String BASEURLGROUP =  getApi() + "groups/";
 
+
+    /*
+    1- check if admin
+    2- update data
+     */
 
 
 
@@ -47,24 +52,44 @@ public class EditGroup extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId",-1);
         setContentView(R.layout.fragment_edit_group);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASEURL)
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASEURLGROUP)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        apiService = retrofit.create(GroupAPIService.class);
-
+        groupApiService = retrofit.create(GroupAPIService.class);
+        groupDescriptionEditText = findViewById(R.id.groupDescEditText);
+        groupNameEditText = findViewById(R.id.groupNameEditText);
+        saveChangesButton = findViewById(R.id.saveButton);
+        deleteGroupButton = findViewById(R.id.deleteGroup);
         getGroup(groupId);
 
     }
 
+    private void checkIfAdmin(int userId) {
+        Call<Boolean> call = groupApiService.getUserIsAdmin(groupId,userId);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()){
+                    updateData();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void getGroup(int groupId){
-        Call<GroupDTO> call = apiService.getGroup(groupId);
+        Call<GroupDTO> call = groupApiService.getGroup(groupId);
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GroupDTO groupDTO = response.body();
-                    Toast.makeText(EditGroup.this,groupDTO.descriptions(),Toast.LENGTH_LONG).show();
                     createGroupEditView(groupDTO);
                 }
             }
@@ -78,29 +103,31 @@ public class EditGroup extends AppCompatActivity {
     }
 
     private void createGroupEditView(GroupDTO groupDTO){
-        groupDescriptionEditText = findViewById(R.id.groupDescEditText);
-        groupNameEditText = findViewById(R.id.groupNameEditText);
-        saveChangesButton = findViewById(R.id.saveButton);
-        deleteGroupButton = findViewById(R.id.deleteGroup);
 
         groupNameEditText.setText(groupDTO.name());
         groupDescriptionEditText.setText(groupDTO.descriptions());
 
         saveChangesButton.setOnClickListener(view -> {
-            updateData();
+            checkIfAdmin(userId);
         });
     }
 
     public void updateData(){
         UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString());
-        Call<GroupDTO> call = apiService.updateGroup(updateGroupDTO.getIdOfActingUser(),updateGroupDTO);
+        Call<GroupDTO> call = groupApiService.updateGroup(updateGroupDTO.getIdOfActingUser(),updateGroupDTO);
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                Toast.makeText(EditGroup.this, "false", Toast.LENGTH_SHORT).show();
                 if(response.isSuccessful() && response.body() != null){
+                    Toast.makeText(EditGroup.this, "true", Toast.LENGTH_SHORT).show();
                     GroupDTO groupDTO = response.body();
                     Toast.makeText(EditGroup.this, "Group info has been updated", Toast.LENGTH_LONG).show();
                     updateView(groupDTO);
+                    Intent intent = new Intent(EditGroup.this, GroupView.class);
+                    intent.putExtra("groupId", groupId);
+                    startActivity(intent);
+                    finish();
                 }
             }
 
