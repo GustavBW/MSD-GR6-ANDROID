@@ -89,6 +89,25 @@ public class GroupView extends AppCompatActivity {
 
 
     }
+    private void getGroup(int groupId){
+        Call<GroupDTO> call = apiService.getGroup(groupId);
+        call.enqueue(new Callback<GroupDTO>() {
+            @Override
+            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    GroupDTO groupDTO = response.body();
+                    Toast.makeText(GroupView.this, "ss" + response.body().descriptions(), Toast.LENGTH_SHORT).show();
+                    createGroupView(groupDTO);
+                }
+            }
+            @Override
+            public void onFailure(Call<GroupDTO> call, Throwable t) {
+                Toast.makeText(GroupView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
+                t.printStackTrace(); // Log the exception for debugging purposes
+
+            }
+        });
+    }
 
     private void getGroupActivities(){
         /*
@@ -218,24 +237,7 @@ public class GroupView extends AppCompatActivity {
 
     }
 
-    private void getGroup(int groupId){
-        Call<GroupDTO> call = apiService.getGroup(groupId);
-        call.enqueue(new Callback<GroupDTO>() {
-            @Override
-            public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    GroupDTO groupDTO = response.body();
-                    createGroupView(groupDTO);
-                }
-                }
-            @Override
-            public void onFailure(Call<GroupDTO> call, Throwable t) {
-                Toast.makeText(GroupView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
-                t.printStackTrace(); // Log the exception for debugging purposes
 
-            }
-        });
-    }
 
     private void createGroupView(GroupDTO groupDTO){
         TextView textView = findViewById(R.id.groupName);
