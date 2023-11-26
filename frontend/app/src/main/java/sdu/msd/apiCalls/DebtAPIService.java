@@ -9,6 +9,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import sdu.msd.dtos.CreateGroupDTO;
+import sdu.msd.dtos.DebtDTO;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 
@@ -22,7 +23,8 @@ public interface DebtAPIService {
     @GET("{userId}/to-group/{groupId}")
     Call<Double> getHowMuchUserOwesGroup(@Path("userId") int userId, @Path("groupId") int groupId);
 
-    @GET("{userA}")
-    Call<Double> getHowMuchUser(@Path("userA") int userA);
+    @POST("{userA}/pay-group/{groupId}/amount/{amount}")
+    Call<Double> payGroupDept(@Path("userA") int userA, @Path("groupId") int groupId, @Path("amount") double amount);
+
 
 }
