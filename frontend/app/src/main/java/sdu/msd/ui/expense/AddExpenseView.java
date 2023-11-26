@@ -277,7 +277,7 @@ public class AddExpenseView extends AppCompatActivity {
         confirmButton.setOnClickListener(view -> {
             checkIfMemberIsSelected();
             if (amountEditText.getText().length() != 0) {
-                amount = Double.parseDouble(amountEditText.getText().toString()) / (double) selectedMembers.size();
+                amount = Double.parseDouble(amountEditText.getText().toString());
             } else {
                 amount = 0;
                 Toast.makeText(this, "Please Choose the amount", Toast.LENGTH_SHORT).show();
@@ -299,6 +299,7 @@ public class AddExpenseView extends AppCompatActivity {
                         intent.putExtra("groupId", groupId);
                         Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
                         startActivity(intent);
+                        finish();
                         overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
                     }
                 }

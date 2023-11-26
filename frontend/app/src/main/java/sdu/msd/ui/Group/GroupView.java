@@ -2,15 +2,23 @@ package sdu.msd.ui.Group;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,47 +26,159 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
+import sdu.msd.apiCalls.DebtAPIService;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.UserAPIService;
+import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
 
 public class GroupView extends AppCompatActivity {
-    int userId, groupId;
+    private int userId, groupId;
     private Button payBtn, addExpense;
     private GroupAPIService apiService;
+    private DebtAPIService debtAPIService;
+    private UserAPIService userAPIService;
+    private Retrofit retrofit;
 
     private ImageView groupInfo, editGroup;
+    private SharedPreferences sharedPreferences;
 
-    private static final String BASEURL =  getApi() + "groups/";
+    private static final String BASEUSERURL = getApi() +  "users/";
+    private static final String BASEGROUPURL =  getApi() + "groups/";
+    private static final String BASEDEBTURL = getApi() + "debt/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         groupId = getIntent().getIntExtra("groupId",-1);
+        sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        userId = sharedPreferences.getInt("userId", -1);
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASEUSERURL)
+            .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
         setContentView(R.layout.fragment_group);
-        payBtn = findViewById(R.id.pay);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASEURL)
+        userAPIService = retrofit.create(UserAPIService.class);
+        // payBtn = findViewById(R.id.pay);
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASEGROUPURL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = retrofit.create(GroupAPIService.class);
         getGroup(groupId);
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASEDEBTURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        debtAPIService = retrofit.create(DebtAPIService.class);
+        getGroupActivities();
+        // getUser(userId);
+        getHowMuchMoneyUserOwes(userId);
+        //
         doPay();
 
 
 
     }
 
+    private void getGroupActivities(){
+        /*
+        Call<List<GroupActivityDTO>> call = apiService.getActivities(groupId, 0, ,false);
+        call.enqueue(new Callback<List<GroupActivityDTO>>() {
+            @Override
+            public void onResponse(Call<List<GroupActivityDTO>> call, Response<List<GroupActivityDTO>> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    createGroupActivitieView();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GroupActivityDTO>> call, Throwable t) {
+
+            }
+        });
+
+         */
+
+    }
+
+    private void createGroupActivitieView(){
+
+    }
+
+    private void getUser(int userId){
+        Call<UserDTO> call = userAPIService.getUser(userId);
+        call.enqueue(new Callback<UserDTO>() {
+            @Override
+            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                if (response.isSuccessful() && response.body() !=null){
+                    getHowMuchMoneyUserOwes(response.body().id());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserDTO> call, Throwable t) {
+
+            }
+        });
+    }
+    private void getHowMuchMoneyUserOwes(int userId) {
+        this.userId = userId;
+         Call<Double> call = debtAPIService.getHowMuchUserOwesGroup(userId, groupId);
+       // Call<Double> call = debtAPIService.getHowMuchUser(userId);
+
+        call.enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, Response<Double> response) {
+                if (response.isSuccessful() && response.body() !=null){
+                    double amount = response.body();
+                    Toast.makeText(GroupView.this, "amount" + amount, Toast.LENGTH_SHORT).show();
+                    updateHowMuchToPayInView(amount);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+
+            }
+        });
+
+    }
+    @SuppressLint("SetTextI18n")
+    private void updateHowMuchToPayInView(double amount){
+        FrameLayout frameLayout = new FrameLayout(GroupView.this);
+        LinearLayout layout = new LinearLayout(GroupView.this);
+        layout.setBackgroundColor(Color.rgb(31,35,40));
+        TextView textView = new TextView(GroupView.this);
+        textView.setText("You owe:");
+        TextView howMuch = new TextView(GroupView.this);
+        howMuch.setText(amount + " DKK");
+        Button button = new Button(GroupView.this);
+        button.setText("Pay");
+        layout.addView(textView);
+        layout.addView(howMuch);
+        layout.addView(button);
+        frameLayout.addView(layout);
+
+
+    }
+
     private void doPay(){
-        // TODO: 17-11-2023 This will also be done soon 
+        // TODO: 17-11-2023 This will also be done soon
+        /*
         payBtn.setOnClickListener(v -> {
             Intent intent = new Intent(GroupView.this, HomeView.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         });
+
+         */
 
     }
 

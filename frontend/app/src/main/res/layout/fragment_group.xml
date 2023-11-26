@@ -147,7 +147,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!--
         <FrameLayout
+            android:id="@+id/paymentPopUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="80"
@@ -158,19 +160,35 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/activites"
+                android:background="#1f2328"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/oweMomey"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="40dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="You owe:\n price DKK"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="20dp" />
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="40dp"
+                        android:text="You owe"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="20dp" />
+                    <TextView
+                        android:id="@+id/oweMomey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0 DKK"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="20dp"
+                        />
+
+
+                </LinearLayout>
+
+
 
                 <Button
                     android:id="@+id/pay"
@@ -185,6 +203,7 @@
             </LinearLayout>
 
         </FrameLayout>
+        !-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
