@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,14 +37,23 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.NotificationAPIService;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.NotificationDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
+import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.home.HomeView;
 
 public class GroupInfoView extends AppCompatActivity {
+    // Notification API
+    private NotificationAPIService notificationAPIService;
+    private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
+    private SharedPreferences sharedPreferencesUsers;
+    private String groupName;
+
     int userId, groupId;
     private GroupAPIService apiService;
     private UserAPIService userAPIService;
@@ -79,6 +89,14 @@ public class GroupInfoView extends AppCompatActivity {
         closeBtn.setOnClickListener(view -> {
             closeView();
         });
+
+        // Notification Api service:
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASENOTIFICATIONURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        notificationAPIService = retrofit.create(NotificationAPIService.class);
+        groupName = getIntent().getStringExtra("groupName");
 
         addGroupMembers.setOnClickListener(view -> addUserPopup());
 
@@ -181,6 +199,7 @@ public class GroupInfoView extends AppCompatActivity {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {
+                    pushNotification(id);
                     Toast.makeText(GroupInfoView.this, "User added to group.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -249,6 +268,25 @@ public class GroupInfoView extends AppCompatActivity {
             userButtonContainer.addView(textView);
             textView.setTextSize(20);
         }
+    }
+
+    private void pushNotification(int id) {
+        NotificationDTO notificationDTO = new NotificationDTO(sharedPreferencesUsers.getString("username", null) + " invited you to " + groupName,
+                sharedPreferencesUsers.getString("username", null) + " invited you to join " + groupName + " at " + new Date());
+        Call<Boolean> call = notificationAPIService.pushToUser(id, notificationDTO);
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(GroupInfoView.this, "Notification sent!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(GroupInfoView.this, t.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
 

@@ -21,6 +21,6 @@ public interface NotificationAPIService {
     @GET("{userId}")
     Call<List<NotificationDTO>> getUserNotifications(@Path("userId") int userId);
 
-    @POST("{userId}")
-    Call<NotificationDTO> pushToUser(@Body NotificationDTO notificationDTO);
+    @POST("push-to-user/{userId}")
+    Call<Boolean> pushToUser(@Path("userId") int userId, @Body NotificationDTO notificationDTO);
 }

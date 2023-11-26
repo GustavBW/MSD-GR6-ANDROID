@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ import sdu.msd.ui.camera.CameraView;
 public class AddExpenseView extends AppCompatActivity {
     // Notification API
     private NotificationAPIService notificationAPIService;
-    private static final String BASENOTIFICATIONURL = getApi() + "notification/";
+    private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
 
     // Debt Api
     private final String BASEURLDebt = getApi() + "debt/";
@@ -69,6 +70,7 @@ public class AddExpenseView extends AppCompatActivity {
 
     // Group Information:
     private int groupId;
+    private String groupName;
 
     // Payment information:
     private ArrayList<Integer> selectedMembers;
@@ -106,6 +108,7 @@ public class AddExpenseView extends AppCompatActivity {
                 .build();
         groupApiService = retrofit.create(GroupAPIService.class);
         groupId = getIntent().getIntExtra("groupId", -1);
+        groupName = getIntent().getStringExtra("groupName");
         userCheckBoxes = new HashMap<>();
         selectedMembers = new ArrayList<>();
         getGroupInformation(groupId);
@@ -307,7 +310,7 @@ public class AddExpenseView extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     if (response.isSuccessful()) {
-                        // TODO: push notification here!
+                        pushNotification();
                         Intent intent = new Intent(AddExpenseView.this, GroupView.class);
                         intent.putExtra("groupId", groupId);
                         Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
@@ -325,8 +328,25 @@ public class AddExpenseView extends AppCompatActivity {
         });
     }
 
-    private void pushNotification(int userId) {
-        // Call<NotificationDTO> call = notificationAPIService.pushToUser(userId);
+    private void pushNotification() {
+        for (Integer user : selectedMembers) {
+            NotificationDTO notificationDTO = new NotificationDTO(sharedPreferencesUsers.getString("username", null) + " added expense to " + groupName,
+                    sharedPreferencesUsers.getString("username", null) + " added an expense of " + amount + " to " + groupName + " at " + new Date());
+            Call<Boolean> call = notificationAPIService.pushToUser(user, notificationDTO);
+            call.enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(AddExpenseView.this, "Notification sent!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    Toast.makeText(AddExpenseView.this, t.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 }
 

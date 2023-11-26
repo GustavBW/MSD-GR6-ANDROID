@@ -35,6 +35,7 @@ import sdu.msd.dtos.NotificationDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.home.HomeView;
+import sdu.msd.ui.profile.ProfileView;
 
 public class NotificationsView extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class NotificationsView extends AppCompatActivity {
     private NotificationAPIService notificationAPIService;
     private Retrofit retrofit;
     private SharedPreferences sharedPreferences;
-    private static final String BASENOTIFICATIONURL = getApi() + "notification/";
+    private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +142,13 @@ public class NotificationsView extends AppCompatActivity {
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
             startActivity(intent);
+        });
+
+        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
         getNotifications();

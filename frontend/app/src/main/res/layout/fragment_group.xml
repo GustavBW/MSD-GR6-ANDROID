@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#282c34">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upperNavigation"
         android:layout_width="match_parent"
@@ -15,15 +16,16 @@
         android:layout_marginBottom="20dp"
         >
 
-        <Button
+        <ImageView
             android:id="@+id/buttonClose"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:background="@drawable/close_button"
-            android:text="X"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:src="@drawable/home"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/groupName"

@@ -125,6 +125,7 @@ public class GroupView extends AppCompatActivity {
         addExpense.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, AddExpenseView.class);
             intent.putExtra("groupId", groupId);
+            intent.putExtra("groupName", groupDTO.name());
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
@@ -138,7 +139,7 @@ public class GroupView extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
-        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        ImageView closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, HomeView.class);
             startActivity(intent);
