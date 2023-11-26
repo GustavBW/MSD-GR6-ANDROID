@@ -146,8 +146,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <!--
         <FrameLayout
             android:id="@+id/paymentPopUp"
             android:layout_width="match_parent"
@@ -157,6 +155,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints">
 
+            <!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -190,6 +189,7 @@
 
 
 
+
                 <Button
                     android:id="@+id/pay"
                     android:layout_width="match_parent"
@@ -201,6 +201,7 @@
                     android:textColor="@color/white" />
 
             </LinearLayout>
+            !-->
 
         </FrameLayout>
         !-->

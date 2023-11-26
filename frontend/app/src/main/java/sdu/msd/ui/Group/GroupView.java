@@ -8,10 +8,13 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -150,24 +153,57 @@ public class GroupView extends AppCompatActivity {
         });
 
     }
-    @SuppressLint("SetTextI18n")
-    private void updateHowMuchToPayInView(double amount){
-        FrameLayout frameLayout = new FrameLayout(GroupView.this);
-        LinearLayout layout = new LinearLayout(GroupView.this);
-        layout.setBackgroundColor(Color.rgb(31,35,40));
-        TextView textView = new TextView(GroupView.this);
-        textView.setText("You owe:");
-        TextView howMuch = new TextView(GroupView.this);
-        howMuch.setText(amount + " DKK");
-        Button button = new Button(GroupView.this);
-        button.setText("Pay");
-        layout.addView(textView);
-        layout.addView(howMuch);
-        layout.addView(button);
-        frameLayout.addView(layout);
+    private void updateHowMuchToPayInView(double amount) {
+        // Create the dynamic views
+        if(amount != 0){
+            LinearLayout layout = new LinearLayout(GroupView.this);
+            layout.setBackgroundColor(Color.rgb(31, 35, 40));
+            layout.setOrientation(LinearLayout.VERTICAL); // Set orientation to vertical
+            layout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            TextView textView = new TextView(GroupView.this);
+            textView.setText("You owe:");
+            textView.setTextColor(Color.WHITE);
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(20);
+            TextView howMuch = new TextView(GroupView.this);
+            howMuch.setTextColor(Color.WHITE);
+            howMuch.setGravity(Gravity.CENTER);
+            howMuch.setText(amount + " DKK");
+            howMuch.setTextSize(20);
+            Button button = new Button(GroupView.this);
+            button.setText("Pay");
+            // Set layout parameters to add horizontal margins
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            int marginInDp = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    70, // replace with your desired margin in dp
+                    getResources().getDisplayMetrics()
+            );
+            layoutParams.setMargins(marginInDp, 0, marginInDp, 0); // left, top, right, bottom
+            button.setLayoutParams(layoutParams);
+            button.setTextColor(Color.WHITE);
+            button.setBackgroundResource(R.drawable.buttoncolors); // Set the background drawable
+            layout.addView(textView);
+            layout.addView(howMuch);
+            layout.addView(button);
 
+
+            // Find the parent layout in your XML file
+            FrameLayout parentLayout = findViewById(R.id.paymentPopUp); // Change this to the actual ID of your parent layout
+
+            // Add the dynamic view to the parent layout
+            parentLayout.addView(layout);
+
+        }
 
     }
+
 
     private void doPay(){
         // TODO: 17-11-2023 This will also be done soon

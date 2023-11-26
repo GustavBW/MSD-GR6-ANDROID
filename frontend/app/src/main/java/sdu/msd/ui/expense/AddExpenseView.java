@@ -174,6 +174,7 @@ public class AddExpenseView extends AppCompatActivity {
     }
 
     private void getMembers(List<Integer> userIds) {
+        userIds.removeIf(userId -> userId == this.userId);
         Call<List<UserDTO>> call = userApiService.getUsersFromId(userIds);
         call.enqueue(new Callback<List<UserDTO>>() {
             @Override
