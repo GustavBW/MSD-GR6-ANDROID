@@ -41,19 +41,18 @@
             tools:ignore="MissingConstraints"
             tools:layout_editor_absoluteX="0dp" />
 
-        <TextView
-            android:id="@+id/activitesText"
+        <Button
+            android:id="@+id/addExpense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:width="10dp"
-            android:text="Activites"
+            android:layout_marginHorizontal="70dp"
+            android:background="@drawable/buttoncolors"
+            android:text="Add Expense"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteX="0dp" />
-
+            tools:layout_editor_absoluteX="70dp" />
         <ImageView
             android:id="@+id/groupInfo"
             android:layout_width="50dp"
@@ -65,6 +64,19 @@
             tools:layout_editor_absoluteY="22dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/activitesText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:width="10dp"
+        android:text="Activites"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
 
 
 
@@ -134,8 +146,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <FrameLayout
+            android:id="@+id/paymentPopUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="80"
@@ -143,22 +155,40 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="MissingConstraints">
 
+            <!--
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/activites"
+                android:background="#1f2328"
                 android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/oweMomey"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="40dp"
-                    android:layout_marginBottom="20dp"
-                    android:text="You owe:\n price DKK"
-                    android:textAlignment="center"
-                    android:textColor="@color/white"
-                    android:textSize="20dp" />
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="40dp"
+                        android:text="You owe"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="20dp" />
+                    <TextView
+                        android:id="@+id/oweMomey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0 DKK"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="20dp"
+                        />
+
+
+                </LinearLayout>
+
+
+
 
                 <Button
                     android:id="@+id/pay"
@@ -171,8 +201,10 @@
                     android:textColor="@color/white" />
 
             </LinearLayout>
+            !-->
 
         </FrameLayout>
+        !-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

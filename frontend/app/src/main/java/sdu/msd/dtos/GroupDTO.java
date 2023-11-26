@@ -11,11 +11,10 @@ public final class GroupDTO {
     private final String descriptions;
     private final int groupColor;
     public static GroupDTO groupDTO;
+    public final List<Integer> users;
 
-    private final int[] users;
 
-
-    public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, int[] users  ){
+    public GroupDTO(int id, int adminId, String name, String descriptions, int groupColor, List<Integer> users  ){
         this.id = id;
         this.adminId = adminId;
         this.name = name;
@@ -44,7 +43,9 @@ public final class GroupDTO {
         return groupColor;
     }
 
-    public int[] getUsers() {return users;}
+    public List<Integer> getUsers() {
+        return users;
+    }
 
     @Override
     public boolean equals(Object obj) {

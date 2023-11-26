@@ -23,11 +23,15 @@ public interface UserAPIService {
     Call<UserDTO> checkCredentials(@Body UserCredentialsDTO userCredentialsDTO);
     @POST("{userId}")
     Call<UserDTO> updateUser(@Path("userId") int userId, @Body UpdateUserDTO updateUserDTO);
+    @GET("{userId}")
+    Call<UserDTO> getUser(@Path("userId") int userId);
 
     @GET("users")
     Call<List<UserDTO>> checkUser(@Query("usernames") String usernames);
 
     @GET("users")
-    Call<List<UserDTO>> getUserFromId(@Query("ids") int[] userId);
+    Call<List<UserDTO>> getUsersFromId(@Query("ids") List<Integer> userIds);
+
+
 
 }
