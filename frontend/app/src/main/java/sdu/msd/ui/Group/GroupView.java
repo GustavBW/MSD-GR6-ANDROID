@@ -40,6 +40,7 @@ import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
+import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
 import sdu.msd.ui.profile.ProfileView;
 
@@ -160,7 +161,7 @@ public class GroupView extends AppCompatActivity {
     }
     @SuppressLint("SetTextI18n")
     private void updateHowMuchToPayInView(double amount) {
-        FrameLayout parentLayout = findViewById(R.id.paymentPopUp); // Change this to the actual ID of your parent layout
+        FrameLayout parentLayout = findViewById(R.id.paymentPopUp);
         if(amount != 0){
             LinearLayout layout = new LinearLayout(GroupView.this);
             layout.setBackgroundColor(Color.rgb(31, 35, 40));
@@ -282,13 +283,8 @@ public class GroupView extends AppCompatActivity {
                                 formattedAmount +
                                 " DKK";
                         break;
-
                     }
-
-
                 }
-
-
             }
             textView.setText(text);
             textView.setTextColor(Color.BLACK);
@@ -310,13 +306,6 @@ public class GroupView extends AppCompatActivity {
             separator.setBackground(getResources().getDrawable(R.drawable.divider_line)); // Set your divider color here
             activitiesContainer.addView(separator);
         }
-
-        Button closeButton = findViewById(R.id.buttonClose); // Go to home
-        closeButton.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupView.this, HomeView.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
-        });
     }
 
 }

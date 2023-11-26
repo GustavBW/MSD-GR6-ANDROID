@@ -101,45 +101,6 @@
             android:orientation="vertical"
             android:background="@drawable/activites"
             >
-            <!--
-            <TextView
-                android:id="@+id/activity1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_marginHorizontal="40dp"
-                android:textAlignment="center"
-                android:text="activity1" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/divider_line" />
-
-            <TextView
-                android:id="@+id/activity2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:layout_marginHorizontal="40dp"
-                android:textAlignment="center"
-                android:text="activity2" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="6dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/divider_line" />
-
-                !-->
 
 
         </LinearLayout>
