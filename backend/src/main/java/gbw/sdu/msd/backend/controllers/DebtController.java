@@ -92,7 +92,7 @@ public class DebtController {
             if(debtee == null){
                 return ResponseEntity.notFound().build();
             }
-            debtees.add(creditor);
+            debtees.add(debtee);
         }
         if(amount == null || amount <= 0){
             return ResponseEntity.badRequest().build();
