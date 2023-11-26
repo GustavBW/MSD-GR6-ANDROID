@@ -137,6 +137,13 @@ public class GroupView extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
+
+        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupView.this, HomeView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
     }
     private void getHowMuchMoneyUserOwes(int userId) {
         this.userId = userId;

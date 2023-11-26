@@ -34,15 +34,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.DebtAPIService;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.NotificationAPIService;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.NotificationDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.camera.CameraView;
 
 public class AddExpenseView extends AppCompatActivity {
-    // Debt Api
+    // Notification API
+    private NotificationAPIService notificationAPIService;
+    private static final String BASENOTIFICATIONURL = getApi() + "notification/";
 
+    // Debt Api
     private final String BASEURLDebt = getApi() + "debt/";
 
     private DebtAPIService debtAPIService;
@@ -105,12 +110,19 @@ public class AddExpenseView extends AppCompatActivity {
         selectedMembers = new ArrayList<>();
         getGroupInformation(groupId);
 
-        // GDebt Api service:
+        // Debt Api service:
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURLDebt)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         debtAPIService = retrofit.create(DebtAPIService.class);
+
+        // Notification Api service:
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASENOTIFICATIONURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        notificationAPIService = retrofit.create(NotificationAPIService.class);
 
         // Define checkbox listeners:
         checkIfAllMembersAreSelected();
@@ -289,13 +301,13 @@ public class AddExpenseView extends AppCompatActivity {
                 return;
             }
 
-
             Call<Boolean> call = debtAPIService.addDebtToMembers(userId, amount, selectedMembers, groupId);
 
             call.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     if (response.isSuccessful()) {
+                        // TODO: push notification here!
                         Intent intent = new Intent(AddExpenseView.this, GroupView.class);
                         intent.putExtra("groupId", groupId);
                         Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
@@ -311,6 +323,10 @@ public class AddExpenseView extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void pushNotification(int userId) {
+        // Call<NotificationDTO> call = notificationAPIService.pushToUser(userId);
     }
 }
 

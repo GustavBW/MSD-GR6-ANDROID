@@ -7,16 +7,39 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#282c34">
-    <TextView
-        android:id="@+id/groupName"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/upperNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:width="20dp"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        android:textStyle="italic"
-        tools:ignore="MissingConstraints"/>
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        >
+
+        <Button
+            android:id="@+id/buttonClose"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/close_button"
+            android:text="X"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/groupName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:width="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:layout_marginRight="75dp"
+            android:textSize="30sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/allGroups"
