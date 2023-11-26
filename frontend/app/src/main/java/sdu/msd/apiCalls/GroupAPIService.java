@@ -11,7 +11,6 @@ import retrofit2.http.Query;
 import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
-import sdu.msd.dtos.UpdateGroupDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 
 public interface GroupAPIService {
@@ -29,6 +28,8 @@ public interface GroupAPIService {
     @POST("{groupId}/add-user/{userId}")
     Call<Boolean> addUserToGroup(@Path("groupId") int groupId, @Path("userId") int userId);
 
+    @GET("{groupId}/activities")
+    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId);
     @GET("{groupId}/is-admin/{userId}")
     Call<Boolean> getUserIsAdmin(@Path("groupId") int groupId, @Path("userId") int userId);
 

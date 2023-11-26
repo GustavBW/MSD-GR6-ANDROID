@@ -6,21 +6,24 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.LinkedList;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import retrofit2.Call;
@@ -35,7 +38,6 @@ import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
 import sdu.msd.dtos.UserDTO;
-import sdu.msd.ui.editGroup.EditGroup;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
@@ -56,6 +58,8 @@ public class GroupView extends AppCompatActivity {
     private static final String BASEUSERURL = getApi() +  "users/";
     private static final String BASEGROUPURL =  getApi() + "groups/";
     private static final String BASEDEBTURL = getApi() + "debt/";
+    private double amount;
+    private DecimalFormat decimalFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,8 @@ public class GroupView extends AppCompatActivity {
         groupId = getIntent().getIntExtra("groupId",-1);
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
+        payBtn = new Button(this);
+        decimalFormat = new DecimalFormat("#,##0.00");
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEUSERURL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -70,7 +76,7 @@ public class GroupView extends AppCompatActivity {
 
         setContentView(R.layout.fragment_group);
         userAPIService = retrofit.create(UserAPIService.class);
-        // payBtn = findViewById(R.id.pay);
+        this.amount = 0;
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEGROUPURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -82,12 +88,7 @@ public class GroupView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         debtAPIService = retrofit.create(DebtAPIService.class);
-        getGroupActivities();
-        // getUser(userId);
         getHowMuchMoneyUserOwes(userId);
-        //
-        doPay();
-
 
 
     }
@@ -98,7 +99,6 @@ public class GroupView extends AppCompatActivity {
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GroupDTO groupDTO = response.body();
-                    Toast.makeText(GroupView.this, "ss" + response.body().descriptions(), Toast.LENGTH_SHORT).show();
                     createGroupView(groupDTO);
                 }
             }
@@ -110,149 +110,14 @@ public class GroupView extends AppCompatActivity {
             }
         });
     }
-
-    private void getGroupActivities(){
-        /*
-        Call<List<GroupActivityDTO>> call = apiService.getActivities(groupId, 0, ,false);
-        call.enqueue(new Callback<List<GroupActivityDTO>>() {
-            @Override
-            public void onResponse(Call<List<GroupActivityDTO>> call, Response<List<GroupActivityDTO>> response) {
-                if(response.isSuccessful() && response.body() != null){
-                    createGroupActivitieView();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<GroupActivityDTO>> call, Throwable t) {
-
-            }
-        });
-
-         */
-
-    }
-
-    private void createGroupActivitieView(){
-
-    }
-
-    private void getUser(int userId){
-        Call<UserDTO> call = userAPIService.getUser(userId);
-        call.enqueue(new Callback<UserDTO>() {
-            @Override
-            public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
-                if (response.isSuccessful() && response.body() !=null){
-                    getHowMuchMoneyUserOwes(response.body().id());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UserDTO> call, Throwable t) {
-
-            }
-        });
-    }
-    private void getHowMuchMoneyUserOwes(int userId) {
-        this.userId = userId;
-         Call<Double> call = debtAPIService.getHowMuchUserOwesGroup(userId, groupId);
-       // Call<Double> call = debtAPIService.getHowMuchUser(userId);
-
-        call.enqueue(new Callback<Double>() {
-            @Override
-            public void onResponse(Call<Double> call, Response<Double> response) {
-                if (response.isSuccessful() && response.body() !=null){
-                    double amount = response.body();
-                    Toast.makeText(GroupView.this, "amount" + amount, Toast.LENGTH_SHORT).show();
-                    updateHowMuchToPayInView(amount);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Double> call, Throwable t) {
-
-            }
-        });
-
-    }
-    private void updateHowMuchToPayInView(double amount) {
-        // Create the dynamic views
-        if(amount != 0){
-            LinearLayout layout = new LinearLayout(GroupView.this);
-            layout.setBackgroundColor(Color.rgb(31, 35, 40));
-            layout.setOrientation(LinearLayout.VERTICAL); // Set orientation to vertical
-            layout.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
-            TextView textView = new TextView(GroupView.this);
-            textView.setText("You owe:");
-            textView.setTextColor(Color.WHITE);
-            textView.setGravity(Gravity.CENTER);
-            textView.setTextSize(20);
-            TextView howMuch = new TextView(GroupView.this);
-            howMuch.setTextColor(Color.WHITE);
-            howMuch.setGravity(Gravity.CENTER);
-            howMuch.setText(amount + " DKK");
-            howMuch.setTextSize(20);
-            Button button = new Button(GroupView.this);
-            button.setText("Pay");
-            // Set layout parameters to add horizontal margins
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            int marginInDp = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    70, // replace with your desired margin in dp
-                    getResources().getDisplayMetrics()
-            );
-            layoutParams.setMargins(marginInDp, 0, marginInDp, 0); // left, top, right, bottom
-            button.setLayoutParams(layoutParams);
-            button.setTextColor(Color.WHITE);
-            button.setBackgroundResource(R.drawable.buttoncolors); // Set the background drawable
-            layout.addView(textView);
-            layout.addView(howMuch);
-            layout.addView(button);
-
-
-            // Find the parent layout in your XML file
-            FrameLayout parentLayout = findViewById(R.id.paymentPopUp); // Change this to the actual ID of your parent layout
-
-            // Add the dynamic view to the parent layout
-            parentLayout.addView(layout);
-
-        }
-
-    }
-
-
-    private void doPay(){
-        // TODO: 17-11-2023 This will also be done soon
-        /*
-        payBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(GroupView.this, HomeView.class);
-            intent.putExtra("groupId", groupId);
-            startActivity(intent);
-        });
-
-         */
-
-    }
-
-
-
     private void createGroupView(GroupDTO groupDTO){
         TextView textView = findViewById(R.id.groupName);
         textView.setText(groupDTO.name());
         groupInfo = findViewById(R.id.groupInfo);
         editGroup = findViewById(R.id.editGroupBtn);
         addExpense = findViewById(R.id.addExpense);
-        // TODO: 17-11-2023
-        /*
-        The rest will be added soon when other features are done.
-         */
         editGroup.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupView.this, EditGroup.class);
+            Intent intent = new Intent(GroupView.this, NotificationsView.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         });
@@ -260,6 +125,7 @@ public class GroupView extends AppCompatActivity {
         addExpense.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, AddExpenseView.class);
             intent.putExtra("groupId", groupId);
+            intent.putExtra("groupName", groupDTO.name());
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
@@ -273,11 +139,181 @@ public class GroupView extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
-        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        ImageView closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, HomeView.class);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
     }
+    private void getHowMuchMoneyUserOwes(int userId) {
+        this.userId = userId;
+         Call<Double> call = debtAPIService.getHowMuchUserOwesGroup(userId, groupId);
+
+        call.enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, Response<Double> response) {
+                if (response.isSuccessful() && response.body() !=null){
+                    amount = response.body();
+                    updateHowMuchToPayInView(amount);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                Toast.makeText(GroupView.this, t.toString(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+    @SuppressLint("SetTextI18n")
+    private void updateHowMuchToPayInView(double amount) {
+        FrameLayout parentLayout = findViewById(R.id.paymentPopUp);
+        if(amount != 0){
+            LinearLayout layout = new LinearLayout(GroupView.this);
+            layout.setBackgroundColor(Color.rgb(31, 35, 40));
+            layout.setOrientation(LinearLayout.VERTICAL); // Set orientation to vertical
+            layout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            ));
+            TextView textView = new TextView(GroupView.this);
+            textView.setText("You owe:");
+            textView.setTextColor(Color.WHITE);
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(20);
+            TextView howMuch = new TextView(GroupView.this);
+            howMuch.setTextColor(Color.WHITE);
+            howMuch.setGravity(Gravity.CENTER);
+            String formattedAmount = decimalFormat.format(amount);
+            howMuch.setText(formattedAmount + " DKK");
+            howMuch.setTextSize(20);
+            payBtn = new Button(GroupView.this);
+            payBtn.setText("Pay");
+            // Set layout parameters to add horizontal margins
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            int marginInDp = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    70, // replace with your desired margin in dp
+                    getResources().getDisplayMetrics()
+            );
+            layoutParams.setMargins(marginInDp, 0, marginInDp, 0); // left, top, right, bottom
+            payBtn.setLayoutParams(layoutParams);
+            payBtn.setTextColor(Color.WHITE);
+            payBtn.setBackgroundResource(R.drawable.buttoncolors); // Set the background drawable
+            layout.addView(textView);
+            layout.addView(howMuch);
+            layout.addView(payBtn);
+
+
+            // Find the parent layout in your XML file
+
+            // Add the dynamic view to the parent layout
+            parentLayout.addView(layout);
+            
+            doPay();
+
+        } else{
+            parentLayout.removeAllViews();
+        }
+
+        getGroupActivities();
+
+    }
+
+
+
+    private void doPay(){
+        payBtn.setOnClickListener(v -> {
+            payGroupDept();
+        });
+
+    }
+
+    private void payGroupDept() {
+        String formattedAmount = decimalFormat.format(amount);
+        Call<Double> call = debtAPIService.payGroupDept(userId, groupId, amount);
+        call.enqueue(new Callback<Double>() {
+            @Override
+            public void onResponse(Call<Double> call, Response<Double> response) {
+                if(response.isSuccessful() && response.body() !=null){
+                    updateHowMuchToPayInView(response.body());
+                    Toast.makeText(GroupView.this, "you have successfully paid" + formattedAmount, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Double> call, Throwable t) {
+                Toast.makeText(GroupView.this, t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void getGroupActivities(){
+        Call<List<GroupActivityDTO>> call = apiService.getActivities(groupId);
+        call.enqueue(new Callback<List<GroupActivityDTO>>() {
+            @Override
+            public void onResponse(Call<List<GroupActivityDTO>> call, Response<List<GroupActivityDTO>> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    createGroupActivitiesView(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GroupActivityDTO>> call, Throwable t) {
+            }
+        });
+
+    }
+
+    @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+    private void createGroupActivitiesView(List<GroupActivityDTO> groupActivityDTOS){
+        LinearLayout activitiesContainer = findViewById(R.id.activitiesContainer);
+        activitiesContainer.removeAllViews();
+        for (int i = groupActivityDTOS.size() - 1; i >= 0; i--) {
+            GroupActivityDTO groupActivityDTO = groupActivityDTOS.get(i);
+            GradientDrawable gradientDrawable = new GradientDrawable();
+            gradientDrawable.setCornerRadius(getResources().getDimension(R.dimen.corner_radius));
+            gradientDrawable.setColor(Color.WHITE);
+            TextView textView = new TextView(this);
+            String formattedAmount = decimalFormat.format(groupActivityDTO.getAmount());
+            String text = groupActivityDTO.getCreditor().name() + " added an expense with amount =" + groupActivityDTO.getAmount() + "DKK";
+            if(!groupActivityDTO.isExpense()){
+                for(UserDTO userDTO: groupActivityDTO.getDebtees()){
+                    if(userDTO.id() == userId){
+                        text = userDTO.name()+
+                                " had paid " +
+                                formattedAmount +
+                                " DKK";
+                        break;
+                    }
+                }
+            }
+            textView.setText(text);
+            textView.setTextColor(Color.BLACK);
+            textView.setTextSize(20);
+            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
+            textView.setBackground(layerDrawable);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            layoutParams.setMargins(0, 10, 0, (int) 0);
+            textView.setLayoutParams(layoutParams);
+            textView.setPadding(30,30,2,1);
+            activitiesContainer.addView(textView);
+            View separator = new View(this);
+            separator.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (int) getResources().getDimension(R.dimen.corner_radius))); // Set your divider height here
+            separator.setBackground(getResources().getDrawable(R.drawable.divider_line)); // Set your divider color here
+            activitiesContainer.addView(separator);
+        }
+    }
+
 }

@@ -80,10 +80,14 @@
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar"></activity>
         <activity
+            android:name=".ui.Invoices.InvoicesView"
+            android:exported="true"
+            android:theme="@style/Theme.Frontend.NoActionBar"></activity>
+        <activity
             android:name=".ui.editGroup.EditGroup"
             android:exported="true"
             android:theme="@style/Theme.Frontend.NoActionBar"></activity>
-        
+
 
     </application>
 

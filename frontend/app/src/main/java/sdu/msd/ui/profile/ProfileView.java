@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import sdu.msd.R;
 import sdu.msd.dtos.UpdateUserDTO;
+import sdu.msd.ui.Invoices.InvoicesView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.login.LoginView;
@@ -122,7 +123,7 @@ public class ProfileView extends AppCompatActivity {
 
         Button invoicesButton = findViewById(R.id.buttonInvoices); // Go to invoices
         invoicesButton.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileView.this, HomeView.class); // TODO: change to InvoiceView.class when possible.
+            Intent intent = new Intent(ProfileView.this, InvoicesView.class); // TODO: change to InvoiceView.class when possible.
             startActivity(intent);
         });
 

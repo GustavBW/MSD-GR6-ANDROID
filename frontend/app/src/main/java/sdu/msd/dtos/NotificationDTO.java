@@ -9,7 +9,7 @@ public final class NotificationDTO {
     private final String title;
     private final String message;
 
-    NotificationDTO(String title, String message) {
+    public NotificationDTO(String title, String message) {
         this.title = title;
         this.message = message;
     }

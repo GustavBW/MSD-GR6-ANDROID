@@ -35,6 +35,7 @@ import sdu.msd.dtos.NotificationDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.home.HomeView;
+import sdu.msd.ui.profile.ProfileView;
 
 public class NotificationsView extends AppCompatActivity {
 
@@ -42,7 +43,7 @@ public class NotificationsView extends AppCompatActivity {
     private NotificationAPIService notificationAPIService;
     private Retrofit retrofit;
     private SharedPreferences sharedPreferences;
-    private static final String BASENOTIFICATIONURL = getApi() + "notification/";
+    private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +71,17 @@ public class NotificationsView extends AppCompatActivity {
 
         // Append scroll view:
         for (NotificationDTO notification : notifications) {
+            // Create container for each notification
             GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setCornerRadius(16);
-            RelativeLayout relativeLayout = new RelativeLayout(this);
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            gradientDrawable.setColor(Color.WHITE);
+            LinearLayout notificationLayout = new LinearLayout(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
             );
             layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.activity_vertical_margin));
-            relativeLayout.setLayoutParams(layoutParams);
+            notificationLayout.setLayoutParams(layoutParams);
+            notificationLayout.setOrientation(LinearLayout.VERTICAL);
 
             // Create notification title:
             TextView titleTextView = new TextView(this);
@@ -86,8 +89,8 @@ public class NotificationsView extends AppCompatActivity {
             titleTextView.setTextColor(Color.BLACK);
             titleTextView.setTextSize(25);
             titleTextView.setPadding(10,0,0,0);
-            titleTextView.setGravity(Gravity.CENTER);
-            gradientDrawable.setColor(Color.WHITE);
+            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
+            titleTextView.setBackground(layerDrawable);
 
             // Create notification message:
             TextView messageTextView = new TextView(this);
@@ -95,25 +98,19 @@ public class NotificationsView extends AppCompatActivity {
             messageTextView.setTextColor(Color.BLACK);
             messageTextView.setTextSize(15);
             messageTextView.setPadding(10,0,0,0);
-            messageTextView.setGravity(Gravity.CENTER);
-            gradientDrawable.setColor(Color.WHITE);
+            layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
+            messageTextView.setBackground(layerDrawable);
 
-            // Add views to container:
-            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
-            relativeLayout.setBackground(layerDrawable);
-            RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-            );
-            textParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            textParams.addRule(RelativeLayout.ALIGN_PARENT_START);
-            titleTextView.setLayoutParams(textParams);
-            messageTextView.setLayoutParams(textParams);
-            relativeLayout.addView(titleTextView);
-            relativeLayout.addView(messageTextView);
-            notificationsContainer.addView(relativeLayout);
+            // Add title and message to the container
+            notificationLayout.addView(titleTextView);
+            notificationLayout.addView(messageTextView);
+
+            // Add the container to the main container
+            notificationsContainer.addView(notificationLayout);
         }
     }
+
+
 
     private void getNotifications() {
         Call<List<NotificationDTO>> call = notificationAPIService.getUserNotifications(userId);
@@ -141,6 +138,13 @@ public class NotificationsView extends AppCompatActivity {
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
             startActivity(intent);
+        });
+
+        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
         getNotifications();

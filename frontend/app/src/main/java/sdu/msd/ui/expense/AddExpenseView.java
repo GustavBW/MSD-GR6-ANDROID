@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +35,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
 import sdu.msd.apiCalls.DebtAPIService;
 import sdu.msd.apiCalls.GroupAPIService;
+import sdu.msd.apiCalls.NotificationAPIService;
 import sdu.msd.apiCalls.UserAPIService;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.NotificationDTO;
 import sdu.msd.dtos.UserDTO;
 import sdu.msd.ui.Group.GroupView;
 import sdu.msd.ui.camera.CameraView;
 
 public class AddExpenseView extends AppCompatActivity {
-    // Debt Api
+    // Notification API
+    private NotificationAPIService notificationAPIService;
+    private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
 
+    // Debt Api
     private final String BASEURLDebt = getApi() + "debt/";
 
     private DebtAPIService debtAPIService;
@@ -64,6 +70,7 @@ public class AddExpenseView extends AppCompatActivity {
 
     // Group Information:
     private int groupId;
+    private String groupName;
 
     // Payment information:
     private ArrayList<Integer> selectedMembers;
@@ -101,16 +108,24 @@ public class AddExpenseView extends AppCompatActivity {
                 .build();
         groupApiService = retrofit.create(GroupAPIService.class);
         groupId = getIntent().getIntExtra("groupId", -1);
+        groupName = getIntent().getStringExtra("groupName");
         userCheckBoxes = new HashMap<>();
         selectedMembers = new ArrayList<>();
         getGroupInformation(groupId);
 
-        // GDebt Api service:
+        // Debt Api service:
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASEURLDebt)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         debtAPIService = retrofit.create(DebtAPIService.class);
+
+        // Notification Api service:
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASENOTIFICATIONURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        notificationAPIService = retrofit.create(NotificationAPIService.class);
 
         // Define checkbox listeners:
         checkIfAllMembersAreSelected();
@@ -289,13 +304,13 @@ public class AddExpenseView extends AppCompatActivity {
                 return;
             }
 
-
             Call<Boolean> call = debtAPIService.addDebtToMembers(userId, amount, selectedMembers, groupId);
 
             call.enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                     if (response.isSuccessful()) {
+                        pushNotification();
                         Intent intent = new Intent(AddExpenseView.this, GroupView.class);
                         intent.putExtra("groupId", groupId);
                         Toast.makeText(AddExpenseView.this, "The expense was added!", Toast.LENGTH_LONG).show();
@@ -311,6 +326,27 @@ public class AddExpenseView extends AppCompatActivity {
                 }
             });
         });
+    }
+
+    private void pushNotification() {
+        for (Integer user : selectedMembers) {
+            NotificationDTO notificationDTO = new NotificationDTO(sharedPreferencesUsers.getString("username", null) + " added expense to " + groupName,
+                    sharedPreferencesUsers.getString("username", null) + " added an expense of " + amount + " to " + groupName + " at " + new Date());
+            Call<Boolean> call = notificationAPIService.pushToUser(user, notificationDTO);
+            call.enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(AddExpenseView.this, "Notification sent!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable t) {
+                    Toast.makeText(AddExpenseView.this, t.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 }
 
