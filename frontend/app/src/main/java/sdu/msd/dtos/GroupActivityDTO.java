@@ -5,13 +5,13 @@ import java.util.List;
 public class GroupActivityDTO {
     private UserDTO creditor;
     private double amount;
-    private List<UserDTO> debtes;
+    private List<UserDTO> debtees;
     private boolean isExpense;
 
-    public GroupActivityDTO(UserDTO creditor, double amount, List<UserDTO> debtes, boolean isExpense) {
+    public GroupActivityDTO(UserDTO creditor, double amount, List<UserDTO> debtees, boolean isExpense) {
         this.creditor = creditor;
         this.amount = amount;
-        this.debtes = debtes;
+        this.debtees = debtees;
         this.isExpense = isExpense;
     }
 
@@ -23,8 +23,8 @@ public class GroupActivityDTO {
         return amount;
     }
 
-    public List<UserDTO> getDebtes() {
-        return debtes;
+    public List<UserDTO> getDebtees() {
+        return debtees;
     }
 
     public boolean isExpense() {
