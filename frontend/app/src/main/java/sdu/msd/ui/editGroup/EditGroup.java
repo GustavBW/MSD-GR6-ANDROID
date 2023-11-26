@@ -139,20 +139,22 @@ public class EditGroup extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<GroupDTO> call, Throwable t) {
-                Toast.makeText(EditGroup.this,t.toString(),Toast.LENGTH_LONG).show();
+                //Toast.makeText(EditGroup.this,t.toString(),Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(EditGroup.this, HomeView.class);
+                intent.putExtra("groupId",groupId);
+                startActivity(intent);
+                finish();
             }
         });
 
     }
     public void updateData(){
-        UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(groupId,userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString(),0);
+        UpdateGroupDTO updateGroupDTO = new UpdateGroupDTO(userId,groupNameEditText.getText().toString(),groupDescriptionEditText.getText().toString(),0);
         Call<GroupDTO> call = groupApiService.updateGroup(groupId,updateGroupDTO);
         call.enqueue(new Callback<GroupDTO>() {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if(response.isSuccessful() && response.body() != null){
-                    Toast.makeText(EditGroup.this, "true", Toast.LENGTH_SHORT).show();
-                    GroupDTO groupDTO = response.body();
                     Toast.makeText(EditGroup.this, "Group info has been updated", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(EditGroup.this, GroupView.class);
                     intent.putExtra("groupId", groupId);
@@ -161,7 +163,6 @@ public class EditGroup extends AppCompatActivity {
                 } else {Toast.makeText(EditGroup.this, "false", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<GroupDTO> call, Throwable t) {
                 Toast.makeText(EditGroup.this, t.toString(), Toast.LENGTH_LONG).show();
