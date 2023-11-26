@@ -24,6 +24,7 @@ import sdu.msd.ui.addExpense.AddExpenseView;
 import sdu.msd.ui.groupInfo.GroupInfoView;
 import sdu.msd.ui.home.HomeView;
 import sdu.msd.ui.notifications.NotificationsView;
+import sdu.msd.ui.profile.ProfileView;
 
 public class GroupView extends AppCompatActivity {
     int userId, groupId;
@@ -113,6 +114,11 @@ public class GroupView extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
-
+        Button closeButton = findViewById(R.id.buttonClose); // Go to home
+        closeButton.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupView.this, HomeView.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
+        });
     }
 }
