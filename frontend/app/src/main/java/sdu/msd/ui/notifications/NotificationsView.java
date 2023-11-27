@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -44,6 +45,7 @@ public class NotificationsView extends AppCompatActivity {
     private Retrofit retrofit;
     private SharedPreferences sharedPreferences;
     private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
+    private List<NotificationDTO> notifications;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class NotificationsView extends AppCompatActivity {
         // Get user id:
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
+        notifications = new ArrayList<>();
 
         // Build API:
         retrofit = new Retrofit.Builder()
@@ -119,7 +122,7 @@ public class NotificationsView extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<NotificationDTO>> call, Response<List<NotificationDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<NotificationDTO> notifications = response.body();
+                    notifications = response.body();
                     addNotificationsToView(notifications);
                 }
             }
@@ -137,16 +140,32 @@ public class NotificationsView extends AppCompatActivity {
         Button btnBack = findViewById(R.id.back);
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            intent.putExtra("AreChecked",true);
             startActivity(intent);
         });
 
         Button closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            intent.putExtra("AreChecked",true);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });
 
         getNotifications();
+       // removeNotificationsFor(userId);
     }
+
+    /*
+    private void removeNotificationsFor(int userId){
+        List<Integer> notificationsIds = new ArrayList<>();
+        for(NotificationDTO notificationDTO: notifications){
+            notificationsIds.add(notificationDTO)
+
+        }
+        Call<Boolean> call = notificationAPIService.removeNotificationsFor(userId, notifications);
+
+    }
+
+     */
 }

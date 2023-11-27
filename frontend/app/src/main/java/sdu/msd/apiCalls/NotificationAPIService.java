@@ -23,4 +23,9 @@ public interface NotificationAPIService {
 
     @POST("push-to-user/{userId}")
     Call<Boolean> pushToUser(@Path("userId") int userId, @Body NotificationDTO notificationDTO);
+    @GET("{userId}/amount")
+    Call<Integer> getAmountFor(@Path("userId") int userId);
+
+    @POST("{userId}/remove")
+    Call<Boolean> removeNotificationsFor(@Path("userId") int userId, @Query("ids") List<Integer> ids);
 }
