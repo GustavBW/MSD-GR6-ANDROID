@@ -26,9 +26,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,7 +55,6 @@ public class GroupInfoView extends AppCompatActivity {
     // Notification API
     private NotificationAPIService notificationAPIService;
     private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
-    private SharedPreferences sharedPreferencesUsers;
     private String groupName;
 
     int userId, groupId;
@@ -177,7 +180,7 @@ public class GroupInfoView extends AppCompatActivity {
 
             @Override
             public void onResponse(Call<List<UserDTO>>call, Response<List<UserDTO>> response) {
-                if(response.isSuccessful()) {
+                if(response.isSuccessful() && response.body() !=null) {
                     List<UserDTO> rs = response.body();
                    addUserToGroupHelper(rs.get(0).id());
                     createCardView(rs);
@@ -271,14 +274,15 @@ public class GroupInfoView extends AppCompatActivity {
     }
 
     private void pushNotification(int id) {
-        NotificationDTO notificationDTO = new NotificationDTO(sharedPreferencesUsers.getString("username", null) + " invited you to " + groupName,
-                sharedPreferencesUsers.getString("username", null) + " invited you to join " + groupName + " at " + new Date());
+        String username = sharedPreferences.getString("username", null);
+        String invitationMessage = username + " invited you to join " + groupName + " at " + getCurrentDateTime();
+        NotificationDTO notificationDTO = new NotificationDTO(username + " invited you to " + groupName, invitationMessage);
         Call<Boolean> call = notificationAPIService.pushToUser(id, notificationDTO);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(GroupInfoView.this, "Notification sent!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupInfoView.this, "A notification is sent!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -287,6 +291,10 @@ public class GroupInfoView extends AppCompatActivity {
                 Toast.makeText(GroupInfoView.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+    private String getCurrentDateTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date());
     }
 }
 

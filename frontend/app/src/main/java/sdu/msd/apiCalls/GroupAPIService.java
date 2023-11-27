@@ -11,6 +11,7 @@ import retrofit2.http.Query;
 import sdu.msd.dtos.CreateGroupDTO;
 import sdu.msd.dtos.GroupActivityDTO;
 import sdu.msd.dtos.GroupDTO;
+import sdu.msd.dtos.UpdateGroupDTO;
 import sdu.msd.dtos.UserCredentialsDTO;
 
 public interface GroupAPIService {
@@ -30,6 +31,17 @@ public interface GroupAPIService {
 
     @GET("{groupId}/activities")
     Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId);
+    @GET("{groupId}/is-admin/{userId}")
+    Call<Boolean> getUserIsAdmin(@Path("groupId") int groupId, @Path("userId") int userId);
+
+    @POST("{groupId}/delete")
+    Call<Boolean> deleteGroup(@Path("groupId") int groupId, @Body UserCredentialsDTO userCredentialsDTO);
+
+    @GET("{groupId}/activites")
+    Call<List<GroupActivityDTO>> getActivities(@Path("groupId") int groupId, @Query("amount") Integer amount);
+
+    @POST("{groupId}/update")
+    Call<GroupDTO> updateGroup(@Path("groupId") int groupId, @Body UpdateGroupDTO updateGroupDTO);
 
 
 }
