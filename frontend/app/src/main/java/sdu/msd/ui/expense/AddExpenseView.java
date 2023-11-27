@@ -2,6 +2,7 @@ package sdu.msd.ui.expense;
 
 import static sdu.msd.ui.home.HomeView.getApi;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -330,8 +332,9 @@ public class AddExpenseView extends AppCompatActivity {
 
     private void pushNotification() {
         for (Integer user : selectedMembers) {
+            @SuppressLint("SimpleDateFormat") String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
             NotificationDTO notificationDTO = new NotificationDTO(sharedPreferencesUsers.getString("username", null) + " added expense to " + groupName,
-                    sharedPreferencesUsers.getString("username", null) + " added an expense of " + amount + " to " + groupName + " at " + new Date());
+                    sharedPreferencesUsers.getString("username", null) + " added an expense of " + amount + " to " + groupName + " at " + currentDate );
             Call<Boolean> call = notificationAPIService.pushToUser(user, notificationDTO);
             call.enqueue(new Callback<Boolean>() {
                 @Override

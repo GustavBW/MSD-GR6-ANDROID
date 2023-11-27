@@ -98,7 +98,7 @@ public class InvoicesView extends AppCompatActivity {
             gradientDrawable.setCornerRadius(getResources().getDimension(R.dimen.corner_radius));
             gradientDrawable.setColor(Color.parseColor("#f3f3f3"));
             TextView textView = new Button(this);
-            @SuppressLint("SimpleDateFormat") String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            @SuppressLint("SimpleDateFormat") String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
             textView.setText("Date: " + currentDate + "\n" +
                     "From " + invoiceDTO.paymentFrom().username() + "\n" +
                     "To " + invoiceDTO.paymentTo().username() + "\n" +

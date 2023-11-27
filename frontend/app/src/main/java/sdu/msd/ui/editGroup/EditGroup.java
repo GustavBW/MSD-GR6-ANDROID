@@ -117,13 +117,18 @@ public class EditGroup extends AppCompatActivity {
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() !=null){
+                    if(!response.body()){
+                        Toast.makeText(EditGroup.this, "You are not allowed to make change on this group", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     deleteGroup();
                 }
             }
 
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
+                Toast.makeText(EditGroup.this, t.toString(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -268,7 +273,7 @@ public class EditGroup extends AppCompatActivity {
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                if(response.isSuccessful()){
+                if(response.isSuccessful() && response.body() !=null){
                     Iterator<UserDTO> iterator = members.iterator();
                     while (iterator.hasNext()) {
                         UserDTO user = iterator.next();
@@ -280,6 +285,9 @@ public class EditGroup extends AppCompatActivity {
                     }
                     Toast.makeText(EditGroup.this, member.username() + " had been removed from the group", Toast.LENGTH_SHORT).show();
                     addMembersToView();
+                }
+                else{
+                    Toast.makeText(EditGroup.this, "You are not allowed to make change on this group", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -314,6 +322,10 @@ public class EditGroup extends AppCompatActivity {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if(response.isSuccessful() && response.body() != null){
+                    if(!response.body()){
+                        Toast.makeText(EditGroup.this, "You are not allowed to make change on this group", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     Intent intent = new Intent(EditGroup.this, HomeView.class);
                     intent.putExtra("groupId",groupId);
                     startActivity(intent);
@@ -335,14 +347,16 @@ public class EditGroup extends AppCompatActivity {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if(response.isSuccessful() && response.body() != null){
-                    Toast.makeText(EditGroup.this, "true", Toast.LENGTH_SHORT).show();
                     GroupDTO groupDTO = response.body();
+                    createGroupEditView(groupDTO);
+                    addMembersToView();
                     Toast.makeText(EditGroup.this, "Group info has been updated", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(EditGroup.this, GroupView.class);
                     intent.putExtra("groupId", groupId);
                     startActivity(intent);
                     finish();
-                } else {Toast.makeText(EditGroup.this, "false", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EditGroup.this, "You are not allowed to make change on this group", Toast.LENGTH_SHORT).show();
                 }
             }
 
