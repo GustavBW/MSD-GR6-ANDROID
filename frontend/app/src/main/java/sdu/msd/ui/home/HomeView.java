@@ -162,7 +162,7 @@ public class HomeView extends AppCompatActivity {
                 LinearLayout groupButtonContainer = findViewById(R.id.groupButtonContainer);
 
                 Toast.makeText(HomeView.this, Log.getStackTraceString(t).substring(150), Toast.LENGTH_LONG).show();
-                t.printStackTrace(); // Log the exception for debugging purposes
+                t.printStackTrace();
 
             }
         });
@@ -186,7 +186,6 @@ public class HomeView extends AppCompatActivity {
             }
             LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
             groupButton.setBackground(layerDrawable);
-            // Set marginBottom
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

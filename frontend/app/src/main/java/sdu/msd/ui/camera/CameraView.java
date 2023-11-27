@@ -1,6 +1,5 @@
 package sdu.msd.ui.camera;
 
-// import your generated binding class
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import sdu.msd.databinding.FragmentCameraBinding;
@@ -58,7 +57,6 @@ public class CameraView extends AppCompatActivity {
     }
 
     private void takePhoto() {
-        // Create time-stamped name and MediaStore entry.
         String name = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
                 .format(System.currentTimeMillis());
 
@@ -70,14 +68,11 @@ public class CameraView extends AppCompatActivity {
             contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image");
         }
 
-        // Create output options object which contains file + metadata
         ImageCapture.OutputFileOptions outputOptions =
                 new ImageCapture.OutputFileOptions.Builder(getContentResolver(),
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
                         .build();
 
-        // Set up image capture listener,
-        // which is triggered after the photo has been taken
         cameraController.takePicture(
                 outputOptions,
                 ContextCompat.getMainExecutor(this),
@@ -90,7 +85,6 @@ public class CameraView extends AppCompatActivity {
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
                         String msg = "Photo capture succeeded: " + output.getSavedUri();
-                        // Start DisplayPictureActivity and pass the image URI
                         Intent intent = new Intent(CameraView.this, DisplayPictureView.class);
                         intent.putExtra("groupId", groupId);
                         saveImageLocally(Objects.requireNonNull(output.getSavedUri()));
@@ -117,7 +111,6 @@ public class CameraView extends AppCompatActivity {
         previewView.setController(cameraController);
     }
     private boolean hasPermissions(Context context) {
-        // Check for camera-related permissions
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
     }

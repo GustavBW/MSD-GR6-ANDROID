@@ -28,11 +28,9 @@ public class DisplayPictureView extends AppCompatActivity {
         Button btnConfirm = findViewById(R.id.btnConfirm);
         Button retake = findViewById(R.id.retake);
         sharedPreferences = getSharedPreferences("image_path", MODE_PRIVATE);
-        // Get the URI of the captured image from the intent
         imageUri =sharedPreferences.getString("IMAGEPATH",null);
         groupId = getIntent().getIntExtra("groupId", -1);
 
-        // Load and display the captured image using Glide
         Glide.with(this)
                 .load(Uri.parse(imageUri))
                 .into(imageView);

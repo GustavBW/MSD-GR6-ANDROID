@@ -141,7 +141,7 @@ public class GroupView extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
-        ImageView closeButton = findViewById(R.id.buttonClose); // Go to home
+        ImageView closeButton = findViewById(R.id.buttonClose);
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, HomeView.class);
             startActivity(intent);
@@ -175,7 +175,7 @@ public class GroupView extends AppCompatActivity {
         if(amount != 0){
             LinearLayout layout = new LinearLayout(GroupView.this);
             layout.setBackgroundColor(Color.rgb(31, 35, 40));
-            layout.setOrientation(LinearLayout.VERTICAL); // Set orientation to vertical
+            layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.MATCH_PARENT
@@ -193,28 +193,23 @@ public class GroupView extends AppCompatActivity {
             howMuch.setTextSize(20);
             payBtn = new Button(GroupView.this);
             payBtn.setText("Pay");
-            // Set layout parameters to add horizontal margins
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
             int marginInDp = (int) TypedValue.applyDimension(
                     TypedValue.COMPLEX_UNIT_DIP,
-                    70, // replace with your desired margin in dp
+                    70,
                     getResources().getDisplayMetrics()
             );
-            layoutParams.setMargins(marginInDp, 0, marginInDp, 0); // left, top, right, bottom
+            layoutParams.setMargins(marginInDp, 0, marginInDp, 0);
             payBtn.setLayoutParams(layoutParams);
             payBtn.setTextColor(Color.WHITE);
-            payBtn.setBackgroundResource(R.drawable.buttoncolors); // Set the background drawable
+            payBtn.setBackgroundResource(R.drawable.buttoncolors);
             layout.addView(textView);
             layout.addView(howMuch);
             layout.addView(payBtn);
 
-
-            // Find the parent layout in your XML file
-
-            // Add the dynamic view to the parent layout
             parentLayout.addView(layout);
             
             doPay();

@@ -99,7 +99,7 @@ public class LoginView extends AppCompatActivity {
                         editor.clear();
                         editor.apply();
                         finish();
-                        startActivity(new Intent(LoginView.this, LoginView.class));  // Start a new instance of LoginView
+                        startActivity(new Intent(LoginView.this, LoginView.class));
                     }
 
                 }

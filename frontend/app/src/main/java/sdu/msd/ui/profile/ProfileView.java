@@ -124,7 +124,7 @@ public class ProfileView extends AppCompatActivity {
 
         Button invoicesButton = findViewById(R.id.buttonInvoices); // Go to invoices
         invoicesButton.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileView.this, InvoicesView.class); // TODO: change to InvoiceView.class when possible.
+            Intent intent = new Intent(ProfileView.this, InvoicesView.class);
             startActivity(intent);
         });
 

@@ -60,7 +60,6 @@ public class CreateGroupView extends AppCompatActivity {
         createGroup();
     }
     private void changeViewColor(){
-        //Generate Random Color
         Random randomColor = new Random();
         color = Color.argb(255, randomColor.nextInt(256), randomColor.nextInt(256), randomColor.nextInt(256));
         GradientDrawable gradientDrawable = new GradientDrawable();

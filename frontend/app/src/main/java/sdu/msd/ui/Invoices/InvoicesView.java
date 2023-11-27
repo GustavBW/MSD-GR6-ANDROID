@@ -125,8 +125,8 @@ public class InvoicesView extends AppCompatActivity {
             View separator = new View(this);
             separator.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    (int) getResources().getDimension(R.dimen.corner_radius))); // Set your divider height here
-            separator.setBackground(getResources().getDrawable(R.drawable.divider_line)); // Set your divider color here
+                    (int) getResources().getDimension(R.dimen.corner_radius)));
+            separator.setBackground(getResources().getDrawable(R.drawable.divider_line));
             layout.addView(separator);
         }
     }
