@@ -30,11 +30,16 @@ public class CreateUserView extends AppCompatActivity {
     private Button cancelBtn,confirmationBtn;
     private EditText name,username,password,confirmPassword,email,phone;
     private static final String BASEURL = HomeView.getApi() + "users/";
+    private  SharedPreferences notificationsPrefences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_registration);
+        notificationsPrefences = getSharedPreferences("notifications", MODE_PRIVATE);
+        SharedPreferences.Editor editor = notificationsPrefences.edit();
+        editor.clear();
+        editor.apply();
         cancelCreation();
         createUser();
 

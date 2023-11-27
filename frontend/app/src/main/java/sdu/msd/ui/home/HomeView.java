@@ -51,7 +51,7 @@ public class HomeView extends AppCompatActivity {
     private static final String BASEURL = API + "users/";
     int userId;
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences, notificationsPrefences;
     private boolean notificationsAreChecked;
 
 
@@ -61,7 +61,8 @@ public class HomeView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_home);
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        notificationsAreChecked = getIntent().getBooleanExtra("AreChecked",false);
+        notificationsPrefences = getSharedPreferences("notifications",MODE_PRIVATE);
+        notificationsAreChecked = notificationsPrefences.getBoolean("areChecked",false);
         userId = retrieveUserIdLocally();
         ImageView btnProfile = findViewById(R.id.btnProfile);
         ImageView btnNotifications = findViewById(R.id.btnNotifications);
@@ -123,10 +124,18 @@ public class HomeView extends AppCompatActivity {
     @SuppressLint("UseCompatLoadingForDrawables")
     private void changeNotificationIcon(int amountOfNotifcations) {
         ImageView imageView = findViewById(R.id.btnNotifications);
-        if(amountOfNotifcations > 0){
+        if(amountOfNotifcations > 0 && !notificationsAreChecked){
+            SharedPreferences.Editor editor = notificationsPrefences.edit();
+            editor.putBoolean("areChecked", false);
+            editor.apply();
             imageView.setImageDrawable(getDrawable(R.drawable.notification_with_red_dot));
+
         }
         if (amountOfNotifcations == 0 || notificationsAreChecked){
+            notificationsAreChecked = true;
+            SharedPreferences.Editor editor = notificationsPrefences.edit();
+            editor.putBoolean("areChecked", true);
+            editor.apply();
             imageView.setImageDrawable(getDrawable(R.drawable.notification_1));
         }
 

@@ -9,13 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,20 +25,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import sdu.msd.R;
-import sdu.msd.apiCalls.GroupAPIService;
 import sdu.msd.apiCalls.NotificationAPIService;
 import sdu.msd.dtos.NotificationDTO;
-import sdu.msd.dtos.UserDTO;
-import sdu.msd.ui.expense.AddExpenseView;
 import sdu.msd.ui.home.HomeView;
-import sdu.msd.ui.profile.ProfileView;
 
 public class NotificationsView extends AppCompatActivity {
 
     private int userId;
     private NotificationAPIService notificationAPIService;
     private Retrofit retrofit;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences, notifcationSharedPrefences;
     private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
     private List<NotificationDTO> notifications;
 
@@ -54,6 +45,7 @@ public class NotificationsView extends AppCompatActivity {
 
         // Get user id:
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        notifcationSharedPrefences = getSharedPreferences("notifications", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
         notifications = new ArrayList<>();
 
@@ -66,6 +58,13 @@ public class NotificationsView extends AppCompatActivity {
 
         // Create view:
         createNotificationsView();
+        notificationsAreChecked();
+    }
+
+    private void notificationsAreChecked() {
+        SharedPreferences.Editor editor = notifcationSharedPrefences.edit();
+        editor.putBoolean("areChecked", true);
+        editor.apply();
     }
 
     private void addNotificationsToView(List<NotificationDTO> notifications) {
@@ -140,14 +139,12 @@ public class NotificationsView extends AppCompatActivity {
         Button btnBack = findViewById(R.id.back);
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
-            intent.putExtra("AreChecked",true);
             startActivity(intent);
         });
 
         Button closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
-            intent.putExtra("AreChecked",true);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });

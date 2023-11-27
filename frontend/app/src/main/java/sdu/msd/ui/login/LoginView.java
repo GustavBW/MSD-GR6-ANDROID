@@ -27,11 +27,12 @@ public class LoginView extends AppCompatActivity {
     private Button register, login;
 
     private static final String BASEURL =  HomeView.getApi() + "users/";
-    private  SharedPreferences sharedPreferences;
+    private  SharedPreferences sharedPreferences, notificationsPrefences;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
+        notificationsPrefences = getSharedPreferences("notifications", MODE_PRIVATE);
         setContentView(R.layout.fragment_login);
         usernameEditText = findViewById(R.id.username_login);
         passwordEditText = findViewById(R.id.password_login);
@@ -43,6 +44,9 @@ public class LoginView extends AppCompatActivity {
         } else {
             register();
             login();
+            SharedPreferences.Editor editor = notificationsPrefences.edit();
+            editor.clear();
+            editor.apply();
         }
     }
 
