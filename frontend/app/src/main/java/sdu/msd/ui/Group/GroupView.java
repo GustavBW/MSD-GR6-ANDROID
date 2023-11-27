@@ -120,6 +120,7 @@ public class GroupView extends AppCompatActivity {
         editGroup.setOnClickListener(view -> {
             Intent intent = new Intent(GroupView.this, EditGroup.class);
             intent.putExtra("groupId", groupId);
+            intent.putExtra("groupName", groupDTO.name());
             startActivity(intent);
         });
 
