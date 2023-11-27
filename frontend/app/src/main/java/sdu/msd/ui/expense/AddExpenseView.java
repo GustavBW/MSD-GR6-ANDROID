@@ -141,7 +141,7 @@ public class AddExpenseView extends AppCompatActivity {
         // Load and display username:
         username = sharedPreferencesUsers.getString("username", "Value not found!");
         textViewUsername.setText(username);
-        textViewUsername.setTextSize(30);
+        textViewUsername.setTextSize(25);
         // scaleUsernameText(username);
 
         // EditText:

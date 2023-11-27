@@ -38,6 +38,7 @@ public class NotificationsView extends AppCompatActivity {
     private SharedPreferences sharedPreferences, notifcationSharedPrefences;
     private static final String BASENOTIFICATIONURL = getApi() + "notifications/";
     private List<NotificationDTO> notifications;
+    private String groupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class NotificationsView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         notificationAPIService = retrofit.create(NotificationAPIService.class);
+        groupName = getIntent().getStringExtra("groupName");
 
         // Create view:
         createNotificationsView();
@@ -153,12 +155,14 @@ public class NotificationsView extends AppCompatActivity {
         Button btnBack = findViewById(R.id.back);
         btnBack.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            intent.putExtra("groupName", groupName);
             startActivity(intent);
         });
 
         Button closeButton = findViewById(R.id.buttonClose); // Go to home
         closeButton.setOnClickListener(view -> {
             Intent intent = new Intent(NotificationsView.this, HomeView.class);
+            intent.putExtra("groupName", groupName);
             startActivity(intent);
             overridePendingTransition(R.anim.stay, R.anim.slide_in_down);
         });

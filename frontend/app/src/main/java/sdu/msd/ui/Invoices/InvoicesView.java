@@ -44,6 +44,7 @@ public class InvoicesView extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private DecimalFormat decimalFormat;
     private InvoicesAPIService invoicesAPIService;
+    private String groupName;
 
     private static final String BASEINVOICEURL = getApi() + "invoices/";
     @Override
@@ -58,6 +59,7 @@ public class InvoicesView extends AppCompatActivity {
                 .build();
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
+        groupName = getIntent().getStringExtra("groupName");
         invoicesAPIService = retrofit.create(InvoicesAPIService.class);
         getInvoices();
         back();
@@ -68,6 +70,7 @@ public class InvoicesView extends AppCompatActivity {
     private void back() {
         back.setOnClickListener(view -> {
             Intent intent = new Intent(InvoicesView.this, HomeView.class);
+            intent.putExtra("groupName", groupName);
             startActivity(intent);
         });
     }
