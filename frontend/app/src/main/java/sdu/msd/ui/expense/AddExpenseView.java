@@ -79,6 +79,7 @@ public class AddExpenseView extends AppCompatActivity {
     private EditText amountEditText;
     private double amount;
     LinearLayout attachmentButton;
+    private TextView textViewUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,7 @@ public class AddExpenseView extends AppCompatActivity {
         sharedPreferencesUsers = getSharedPreferences("user_data", MODE_PRIVATE);
 
         attachmentButton = findViewById(R.id.attachment);
+        textViewUsername = findViewById(R.id.user);
         createProfileView();
 
         // User Api service:
@@ -136,9 +138,9 @@ public class AddExpenseView extends AppCompatActivity {
     private void createProfileView(){
         // Load and display username:
         username = sharedPreferencesUsers.getString("username", "Value not found!");
-        TextView textViewUsername = findViewById(R.id.user);
         textViewUsername.setText(username);
-        scaleUsernameText(username);
+        textViewUsername.setTextSize(30);
+        // scaleUsernameText(username);
 
         // EditText:
         amountEditText = findViewById(R.id.amount);
@@ -261,13 +263,11 @@ public class AddExpenseView extends AppCompatActivity {
 
 
     private void scaleUsernameText(String username) {
-        TextView usernameTextView = findViewById(R.id.user);
-        usernameTextView.setText(username);
 
         // float textSize = (float)(75.0 / (1.0 + (float)Math.exp(0.4055 * ((float)(username.length()) - 1.0))));
         float textSize = (float)(100.0 / (1.0 + (float)Math.exp(-(-0.11564339880716944) * ((float)(username.length() - 10.5)))));
 
-        usernameTextView.setTextSize(textSize);
+        textViewUsername.setTextSize(textSize);
     }
 
     private void checkIfMemberIsSelected() {
