@@ -105,12 +105,8 @@ public class CreateGroupView extends AppCompatActivity {
             @Override
             public void onResponse(Call<GroupDTO> call, Response<GroupDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(CreateGroupView.this, "name" + response.body().name() + "desc" + response.body().descriptions(), Toast.LENGTH_SHORT).show();
-                    GroupDTO groupDTO = response.body();
-                    if (groupDTO != null) {
-                        Intent intent = new Intent(CreateGroupView.this, HomeView.class);
-                        startActivity(intent);
-                    }
+                    Intent intent = new Intent(CreateGroupView.this, HomeView.class);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(CreateGroupView.this, "error in" + response.code(), Toast.LENGTH_SHORT).show();
                     // Handle the error, you can check the error body using response.errorBody()

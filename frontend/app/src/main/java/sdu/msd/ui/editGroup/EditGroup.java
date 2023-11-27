@@ -291,8 +291,8 @@ public class EditGroup extends AppCompatActivity {
     }
     private void pushNotification(int id) {
         String username = sharedPreferences.getString("username", null);
-        String invitationMessage = username + " removed you from group " + groupName + " at ";
-        NotificationDTO notificationDTO = new NotificationDTO(username + " invited you to " + groupName, invitationMessage);
+        String invitationMessage = username + " removed you from group " + groupName;
+        NotificationDTO notificationDTO = new NotificationDTO(username + " removed you from the group: " + groupName, invitationMessage);
         Call<Boolean> call = notificationAPIService.pushToUser(id, notificationDTO);
         call.enqueue(new Callback<Boolean>() {
             @Override

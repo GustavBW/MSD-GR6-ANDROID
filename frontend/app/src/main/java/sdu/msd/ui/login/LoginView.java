@@ -42,11 +42,11 @@ public class LoginView extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            register();
-            login();
             SharedPreferences.Editor editor = notificationsPrefences.edit();
             editor.clear();
             editor.apply();
+            register();
+            login();
         }
     }
 

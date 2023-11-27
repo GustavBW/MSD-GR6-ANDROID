@@ -72,7 +72,6 @@ public class ProfileView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_profile);
         sharedPreferences = getSharedPreferences("user_data", MODE_PRIVATE);
-        notificationsPrefences = getSharedPreferences("notifications", MODE_PRIVATE);
         userId = sharedPreferences.getInt("userId", -1);
         createProfileView();
         Retrofit retrofit = new Retrofit.Builder()
@@ -117,9 +116,6 @@ public class ProfileView extends AppCompatActivity {
 
         Button logoutButton = findViewById(R.id.buttonLogout); // Go to login
         logoutButton.setOnClickListener(view -> {
-            SharedPreferences.Editor editor = notificationsPrefences.edit();
-            editor.clear();
-            editor.apply();
             deleteLocalUser();
             Intent intent = new Intent(ProfileView.this, LoginView.class);
             startActivity(intent);

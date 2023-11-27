@@ -80,6 +80,7 @@ public class HomeView extends AppCompatActivity {
         btnNotifications.setOnClickListener(view -> {
             Intent intent = new Intent(HomeView.this, NotificationsView.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_up, R.anim.stay);
         });
 
 

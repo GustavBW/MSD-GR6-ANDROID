@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -68,49 +69,62 @@ public class NotificationsView extends AppCompatActivity {
     }
 
     private void addNotificationsToView(List<NotificationDTO> notifications) {
-        // Find container
         LinearLayout notificationsContainer = findViewById(R.id.notificationContainer);
 
         // Append scroll view:
-        for (NotificationDTO notification : notifications) {
+        for (int i = notifications.size() - 1; i >= 0; i--) {
+            NotificationDTO notification = notifications.get(i);
             // Create container for each notification
             GradientDrawable gradientDrawable = new GradientDrawable();
             gradientDrawable.setColor(Color.WHITE);
+            gradientDrawable.setCornerRadius(getResources().getDimension(R.dimen.corner_radius));
+
             LinearLayout notificationLayout = new LinearLayout(this);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
             );
-            layoutParams.setMargins(0, 0, 0, (int) getResources().getDimension(R.dimen.activity_vertical_margin));
-            notificationLayout.setLayoutParams(layoutParams);
+            layoutParams.setMargins(0, 0, 0, 20);
             notificationLayout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams marginHorizontal = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            marginHorizontal.setMargins(20,0,20,0);
 
             // Create notification title:
-            TextView titleTextView = new TextView(this);
+            TextView titleTextView = new Button(this);
             titleTextView.setText(notification.title());
             titleTextView.setTextColor(Color.BLACK);
-            titleTextView.setTextSize(25);
-            titleTextView.setPadding(10,0,0,0);
-            LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
-            titleTextView.setBackground(layerDrawable);
-
+            titleTextView.setTextSize(20);  // Adjusted size
+            //titleTextView.setBackground(gradientDrawable);
+            titleTextView.setBackgroundColor(0);
+            titleTextView.setLayoutParams(marginHorizontal);
             // Create notification message:
-            TextView messageTextView = new TextView(this);
+            TextView messageTextView = new Button(this);
             messageTextView.setText(notification.message());
             messageTextView.setTextColor(Color.BLACK);
             messageTextView.setTextSize(15);
-            messageTextView.setPadding(10,0,0,0);
-            layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
-            messageTextView.setBackground(layerDrawable);
-
+           // messageTextView.setBackground(gradientDrawable);
+            messageTextView.setBackgroundColor(0);
+            messageTextView.setLayoutParams(marginHorizontal);
+            View separator = new View(this);
+            separator.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (int) getResources().getDimension(R.dimen.corner_radius))); // Set your divider height here
+            separator.setBackground(getResources().getDrawable(R.drawable.divider_line)); // Set your divider color here
             // Add title and message to the container
             notificationLayout.addView(titleTextView);
             notificationLayout.addView(messageTextView);
+            notificationLayout.addView(separator);
+            notificationLayout.setBackground(gradientDrawable);
+            notificationLayout.setLayoutParams(layoutParams);
 
             // Add the container to the main container
             notificationsContainer.addView(notificationLayout);
         }
     }
+
 
 
 

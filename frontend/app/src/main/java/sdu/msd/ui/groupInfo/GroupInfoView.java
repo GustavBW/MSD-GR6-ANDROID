@@ -99,7 +99,7 @@ public class GroupInfoView extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         notificationAPIService = retrofit.create(NotificationAPIService.class);
-        groupName = getIntent().getStringExtra("groupName");
+        groupName = getIntent().getStringExtra("groupNme");
 
         addGroupMembers.setOnClickListener(view -> addUserPopup());
 
@@ -275,14 +275,14 @@ public class GroupInfoView extends AppCompatActivity {
 
     private void pushNotification(int id) {
         String username = sharedPreferences.getString("username", null);
-        String invitationMessage = username + " invited you to join " + groupName + " at " + getCurrentDateTime();
-        NotificationDTO notificationDTO = new NotificationDTO(username + " invited you to " + groupName, invitationMessage);
+        String invitationMessage = username + " Added you to group: " + groupName;
+        NotificationDTO notificationDTO = new NotificationDTO(" Welcome you to group: " + groupName, invitationMessage);
         Call<Boolean> call = notificationAPIService.pushToUser(id, notificationDTO);
         call.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(GroupInfoView.this, "A notification is sent!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupInfoView.this, "A notification is sent to the user!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -291,10 +291,6 @@ public class GroupInfoView extends AppCompatActivity {
                 Toast.makeText(GroupInfoView.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
-    }
-    private String getCurrentDateTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-        return sdf.format(new Date());
     }
 }
 

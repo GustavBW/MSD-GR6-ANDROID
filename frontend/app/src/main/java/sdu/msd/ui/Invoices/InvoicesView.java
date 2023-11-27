@@ -20,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -90,12 +92,18 @@ public class InvoicesView extends AppCompatActivity {
 
     @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
     private void updateInvoicesView(List<InvoiceDTO> invoiceDTOS) {
-        for (InvoiceDTO invoiceDTO : invoiceDTOS) {
+        for (int i = invoiceDTOS.size() - 1; i >= 0; i--) {
+            InvoiceDTO invoiceDTO = invoiceDTOS.get(i);
             GradientDrawable gradientDrawable = new GradientDrawable();
             gradientDrawable.setCornerRadius(getResources().getDimension(R.dimen.corner_radius));
             gradientDrawable.setColor(Color.parseColor("#f3f3f3"));
             TextView textView = new Button(this);
-            textView.setText("From " + invoiceDTO.paymentFrom().username() + "\nTo " + invoiceDTO.paymentTo().username() + "\nAmount = " + invoiceDTO.amount() + " DKK");
+            @SuppressLint("SimpleDateFormat") String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            textView.setText("Date: " + currentDate + "\n" +
+                    "From " + invoiceDTO.paymentFrom().username() + "\n" +
+                    "To " + invoiceDTO.paymentTo().username() + "\n" +
+                    "Amount = " + invoiceDTO.amount() + " DKK");
+
             LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{gradientDrawable});
             textView.setTextColor(Color.BLACK);
             textView.setBackground(layerDrawable);
